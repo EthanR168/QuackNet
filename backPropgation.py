@@ -1,4 +1,5 @@
 import math
+import main
 
 '''
 output layer backpropogation for weights:
@@ -26,9 +27,9 @@ def outputLayerWeightChange(lossDerivative, activationDerivative, currentLayerNo
         errorTerm = lossDerivative(currentLayerNodes[i], trueValues[i]) * activationDerivative(currentLayerNodes[i])
         for j in range(len(pastLayerNodes)):
             weightGradient = errorTerm * pastLayerNodes[j]
-            pastLayerWeights[j][i] -= learningRate * weightGradient 
+            #pastLayerWeights[j][i] -= learningRate * weightGradient 
         errorTerms.append(errorTerm)
-    return pastLayerWeights, errorTerms
+    return weightGradient, errorTerms
 
 '''
 hidden layer backpropgation for weights:
@@ -61,16 +62,16 @@ def hiddenLayerWeightChange(pastLayerErrorTerms, pastLayerWeights, activationDer
 
         for j in range(len(pastLayerWeights)):
             weightGradient = errorTerm * pastLayerNodes[j]
-            pastLayerWeights[j][i] -= learningRate * weightGradient
-    return pastLayerWeights, errorTerms
+            #pastLayerWeights[j][i] -= learningRate * weightGradient
+    return weightGradient, errorTerms
 
 def outputLayerBiaseChange(lossDerivative, activationDerivative, currentLayerNodes, currentLayerBiases, trueValues, learningRate):
     errorTerms = []
     for i in range(len(currentLayerNodes)):
         errorTerm = lossDerivative(currentLayerNodes[i], trueValues[i]) * activationDerivative(currentLayerNodes[i])
         errorTerms.append(errorTerm)
-        currentLayerBiases[i] -= learningRate * errorTerm
-    return currentLayerBiases, errorTerms
+        #currentLayerBiases[i] -= learningRate * errorTerm
+    return errorTerms, errorTerms
 
 def hiddenLayerBiaseChange(pastLayerErrorTerms, pastLayerWeights, currentLayerBiases, activationDerivative, currentLayerNodes, pastLayerNodes, learningRate):
     errorTerms = []
@@ -80,8 +81,8 @@ def hiddenLayerBiaseChange(pastLayerErrorTerms, pastLayerWeights, currentLayerBi
             errorTerm += pastLayerErrorTerms[node] * pastLayerWeights[node][i]
         errorTerm = errorTerm * activationDerivative(currentLayerNodes[i])
         errorTerms.append(errorTerm)
-        currentLayerBiases[i] -= learningRate * errorTerm
-    return currentLayerBiases, errorTerms
+        #currentLayerBiases[i] -= learningRate * errorTerm
+    return errorTerms, errorTerms
 
 def backPropgation(layerNodes, weights, biases, trueValues, layers, lossFunction, learningRate):
     lossDerivatives = {
@@ -89,16 +90,21 @@ def backPropgation(layerNodes, weights, biases, trueValues, layers, lossFunction
         "mae": MAEDerivative,
     }
     activationDerivatives = {
-        "relu": ReLUDerivative,
-        "sigmoid": SigmoidDerivative,
-        "linear": LinearDerivative,
+        main.Network.relu: ReLUDerivative,
+        main.Network.sigmoid: SigmoidDerivative,
+        main.Network.linear: LinearDerivative,
     }
-    weights[len(weights) - 1], weightErrorTerms = outputLayerWeightChange(lossDerivatives[lossFunction.lower()](len(layers[len(layers) - 1])), activationDerivatives[layers[len(layers) - 1][1]], layerNodes[len(layerNodes) - 1], layerNodes[len(layerNodes) - 2], weights[len(weights) - 1], learningRate, trueValues)
-    biases[len(biases) - 1], biasErrorTerms = outputLayerBiaseChange(lossDerivatives[lossFunction.lower()](len(layers[len(layers) - 1])), activationDerivatives[layers[len(layers) - 1][1]], layerNodes[len(layerNodes) - 1], biases[len(biases) - 1], trueValues, learningRate)
+    
+    w, weightErrorTerms = outputLayerWeightChange(lossDerivatives[lossFunction.lower()](len(layers[len(layers) - 1])), activationDerivatives[layers[len(layers) - 1][1]], layerNodes[len(layerNodes) - 1], layerNodes[len(layerNodes) - 2], weights[len(weights) - 1], learningRate, trueValues)
+    b, biasErrorTerms = outputLayerBiaseChange(lossDerivatives[lossFunction.lower()](len(layers[len(layers) - 1])), activationDerivatives[layers[len(layers) - 1][1]], layerNodes[len(layerNodes) - 1], biases[len(biases) - 1], trueValues, learningRate)
+    weightGradients = [w]
+    biaseGradients = [b]
     for i in range(len(layers) - 2, -1, -1):
-        weights[i], weightErrorTerms = hiddenLayerWeightChange(weightErrorTerms, weights[i], activationDerivatives[layers[i][1]], layerNodes[i], layerNodes[i + 1], learningRate)
-        biases[i], biasErrorTerms = hiddenLayerBiaseChange(biasErrorTerms, weights[i + 1], biases[i], activationDerivatives[layers[i][1]], layerNodes[i], layerNodes[i + 1], learningRate)
-    return weights, biases
+        w, weightErrorTerms = hiddenLayerWeightChange(weightErrorTerms, weights[i], activationDerivatives[layers[i][1]], layerNodes[i], layerNodes[i + 1], learningRate)
+        b, biasErrorTerms = hiddenLayerBiaseChange(biasErrorTerms, weights[i + 1], biases[i], activationDerivatives[layers[i][1]], layerNodes[i], layerNodes[i + 1], learningRate)
+        weightGradients.insert(0, w)
+        biaseGradients.insert(0, b)
+    return weightGradients, biaseGradients
 
 def MSEDerivative(value, trueValue, sizeOfLayer):
     return 2 * (trueValue - value) / sizeOfLayer

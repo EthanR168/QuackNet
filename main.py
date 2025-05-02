@@ -5,10 +5,17 @@ import backPropgation
 #biases are in [number of layers][current node in the layer]
 
 class Network:
-    def __init__(self):
+    def __init__(self, lossFunc = "MSE", learningRate = 0.01):
         self.layers = []
         self.weights = []
         self.biases = []
+        self.learningRate = learningRate
+
+        lossFunction = {
+            "mse": self.MSELossFunction,
+            "mae": self.MAELossFunction,
+        }
+        self.lossFunction = lossFunction[lossFunc.lower()]
 
     def createWeightsAndBiases(self):
         #weights are in [number of layers][size of current layer][size of next layer]
@@ -36,6 +43,18 @@ class Network:
             for _ in range(currSize):
                 b.append(0)
             self.biases.append(b)
+
+    def MSELossFunction(self, predicted, true):
+        summ = 0
+        for i in range(len(predicted)):
+            summ += (true - predicted) ** 2
+        return summ / len(predicted)
+
+    def MAELossFunction(self, predicted, true):
+        summ = 0
+        for i in range(len(predicted)):
+            summ += abs(true - predicted)
+        return summ / len(predicted)
 
     def relu(self, value):
         return max(0, value)
@@ -69,7 +88,13 @@ class Network:
         layerNodes = [inputData]
         for i in range(1, len(self.layers)):
             layerNodes.append(self.calculateLayerNodes(layerNodes[i - 1], self.weights[i - 1], self.biases[i - 1], self.layers[i]))
-        return layerNodes[len(layerNodes) - 1]
+        return layerNodes
     
-    def backPropagation(self, layers, weights, biases, trueValues):
-        backPropgation.backPropagation(layers, weights, biases, trueValues)
+    def backPropgation(self, layerNodes, weights, biases, trueValues):
+        self.weights, self.biases = backPropgation.backPropgation(layerNodes, weights, biases, trueValues, self.layers, self.lossFunction, self.learningRate)
+
+    def train(self, inputData, labels, epochs):
+        for _ in range(epochs):
+            for _ in range(inputData):
+                layerNodes = self.forwardPropagation(inputData)
+                self.backPropgation(layerNodes, self.weights, self.biases, labels)

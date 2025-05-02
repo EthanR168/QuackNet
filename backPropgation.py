@@ -83,23 +83,33 @@ def hiddenLayerBiaseChange(pastLayerErrorTerms, pastLayerWeights, currentLayerBi
         currentLayerBiases[i] -= learningRate * errorTerm
     return currentLayerBiases, errorTerms
 
-def backPropagation(layerNodes, weights, biases, trueValues, layers, lossFunction, learningRate):
+def backPropgation(layerNodes, weights, biases, trueValues, layers, lossFunction, learningRate):
     lossDerivatives = {
         "mse": MSEDerivative,
+        "mae": MAEDerivative,
     }
     activationDerivatives = {
         "relu": ReLUDerivative,
         "sigmoid": SigmoidDerivative,
         "linear": LinearDerivative,
     }
-    weights[len(weights) - 1], weightErrorTerms = outputLayerWeightChange(lossDerivatives[lossFunction.lower()], activationDerivatives[layers[len(layers) - 1][1]], layerNodes[len(layerNodes) - 1], layerNodes[len(layerNodes) - 2], weights[len(weights) - 1], learningRate, trueValues)
-    biases[len(biases) - 1], biasErrorTerms = outputLayerBiaseChange(lossDerivatives[lossFunction.lower()], activationDerivatives[layers[len(layers) - 1][1]], layerNodes[len(layerNodes) - 1], biases[len(biases) - 1], trueValues, learningRate)
+    weights[len(weights) - 1], weightErrorTerms = outputLayerWeightChange(lossDerivatives[lossFunction.lower()](len(layers[len(layers) - 1])), activationDerivatives[layers[len(layers) - 1][1]], layerNodes[len(layerNodes) - 1], layerNodes[len(layerNodes) - 2], weights[len(weights) - 1], learningRate, trueValues)
+    biases[len(biases) - 1], biasErrorTerms = outputLayerBiaseChange(lossDerivatives[lossFunction.lower()](len(layers[len(layers) - 1])), activationDerivatives[layers[len(layers) - 1][1]], layerNodes[len(layerNodes) - 1], biases[len(biases) - 1], trueValues, learningRate)
     for i in range(len(layers) - 2, -1, -1):
         weights[i], weightErrorTerms = hiddenLayerWeightChange(weightErrorTerms, weights[i], activationDerivatives[layers[i][1]], layerNodes[i], layerNodes[i + 1], learningRate)
         biases[i], biasErrorTerms = hiddenLayerBiaseChange(biasErrorTerms, weights[i + 1], biases[i], activationDerivatives[layers[i][1]], layerNodes[i], layerNodes[i + 1], learningRate)
+    return weights, biases
 
 def MSEDerivative(value, trueValue, sizeOfLayer):
     return 2 * (trueValue - value) / sizeOfLayer
+
+def MAEDerivative(value, trueValue, sizeOfLayer):
+    summ = value - trueValue
+    if(summ > 0):
+        return 1 / sizeOfLayer
+    elif(summ < 0):
+        return -1 / sizeOfLayer
+    return 0
 
 def ReLUDerivative(value):
     if(value > 0):
@@ -113,3 +123,4 @@ def SigmoidDerivative(value):
 
 def LinearDerivative(_):
     return 1
+

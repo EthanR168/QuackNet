@@ -1,0 +1,19 @@
+Feutures:
+-Core functions:
+    -forward propagation
+    -backward propagation
+    -weight initialisation
+    -training
+    -custom layers
+
+-Activation functions:
+    -ReLU 
+    -sigmoid
+    -linear
+
+-Loss functions:
+    -MSE
+    -MAE
+
+-Optimisation algorithms:
+    -gradient descent

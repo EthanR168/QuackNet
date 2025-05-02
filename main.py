@@ -1,4 +1,5 @@
 import math, random
+import backPropgation
 
 #weights are in [number of layers][size of current layer][size of next layer]
 #biases are in [number of layers][current node in the layer]
@@ -24,15 +25,15 @@ class Network:
                 bounds = 1
                 
             currW = []
-            for _ in currSize:
+            for _ in range(currSize):
                 w = []
-                for _ in lastSize:
+                for _ in range(lastSize):
                     w.append(random.gauss(0, bounds)) 
                 currW.append(w)
             self.weights.append(currW)
 
             b = []
-            for _ in currSize:
+            for _ in range(currSize):
                 b.append(0)
             self.biases.append(b)
 
@@ -51,7 +52,7 @@ class Network:
             "sigmoid": self.sigmoid,
             "linear": self.linear,
         }
-        if(activationFunction.lower() in funcs):
+        if(activationFunction.lower() not in funcs):
             raise ValueError(f"Activation function not made: {activationFunction.lower()}")
         self.layers.append([size, funcs[activationFunction.lower()]])
 
@@ -60,13 +61,15 @@ class Network:
         for i in range(currentLayer[0]):
             summ = biases[i]
             for j in range(len(lastLayerNodes)):
-                summ += lastLayerNodes[j] * lastLayerWeights[j][i]
+                summ += lastLayerNodes[j] * lastLayerWeights[i][j]
             layer.append(currentLayer[1](summ))
         return layer
     
     def forwardPropagation(self, inputData):
         layerNodes = [inputData]
         for i in range(1, len(self.layers)):
-            layerNodes.append(self.calculateLayerNodes(layerNodes[i - 1], self.weights[i], self.biases[i], self.layers[i]))
+            layerNodes.append(self.calculateLayerNodes(layerNodes[i - 1], self.weights[i - 1], self.biases[i - 1], self.layers[i]))
         return layerNodes[len(layerNodes) - 1]
     
+    def backPropagation(self, layers, weights, biases, trueValues):
+        backPropgation.backPropagation(layers, weights, biases, trueValues)

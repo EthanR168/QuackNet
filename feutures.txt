@@ -10,11 +10,17 @@ Feutures:
     -ReLU 
     -sigmoid
     -linear
+    -softmax
 
 -Loss functions:
     -MSE
     -MAE
+    -cross entropy
 
 -Optimisation algorithms:
     -gradient descent
     -stochastic gradient descent 
+    -batch gradient descent
+
+-Extra:
+    -momentum

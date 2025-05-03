@@ -23,13 +23,21 @@ r = learning rate
 
 def outputLayerWeightChange(lossDerivative, activationDerivative, currentLayerNodes, pastLayerNodes, pastLayerWeights, learningRate, trueValues):
     errorTerms = []
+    weightGradients = []
     for i in range(len(currentLayerNodes)):
-        errorTerm = lossDerivative(currentLayerNodes[i], trueValues[i]) * activationDerivative(currentLayerNodes[i])
+        lossDerivativeValue = lossDerivative(currentLayerNodes[i], trueValues[i], len(currentLayerNodes))
+        if(lossDerivative == CrossEntropyLossDerivative):
+            lossDerivativeValue = CrossEntropyLossDerivative(currentLayerNodes[i], trueValues[i], activationDerivative)
+
+        if(activationDerivative == SoftMaxDerivative):
+            errorTerm =  lossDerivativeValue *  activationDerivative(i, trueValues[i], currentLayerNodes, lossDerivative)
+        else:
+            errorTerm = lossDerivativeValue * activationDerivative(currentLayerNodes[i])
         for j in range(len(pastLayerNodes)):
-            weightGradient = errorTerm * pastLayerNodes[j]
+            weightGradients.append(errorTerm * pastLayerNodes[j])
             #pastLayerWeights[j][i] -= learningRate * weightGradient 
         errorTerms.append(errorTerm)
-    return weightGradient, errorTerms
+    return weightGradients, errorTerms
 
 '''
 hidden layer backpropgation for weights:
@@ -65,15 +73,22 @@ def hiddenLayerWeightChange(pastLayerErrorTerms, pastLayerWeights, activationDer
             #pastLayerWeights[j][i] -= learningRate * weightGradient
     return weightGradient, errorTerms
 
-def outputLayerBiaseChange(lossDerivative, activationDerivative, currentLayerNodes, currentLayerBiases, trueValues, learningRate):
+def outputLayerBiasChange(lossDerivative, activationDerivative, currentLayerNodes, currentLayerBiases, trueValues, learningRate):
     errorTerms = []
     for i in range(len(currentLayerNodes)):
-        errorTerm = lossDerivative(currentLayerNodes[i], trueValues[i]) * activationDerivative(currentLayerNodes[i])
+        lossDerivativeValue = lossDerivative(currentLayerNodes[i], trueValues[i], len(currentLayerNodes))
+        if(lossDerivative == CrossEntropyLossDerivative):
+            lossDerivativeValue = CrossEntropyLossDerivative(currentLayerNodes[i], trueValues[i], activationDerivative)
+
+        if(activationDerivative == SoftMaxDerivative):
+            errorTerm = lossDerivativeValue * activationDerivative(i, trueValues[i], currentLayerNodes, lossDerivative)
+        else:
+            errorTerm = lossDerivativeValue * activationDerivative(currentLayerNodes[i])
         errorTerms.append(errorTerm)
         #currentLayerBiases[i] -= learningRate * errorTerm
     return errorTerms, errorTerms
 
-def hiddenLayerBiaseChange(pastLayerErrorTerms, pastLayerWeights, currentLayerBiases, activationDerivative, currentLayerNodes, pastLayerNodes, learningRate):
+def hiddenLayerBiasChange(pastLayerErrorTerms, pastLayerWeights, currentLayerBiases, activationDerivative, currentLayerNodes, pastLayerNodes, learningRate):
     errorTerms = []
     for i in range(len(currentLayerNodes)):
         errorTerm = 0
@@ -93,18 +108,20 @@ def backPropgation(layerNodes, weights, biases, trueValues, layers, lossFunction
         main.Network.relu: ReLUDerivative,
         main.Network.sigmoid: SigmoidDerivative,
         main.Network.linear: LinearDerivative,
+        main.Network.tanH: TanHDerivative,
+        main.Network.softMax: SoftMaxDerivative,
     }
     
-    w, weightErrorTerms = outputLayerWeightChange(lossDerivatives[lossFunction.lower()](len(layers[len(layers) - 1])), activationDerivatives[layers[len(layers) - 1][1]], layerNodes[len(layerNodes) - 1], layerNodes[len(layerNodes) - 2], weights[len(weights) - 1], learningRate, trueValues)
-    b, biasErrorTerms = outputLayerBiaseChange(lossDerivatives[lossFunction.lower()](len(layers[len(layers) - 1])), activationDerivatives[layers[len(layers) - 1][1]], layerNodes[len(layerNodes) - 1], biases[len(biases) - 1], trueValues, learningRate)
+    w, weightErrorTerms = outputLayerWeightChange(lossDerivatives[lossFunction.lower()](trueValues, len(layers[len(layers) - 1])), activationDerivatives[layers[len(layers) - 1][1]], layerNodes[len(layerNodes) - 1], layerNodes[len(layerNodes) - 2], weights[len(weights) - 1], learningRate, trueValues)
+    b, biasErrorTerms = outputLayerBiasChange(lossDerivatives[lossFunction.lower()](trueValues, len(layers[len(layers) - 1])), activationDerivatives[layers[len(layers) - 1][1]], layerNodes[len(layerNodes) - 1], biases[len(biases) - 1], trueValues, learningRate)
     weightGradients = [w]
-    biaseGradients = [b]
+    biasGradients = [b]
     for i in range(len(layers) - 2, -1, -1):
         w, weightErrorTerms = hiddenLayerWeightChange(weightErrorTerms, weights[i], activationDerivatives[layers[i][1]], layerNodes[i], layerNodes[i + 1], learningRate)
-        b, biasErrorTerms = hiddenLayerBiaseChange(biasErrorTerms, weights[i + 1], biases[i], activationDerivatives[layers[i][1]], layerNodes[i], layerNodes[i + 1], learningRate)
+        b, biasErrorTerms = hiddenLayerBiasChange(biasErrorTerms, weights[i + 1], biases[i], activationDerivatives[layers[i][1]], layerNodes[i], layerNodes[i + 1], learningRate)
         weightGradients.insert(0, w)
-        biaseGradients.insert(0, b)
-    return weightGradients, biaseGradients
+        biasGradients.insert(0, b)
+    return weightGradients, biasGradients
 
 def MSEDerivative(value, trueValue, sizeOfLayer):
     return 2 * (trueValue - value) / sizeOfLayer
@@ -117,6 +134,11 @@ def MAEDerivative(value, trueValue, sizeOfLayer):
         return -1 / sizeOfLayer
     return 0
 
+def CrossEntropyLossDerivative(value, trueVale, activationDerivative):
+    if(activationDerivative == SoftMaxDerivative):
+        return value - trueVale
+    return -1 * (trueVale / value)
+
 def ReLUDerivative(value):
     if(value > 0):
         return 1
@@ -127,6 +149,22 @@ def SigmoidDerivative(value):
         return (1 / (1 + math.exp(-value)))
     return sigmoid(value) * (1 - sigmoid(value))
 
+def TanHDerivative(value):
+    def tanH(value):
+        return ((math.exp(value) - math.exp(-value)) / (math.exp(value) + math.exp(-value)))
+    return 1 - (tanH(value) ** 2)
+
 def LinearDerivative(_):
     return 1
 
+def SoftMaxDerivative(currValueIndex, trueValue, values, lossDerivative):
+    if(lossDerivative == CrossEntropyLossDerivative):
+        return values[currValueIndex] - trueValue
+    summ = 0
+    for i in range(len(values)):
+        if(currValueIndex == i):
+            jacobianMatrix = values[currValueIndex] * (1 - values[currValueIndex])
+        else:
+            jacobianMatrix = -1 * values[currValueIndex] * values[i]
+        summ += lossDerivative(values[i], trueValue[i], len(values)) * jacobianMatrix
+    return summ

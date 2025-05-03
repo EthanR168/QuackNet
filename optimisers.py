@@ -20,21 +20,15 @@ class Optimisers:
             for data in range(len(inputData)):
                 layerNodes = self.forwardPropagation(inputData[data])
                 w, b = self.backPropgation(layerNodes, self.weights, self.biases, labels)
-                for i in range(len(self.weights)):
-                    for j in range(len(self.weights[i])):
-                        for a in range(len(self.weights[i][j])):
-                            if(self.useMomentum == True):
-                                self.velocityWeight[i][j][a] = self.momentumCoefficient * self.velocityWeight[i][j][a] - self.learningRate * w[i][j][a]
-                                self.weights[i][j][a] += self.velocityWeight[i][j][a]
-                            else:
-                                self.weights[i][j][a] -= self.learningRate * w[i][j][a]
-                for i in range(len(self.biases)):
-                    for j in range(len(self.biases[i])):
-                        if(self.useMomentum == True):
-                            self.velocityBias[i][j] = self.momentumCoefficient * self.velocityBias[i][j] - self.learningRate * b[i][j]
-                            self.biases[i][j] += self.velocityBias[i][j]
-                        else:
-                            self.biases[i][j] -= self.learningRate * b[i][j]
+                if(self.useMomentum == True):
+                    self.velocityWeight = self.momentumCoefficient * self.velocityWeight - self.learningRate * w
+                    self.weights += self.velocityWeight
+                    self.velocityBias = self.momentumCoefficient * self.velocityBias - self.learningRate * b
+                    self.biases += self.velocityBias
+                else:
+                    self.weights -= self.learningRate * w
+                    self.biases -= self.learningRate * b
+
             self.momentumCoefficient *= self.momentumDecay
 
     def trainGradientDescentUsingBatching(self, inputData, labels, epochs):
@@ -65,19 +59,11 @@ class Optimisers:
         self.biasGradients += b
     
     def updateWeightsBiases(self, size):
-        for i in range(len(self.weightGradients)):
-            for j in range(len(self.weightGradients[i])):
-                for a in range(len(self.weightGradients[i][j])):
-                    if(self.useMomentum == True):
-                        self.velocityWeight[i][j][a] = self.momentumCoefficient * self.velocityWeight[i][j][a] - self.learningRate * (self.weightGradients[i][j][a] / self.batchSize)
-                        self.weights[i][j][a] += self.velocityWeight[i][j][a]
-                    else:
-                        self.weights[i][j][a] -= self.learningRate * (self.weightGradients[i][j][a] / size)      
-                              
-        for i in range(len(self.biasGradients)):
-            for j in range(len(self.biasGradients[i])):
-                if(self.useMomentum == True):
-                    self.velocityBias[i][j] = self.momentumCoefficient * self.velocityBias[i][j] - self.learningRate * (self.biasGradients[i][j] / self.batchSize)
-                    self.biases[i][j] += self.velocityBias[i][j]
-                else:
-                    self.biases[i][j] -= self.learningRate * (self.biasGradients[i][j] / size)
+        if(self.useMomentum == True):
+            self.velocityWeight = self.momentumCoefficient * self.velocityWeight - self.learningRate * (self.weightGradients / size)
+            self.weights += self.velocityWeight
+            self.velocityBias = self.momentumCoefficient * self.velocityBias - self.learningRate * (self.biasGradients / size)
+            self.biases += self.velocityBias
+        else:
+            self.weights -= self.learningRate * (self.weightGradients / size)
+            self.biases -= self.learningRate * (self.biasGradients / size)

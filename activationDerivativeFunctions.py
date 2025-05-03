@@ -5,9 +5,10 @@ def ReLUDerivative(value):
         return 1
     return 0
 
+def sigmoid(value):
+    return (1 / (1 + math.exp(-value)))
+
 def SigmoidDerivative(value):
-    def sigmoid(value):
-        return (1 / (1 + math.exp(-value)))
     return sigmoid(value) * (1 - sigmoid(value))
 
 def TanHDerivative(value):

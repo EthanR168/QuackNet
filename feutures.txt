@@ -6,13 +6,13 @@ Feutures:
     -training
     -custom layers
 
--Activation functions:
+-Activation functions (also thier derivative functions):
     -ReLU 
     -sigmoid
     -linear
     -softmax
 
--Loss functions:
+-Loss functions (also thier derivative functions):
     -MSE
     -MAE
     -cross entropy

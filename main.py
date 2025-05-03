@@ -4,9 +4,6 @@ from lossFunctions import MSELossFunction, MAELossFunction, CrossEntropyLossFunc
 from optimisers import Optimisers
 from initialisers import Initialisers
 
-#weights are in [number of layers][size of current layer][size of next layer]
-#biases are in [number of layers][current node in the layer]
-
 class Network(Optimisers, Initialisers):
     def __init__(self, lossFunc = "MSE", learningRate = 0.01, optimisationFunc = "gd", useMomentum = False, momentumCoefficient = 0.9, momentumDecay = 0.99, useBatches = False, batchSize = 32):
         self.layers = []

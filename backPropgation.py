@@ -59,6 +59,7 @@ def outputLayerWeightChange(lossDerivative, activationDerivative, currentLayerNo
 
 def hiddenLayerWeightChange(pastLayerErrorTerms, pastLayerWeights, activationDerivative, currentLayerNodes, pastLayerNodes):
     errorTerms = []
+    weightGradients = []
     for i in range(len(currentLayerNodes)):
         errorTerm = 0
         for node in range(len(pastLayerNodes)):
@@ -67,8 +68,8 @@ def hiddenLayerWeightChange(pastLayerErrorTerms, pastLayerWeights, activationDer
         errorTerms.append(errorTerm)
 
         for j in range(len(pastLayerWeights)):
-            weightGradient = errorTerm * pastLayerNodes[j]
-    return weightGradient, errorTerms
+            weightGradients.append(errorTerm * pastLayerNodes[j])
+    return weightGradients, errorTerms
 
 def outputLayerBiasChange(lossDerivative, activationDerivative, currentLayerNodes, trueValues):
     errorTerms = []

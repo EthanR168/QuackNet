@@ -1,3 +1,5 @@
+import numpy as np
+
 class Optimisers:
     def trainGradientDescent(self, inputData, labels, epochs):
         if(self.useMomentum == True):
@@ -51,21 +53,16 @@ class Optimisers:
 
     def initialiseVelocity(self):
         if(self.velocityWeight == None):
-            self.velocityWeight = self.initialiseListOfZeroesForWeights
+            self.velocityWeight = np.zeros_like(self.weights)
         if(self.velocityBias == None):
-            self.velocityBias = self.initialiseListOfZeroesForBiases
+            self.velocityBias = np.zeros_like(self.biases)
     
     def initialiseGradients(self):
-        self.weightGradients, self.biasGradients = self.initialiseListOfZeroesForWeights(self.weights), self.initialiseListOfZeroesForBiases(self.biases)
+        self.weightGradients, self.biasGradients = np.zeros_like(self.weights), np.zeros_like(self.biases)
 
     def addGradients(self, w, b):
-        for i in range(len(w)):
-            for j in range(len(w[i])):
-                for a in range(len(w[i][j])):
-                    self.weightGradients[i][j][a] += w[i][j][a] 
-        for i in range(len(b)):
-            for j in range(len(b[i])):
-                self.biasGradients[i][j] += b[i][j]
+        self.weightGradients += w  
+        self.biasGradients += b
     
     def updateWeightsBiases(self, size):
         for i in range(len(self.weightGradients)):
@@ -75,7 +72,8 @@ class Optimisers:
                         self.velocityWeight[i][j][a] = self.momentumCoefficient * self.velocityWeight[i][j][a] - self.learningRate * (self.weightGradients[i][j][a] / self.batchSize)
                         self.weights[i][j][a] += self.velocityWeight[i][j][a]
                     else:
-                        self.weights[i][j][a] -= self.learningRate * (self.weightGradients[i][j][a] / size)            
+                        self.weights[i][j][a] -= self.learningRate * (self.weightGradients[i][j][a] / size)      
+                              
         for i in range(len(self.biasGradients)):
             for j in range(len(self.biasGradients[i])):
                 if(self.useMomentum == True):
@@ -83,25 +81,3 @@ class Optimisers:
                     self.biases[i][j] += self.velocityBias[i][j]
                 else:
                     self.biases[i][j] -= self.learningRate * (self.biasGradients[i][j] / size)
-
-    def initialiseListOfZeroesForWeights(self, copy):
-        new = []
-        for i in range(len(copy)):
-            nn = []
-            for j in range(len(copy[i])):
-                n = []
-                for a in range(len(copy[i][j])):
-                    n.append(0)
-                nn.append(n)
-            new.append(nn)  
-        return new
-
-    def initialiseListOfZeroesForBiases(self, copy):
-        new = []
-        for i in range(len(copy)):
-            n = []
-            for j in range(len(copy[i])):
-                n.append(0)
-            new.append(n)
-        return new
-            

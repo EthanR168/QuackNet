@@ -1,4 +1,5 @@
 import math, random
+import numpy as np
 
 class Initialisers:
     def createWeightsAndBiases(self):
@@ -22,8 +23,10 @@ class Initialisers:
                     w.append(random.gauss(0, bounds)) 
                 currW.append(w)
             self.weights.append(currW)
+            self.weights = np.array(self.weights)
 
             b = []
             for _ in range(currSize):
                 b.append(0)
             self.biases.append(b)
+            self.biases = np.array(self.biases)

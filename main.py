@@ -3,6 +3,7 @@ from activationFunctions import relu, sigmoid, tanH, linear, softMax
 from lossFunctions import MSELossFunction, MAELossFunction, CrossEntropyLossFunction
 from optimisers import Optimisers
 from initialisers import Initialisers
+import numpy as np
 
 class Network(Optimisers, Initialisers):
     def __init__(self, lossFunc = "MSE", learningRate = 0.01, optimisationFunc = "gd", useMomentum = False, momentumCoefficient = 0.9, momentumDecay = 0.99, useBatches = False, batchSize = 32):
@@ -63,7 +64,7 @@ class Network(Optimisers, Initialisers):
         return layer
     
     def forwardPropagation(self, inputData):
-        layerNodes = [inputData]
+        layerNodes = np.array([inputData])
         for i in range(1, len(self.layers)):
             layerNodes.append(self.calculateLayerNodes(layerNodes[i - 1], self.weights[i - 1], self.biases[i - 1], self.layers[i]))
         return layerNodes

@@ -1,5 +1,6 @@
 import math, random
 import numpy as np
+from activationFunctions import relu, sigmoid
 
 class Initialisers:
     def createWeightsAndBiases(self):
@@ -9,9 +10,9 @@ class Initialisers:
             lastSize = self.layers[i - 1][0]
             actFunc = self.layers[i][1]
 
-            if(actFunc == self.relu):
+            if(actFunc == relu):
                 bounds =  math.sqrt(2 / lastSize) # He initialisation
-            elif(actFunc == self.sigmoid):
+            elif(actFunc == sigmoid):
                 bounds = math.sqrt(6/ (lastSize + currSize)) # Xavier initialisation
             else:
                 bounds = 1
@@ -22,11 +23,9 @@ class Initialisers:
                 for _ in range(lastSize):
                     w.append(random.gauss(0, bounds)) 
                 currW.append(w)
-            self.weights.append(currW)
-            self.weights = np.array(self.weights)
+            self.weights = np.array(currW)
 
             b = []
             for _ in range(currSize):
                 b.append(0)
-            self.biases.append(b)
-            self.biases = np.array(self.biases)
+            self.biases = np.array(b)

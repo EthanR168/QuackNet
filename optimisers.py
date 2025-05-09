@@ -7,8 +7,8 @@ class Optimisers:
         for _ in range(epochs):
             self.initialiseGradients()
             for data in range(len(inputData)):
-                layerNodes = self.forwardPropagation(inputData[data])
-                w, b = self.backPropgation(layerNodes, self.weights, self.biases, labels)
+                self.layerNodes = self.forwardPropagation(inputData[data])
+                w, b = self.backPropgation(self.layerNodes, self.weights, self.biases, labels)
                 self.addGradients(w, b)
             self.updateWeightsBiases(len(inputData))
             self.momentumCoefficient *= self.momentumDecay

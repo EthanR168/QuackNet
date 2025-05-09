@@ -37,7 +37,7 @@ class Network(Optimisers, Initialisers):
         self.useBatches = useBatches
         self.batchSize = batchSize
 
-    def addLayer(self, size, activationFunction):
+    def addLayer(self, size, activationFunction="relu"):
         funcs = {
             "relu": relu,
             "sigmoid": sigmoid,
@@ -52,26 +52,37 @@ class Network(Optimisers, Initialisers):
     def calculateLayerNodes(self, lastLayerNodes, lastLayerWeights, biases, currentLayer):
         layer = []
         for i in range(currentLayer[0]):
-            summ = biases[i]
-            for j in range(len(lastLayerNodes)):
-                summ += lastLayerNodes[j] * lastLayerWeights[i][j]
-            if(currentLayer[1] != self.softMax):
+            #summ = biases[i]
+            #for j in range(len(lastLayerNodes)):
+            #    summ += lastLayerNodes[j] * lastLayerWeights[i][j]
+            summ = lastLayerNodes * lastLayerWeights
+            summ = np.sum(summ) + biases
+            if(currentLayer[1] != softMax):
                 layer.append(currentLayer[1](summ))
             else:
                 layer.append(summ)
-        if(currentLayer[1] == self.softMax):
-            return self.softMax(layer)
+        if(currentLayer[1] == softMax):
+            return softMax(layer)
         return layer
     
     def forwardPropagation(self, inputData):
-        layerNodes = np.array([inputData])
+        layerNodes = [np.array(inputData)]
         for i in range(1, len(self.layers)):
-            layerNodes.append(self.calculateLayerNodes(layerNodes[i - 1], self.weights[i - 1], self.biases[i - 1], self.layers[i]))
+            layerNodes.append(np.array(self.calculateLayerNodes(layerNodes[i - 1], self.weights[i - 1], self.biases[i - 1], self.layers[i])))
         return layerNodes
     
     def backPropgation(self, layerNodes, weights, biases, trueValues):
-        weightGradients, biasGradients = backPropgation.backPropgation(layerNodes, weights, biases, trueValues, self.layers, self.lossFunction, self.learningRate)
+        weightGradients, biasGradients = backPropgation.backPropgation(layerNodes, weights, biases, trueValues, self.layers, self.lossFunction)
         return weightGradients, biasGradients
 
     def train(self, inputData, labels, epochs):
         self.optimisationFunction(inputData, labels, epochs)
+
+
+'''
+n = Network()
+n.addLayer(2)
+n.addLayer(1)
+n.createWeightsAndBiases()
+n.train(np.array([0.5, 0.5]), np.array([1]), 1)
+'''

@@ -24,3 +24,11 @@ Feutures:
 
 -Extra:
     -momentum
+
+-To do:
+    -add the option for convolutional neural network (CNN)
+    -adams optimiser
+    -read/write weights and biases to a file 
+    -create a example code using MNIST
+    -compare MNIST with tensorflow/pytorch on MNIST
+    

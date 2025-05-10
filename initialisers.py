@@ -1,4 +1,4 @@
-import math, random
+import math
 import numpy as np
 from activationFunctions import relu, sigmoid
 
@@ -17,16 +17,6 @@ class Initialisers:
             else:
                 bounds = 1
                 
-            currW = []
-            for _ in range(currSize):
-                w = []
-                for _ in range(lastSize):
-                    w.append(random.gauss(0, bounds)) 
-                currW.append(w)
-            self.weights.append(currW)
-
-            b = []
-            for _ in range(currSize):
-                b.append(0)
-            self.biases.append(b)
+            self.weights.append(np.random.normal(0, bounds, size=(lastSize, currSize)))
+            self.biases.append(np.random.normal(0, bounds, size=(currSize)))
         

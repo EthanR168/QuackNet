@@ -49,14 +49,14 @@ class Network(Optimisers, Initialisers):
             raise ValueError(f"Activation function not made: {activationFunction.lower()}")
         self.layers.append([size, funcs[activationFunction.lower()]])
 
-    def calculateLayerNodes(self, lastLayerNodes, lastLayerWeights, biases, currentLayer):
-        summ = np.dot(lastLayerWeights, lastLayerNodes) + biases
+    def calculateLayerNodes(self, lastLayerNodes, lastLayerWeights, biases, currentLayer) -> np.ndarray:
+        summ = np.dot(lastLayerNodes, lastLayerWeights) + biases
         if(currentLayer[1] != softMax):
             return currentLayer[1](summ)
         else:
             return softMax(summ)
         
-    def forwardPropagation(self, inputData):
+    def forwardPropagation(self, inputData) -> list[np.ndarray]:
         layerNodes = [np.array(inputData)]
         for i in range(1, len(self.layers)):
             layerNodes.append(np.array(self.calculateLayerNodes(layerNodes[i - 1], self.weights[i - 1], self.biases[i - 1], self.layers[i])))
@@ -69,10 +69,9 @@ class Network(Optimisers, Initialisers):
     def train(self, inputData, labels, epochs):
         self.optimisationFunction(inputData, labels, epochs)
 
-
-n = Network()
-n.addLayer(3)
-n.addLayer(2)
-n.addLayer(2)
+n = Network("MSE", 0.01, "gd")
+n.addLayer(784, "relu")
+n.addLayer(64, "relu")
+n.addLayer(10, "softmax")
 n.createWeightsAndBiases()
-n.train([[0.5, 0.5, 0.5]], np.array([1, 1]), 1)
+n.train([[0.5, 0.5, 0.5]], np.array([1]), 1)

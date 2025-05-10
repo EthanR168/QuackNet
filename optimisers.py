@@ -9,7 +9,6 @@ class Optimisers:
             for data in range(len(inputData)):
                 self.layerNodes = self.forwardPropagation(inputData[data])
                 w, b = self.backPropgation(self.layerNodes, self.weights, self.biases, labels)
-                print(w)
                 self.addGradients(w, b)
             self.updateWeightsBiases(len(inputData))
             self.momentumCoefficient *= self.momentumDecay
@@ -55,19 +54,23 @@ class Optimisers:
     def initialiseGradients(self):
         self.weightGradients = []
         for i in self.weights:
-            self.weightGradients.append(np.zeros_like(i))
+            ww = []
+            for j in i:
+                w = []
+                for a in j:
+                    w.append(0)
+                ww.append(w)
+            self.weightGradients.append(ww)
+
         self.biasGradients = []
-        
         for i in self.biases:
             self.biasGradients.append(np.zeros_like(i))
 
         #self.weightGradients, self.biasGradients = np.zeros_like(self.weights), np.zeros_like(self.biases)
 
     def addGradients(self, w, b):
-        print(self.weightGradients)
-        print(w)
-        self.weightGradients = self.weightGradients + np.array(w)  
-        self.biasGradients = self.biasGradients + np.array(b)
+        self.weightGradients = self.weightGradients + w  
+        self.biasGradients = self.biasGradients + b
     
     def updateWeightsBiases(self, size):
         if(self.useMomentum == True):
@@ -76,6 +79,14 @@ class Optimisers:
             self.velocityBias = self.momentumCoefficient * self.velocityBias - self.learningRate * (self.biasGradients / size)
             self.biases += self.velocityBias
         else:
-            print(self.weightGradients)
-            self.weights -= self.learningRate * (np.array(self.weightGradients) / size)
-            self.biases -= self.learningRate * (np.array(self.biasGradients) / size)
+            for i in range(len(self.weights)):
+                for j in range(len(self.weights[i])):
+                    for a in range(len(self.weights[i][j])):
+                        self.weights[i][j][a] -= self.learningRate * (self.weightGradients[i][j][a] / size)
+
+            for i in range(len(self.biases)):
+                for j in range(len(self.biases[i])):
+                    self.biases[i][j] -= self.learningRate * (self.biasGradients[i][j] / size)
+
+            #self.weights -= self.learningRate * (self.weightGradients / size)
+            #self.biases -= self.learningRate * (self.biasGradients / size)

@@ -1,23 +1,23 @@
 import math
+import numpy as np
 
-def ReLUDerivative(value):
-    if(value > 0):
-        return 1
-    return 0
+def ReLUDerivative(values):
+    #if(value > 0):
+    #    return 1
+    #return 0
+    return np.where(values > 0, 1, 0)
 
-def sigmoid(value):
-    return (1 / (1 + math.exp(-value)))
+def sigmoid(values):
+    return 1 / (1 + np.exp(-values))
 
-def SigmoidDerivative(value):
-    return sigmoid(value) * (1 - sigmoid(value))
+def SigmoidDerivative(values):
+    return sigmoid(values) * (1 - sigmoid(values))
 
-def TanHDerivative(value):
-    def tanH(value):
-        return ((math.exp(value) - math.exp(-value)) / (math.exp(value) + math.exp(-value)))
-    return 1 - (tanH(value) ** 2)
+def TanHDerivative(values):
+    return 1 - (np.tanh(values) ** 2)
 
-def LinearDerivative(_):
-    return 1
+def LinearDerivative(values):
+    return np.ones_like(values)
 
 def SoftMaxDerivative(currValueIndex, trueValue, values, lossDerivative):
     from lossDerivativeFunctions import CrossEntropyLossDerivative

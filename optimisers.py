@@ -47,20 +47,19 @@ class Optimisers:
 
     def initialiseVelocity(self):
         if(self.velocityWeight == None):
-            self.velocityWeight = np.zeros_like(self.weights)
+            self.velocityWeight = []
+            for i in self.weights:
+                self.velocityWeight.append(np.zeros_like(i))
+
         if(self.velocityBias == None):
-            self.velocityBias = np.zeros_like(self.biases)
+            self.velocityBias = []
+            for i in self.biases:
+                self.velocityBias.append(np.zeros_like(i))
     
     def initialiseGradients(self):
         self.weightGradients = []
         for i in self.weights:
-            ww = []
-            for j in i:
-                w = []
-                for a in j:
-                    w.append(0)
-                ww.append(w)
-            self.weightGradients.append(ww)
+            self.weightGradients.append(np.zeros_like(i))
 
         self.biasGradients = []
         for i in self.biases:
@@ -74,19 +73,22 @@ class Optimisers:
     
     def updateWeightsBiases(self, size):
         if(self.useMomentum == True):
-            self.velocityWeight = self.momentumCoefficient * self.velocityWeight - self.learningRate * (self.weightGradients / size)
-            self.weights += self.velocityWeight
-            self.velocityBias = self.momentumCoefficient * self.velocityBias - self.learningRate * (self.biasGradients / size)
-            self.biases += self.velocityBias
-        else:
+            #self.velocityWeight = self.momentumCoefficient * self.velocityWeight - self.learningRate * (self.weightGradients / size)
+            #self.weights += self.velocityWeight
+            #self.velocityBias = self.momentumCoefficient * self.velocityBias - self.learningRate * (self.biasGradients / size)
+            #self.biases += self.velocityBias
+
             for i in range(len(self.weights)):
-                for j in range(len(self.weights[i])):
-                    for a in range(len(self.weights[i][j])):
-                        self.weights[i][j][a] -= self.learningRate * (self.weightGradients[i][j][a] / size)
+                self.velocityWeight[i] -= self.momentumCoefficient * self.velocityWeight[i] - self.learningRate * (self.weightGradients[i] / size)
+                self.weights[i] += self.velocityWeight[i]
 
             for i in range(len(self.biases)):
-                for j in range(len(self.biases[i])):
-                    self.biases[i][j] -= self.learningRate * (self.biasGradients[i][j] / size)
+                self.velocityBias[i] = self.momentumCoefficient * self.velocityBias[i] - self.learningRate * (self.biasGradients[i] / size)
+                self.biases[i] += self.velocityBias[i]
 
-            #self.weights -= self.learningRate * (self.weightGradients / size)
-            #self.biases -= self.learningRate * (self.biasGradients / size)
+        else:
+            for i in range(len(self.weights)):
+                self.weights[i] -= self.learningRate * (self.weightGradients[i] / size)
+
+            for i in range(len(self.biases)):
+                self.biases[i] -= self.learningRate * (self.biasGradients[i] / size)

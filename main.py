@@ -69,9 +69,29 @@ class Network(Optimisers, Initialisers):
     def train(self, inputData, labels, epochs):
         self.optimisationFunction(inputData, labels, epochs)
 
-n = Network("MSE", 0.01, "gd")
-n.addLayer(784, "relu")
-n.addLayer(64, "relu")
-n.addLayer(10, "softmax")
-n.createWeightsAndBiases()
-n.train([[0.5, 0.5, 0.5]], np.array([1]), 1)
+#n = Network()
+#n.addLayer(3)
+#n.addLayer(2)
+#n.addLayer(1)
+#n.createWeightsAndBiases()
+#n.train([[0.5, 0.5, 0.5]], np.array([1]), 1)
+
+def benchmark(): #to find bottlenecks use: python -m cProfile -s tottime main.py
+    np.random.seed = 42
+    input = np.random.rand(640, 784)
+    labels = np.eye(10)[np.random.choice(10, 640)]
+
+    n = Network()
+    n.addLayer(784, "relu")
+    n.addLayer(64, "relu")
+    n.addLayer(10, "softmax")
+    n.createWeightsAndBiases()
+
+    import time
+    epochs = 4
+    start = time.time()
+    n.train(input, labels, epochs)
+    end = time.time()
+    print(f"Time taken for {epochs} epochs: {end - start:.2f} seconds")
+
+benchmark()

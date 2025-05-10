@@ -50,21 +50,12 @@ class Network(Optimisers, Initialisers):
         self.layers.append([size, funcs[activationFunction.lower()]])
 
     def calculateLayerNodes(self, lastLayerNodes, lastLayerWeights, biases, currentLayer):
-        layer = []
-        for i in range(currentLayer[0]):
-            #summ = biases[i]
-            #for j in range(len(lastLayerNodes)):
-            #    summ += lastLayerNodes[j] * lastLayerWeights[i][j]
-            summ = lastLayerNodes * lastLayerWeights
-            summ = np.sum(summ) + biases
-            if(currentLayer[1] != softMax):
-                layer.append(currentLayer[1](summ))
-            else:
-                layer.append(summ)
-        if(currentLayer[1] == softMax):
-            return softMax(layer)
-        return layer
-    
+        summ = np.dot(lastLayerWeights, lastLayerNodes) + biases
+        if(currentLayer[1] != softMax):
+            return currentLayer[1](summ)
+        else:
+            return softMax(summ)
+        
     def forwardPropagation(self, inputData):
         layerNodes = [np.array(inputData)]
         for i in range(1, len(self.layers)):
@@ -79,10 +70,9 @@ class Network(Optimisers, Initialisers):
         self.optimisationFunction(inputData, labels, epochs)
 
 
-'''
 n = Network()
+n.addLayer(3)
 n.addLayer(2)
-n.addLayer(1)
+n.addLayer(2)
 n.createWeightsAndBiases()
-n.train(np.array([0.5, 0.5]), np.array([1]), 1)
-'''
+n.train([[0.5, 0.5, 0.5]], np.array([1, 1]), 1)

@@ -1,7 +1,6 @@
 from activationDerivativeFunctions import SoftMaxDerivative
 
 def MSEDerivative(value, trueValue, sizeOfLayer):
-    print(type(trueValue), type(value))
     return 2 * (trueValue - value) / sizeOfLayer
 
 def MAEDerivative(value, trueValue, sizeOfLayer):

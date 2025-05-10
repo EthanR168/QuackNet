@@ -110,14 +110,14 @@ def backPropgation(layerNodes, weights, biases, trueValues, layers, lossFunction
         tanH: TanHDerivative,
         softMax: SoftMaxDerivative,
     }
-    print(layers)
-    w, weightErrorTerms = outputLayerWeightChange(lossDerivatives[lossFunction](layers[len(layers) - 1][0], trueValues, len(layers[len(layers) - 1][0])), activationDerivatives[layers[len(layers) - 1][1]], layerNodes[len(layerNodes) - 1], layerNodes[len(layerNodes) - 2], trueValues)
-    b, biasErrorTerms = outputLayerBiasChange(lossDerivatives[lossFunction](layers[len(layers) - 1], trueValues, len(layers[len(layers) - 1])), activationDerivatives[layers[len(layers) - 1][1]], layerNodes[len(layerNodes) - 1], trueValues)
+    #lossDerivative = lossDerivatives[lossFunction](layerNodes[len(layers) - 1][0], trueValues, layers[len(layers) - 1][0])
+    w, weightErrorTerms = outputLayerWeightChange(lossDerivatives[lossFunction], activationDerivatives[layers[len(layers) - 1][1]], layerNodes[len(layerNodes) - 1], layerNodes[len(layerNodes) - 2], trueValues)
+    b, biasErrorTerms = outputLayerBiasChange(lossDerivatives[lossFunction], activationDerivatives[layers[len(layers) - 1][1]], layerNodes[len(layerNodes) - 1], trueValues)
     weightGradients = [w]
     biasGradients = [b]
     for i in range(len(layers) - 2, -1, -1):
         w, weightErrorTerms = hiddenLayerWeightChange(weightErrorTerms, weights[i], activationDerivatives[layers[i][1]], layerNodes[i], layerNodes[i + 1])
-        b, biasErrorTerms = hiddenLayerBiasChange(biasErrorTerms, weights[i + 1], activationDerivatives[layers[i][1]], layerNodes[i], layerNodes[i + 1])
-        weightGradients.insert(0, w)
-        biasGradients.insert(0, b)
+        b, biasErrorTerms = hiddenLayerBiasChange(biasErrorTerms, weights[i], activationDerivatives[layers[i][1]], layerNodes[i], layerNodes[i + 1])
+        weightGradients.append(w)
+        biasGradients.append(b)
     return weightGradients, biasGradients

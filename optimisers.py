@@ -9,6 +9,7 @@ class Optimisers:
             for data in range(len(inputData)):
                 self.layerNodes = self.forwardPropagation(inputData[data])
                 w, b = self.backPropgation(self.layerNodes, self.weights, self.biases, labels)
+                print(w)
                 self.addGradients(w, b)
             self.updateWeightsBiases(len(inputData))
             self.momentumCoefficient *= self.momentumDecay
@@ -52,11 +53,21 @@ class Optimisers:
             self.velocityBias = np.zeros_like(self.biases)
     
     def initialiseGradients(self):
-        self.weightGradients, self.biasGradients = np.zeros_like(self.weights), np.zeros_like(self.biases)
+        self.weightGradients = []
+        for i in self.weights:
+            self.weightGradients.append(np.zeros_like(i))
+        self.biasGradients = []
+        
+        for i in self.biases:
+            self.biasGradients.append(np.zeros_like(i))
+
+        #self.weightGradients, self.biasGradients = np.zeros_like(self.weights), np.zeros_like(self.biases)
 
     def addGradients(self, w, b):
-        self.weightGradients += w  
-        self.biasGradients += b
+        print(self.weightGradients)
+        print(w)
+        self.weightGradients = self.weightGradients + np.array(w)  
+        self.biasGradients = self.biasGradients + np.array(b)
     
     def updateWeightsBiases(self, size):
         if(self.useMomentum == True):
@@ -65,5 +76,6 @@ class Optimisers:
             self.velocityBias = self.momentumCoefficient * self.velocityBias - self.learningRate * (self.biasGradients / size)
             self.biases += self.velocityBias
         else:
-            self.weights -= self.learningRate * (self.weightGradients / size)
-            self.biases -= self.learningRate * (self.biasGradients / size)
+            print(self.weightGradients)
+            self.weights -= self.learningRate * (np.array(self.weightGradients) / size)
+            self.biases -= self.learningRate * (np.array(self.biasGradients) / size)

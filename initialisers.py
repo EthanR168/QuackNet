@@ -23,9 +23,10 @@ class Initialisers:
                 for _ in range(lastSize):
                     w.append(random.gauss(0, bounds)) 
                 currW.append(w)
-            self.weights = np.array(currW)
+            self.weights.append(currW)
 
             b = []
             for _ in range(currSize):
                 b.append(0)
-            self.biases = np.array(b)
+            self.biases.append(b)
+        

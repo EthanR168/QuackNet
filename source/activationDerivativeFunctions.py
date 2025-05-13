@@ -2,9 +2,6 @@ import math
 import numpy as np
 
 def ReLUDerivative(values):
-    #if(value > 0):
-    #    return 1
-    #return 0
     return np.where(values > 0, 1, 0)
 
 def sigmoid(values):

@@ -56,29 +56,10 @@ def outputLayerWeightChange(lossDerivative, activationDerivative, currentLayerNo
             errorTerm = lossDerivativeValue * activationDerivative(currentLayerNodes[i])
         errorTerms.append(errorTerm)
 
-        #w = []
-        #for j in range(len(pastLayerNodes)):
-        #    w.append(errorTerm * pastLayerNodes[j])
-        #weightGradients.append(w)
-
         weightGradients = np.outer(pastLayerNodes, errorTerms)
     return weightGradients, errorTerms
 
 def hiddenLayerWeightChange(pastLayerErrorTerms, pastLayerWeights, activationDerivative, currentLayerNodes, pastLayerNodes):
-    #errorTerms = []
-    #weightGradients = []
-    #for i in range(len(currentLayerNodes)):
-    #    errorTerm = 0
-    #    for node in range(len(pastLayerNodes)):
-    #        errorTerm += pastLayerErrorTerms[node] * pastLayerWeights[i][node]
-    #    errorTerm = errorTerm * activationDerivative(currentLayerNodes[i])
-    #    errorTerms.append(errorTerm)
-    #    w = []
-    #    for j in range(len(pastLayerNodes)):
-    #        w.append(errorTerm * pastLayerNodes[j])
-    #    weightGradients.append(w)
-    #return weightGradients, errorTerms
-
     errorTerms = (pastLayerErrorTerms @ pastLayerWeights.T) * activationDerivative(currentLayerNodes)
     weightGradients = np.outer(pastLayerNodes, errorTerms)
     return weightGradients, errorTerms
@@ -99,16 +80,6 @@ def outputLayerBiasChange(lossDerivative, activationDerivative, currentLayerNode
     return errorTerms, errorTerms
 
 def hiddenLayerBiasChange(pastLayerErrorTerms, pastLayerWeights, activationDerivative, currentLayerNodes, pastLayerNodes):
-    #errorTerms = []
-    #for i in range(len(currentLayerNodes)):
-    #    errorTerm = 0
-    #    for node in range(len(pastLayerNodes)):
-    #        errorTerm += pastLayerErrorTerms[node] * pastLayerWeights[i][node]
-    #    errorTerm = errorTerm * activationDerivative(currentLayerNodes[i])
-    #    errorTerms.append(errorTerm)
-    #    #currentLayerBiases[i] -= learningRate * errorTerm
-    #return errorTerms, errorTerms
-
     errorTerms = (pastLayerErrorTerms @ pastLayerWeights.T) * activationDerivative(currentLayerNodes)
     biasGradients = np.sum(errorTerms)
     return biasGradients, errorTerms
@@ -125,7 +96,6 @@ def backPropgation(layerNodes, weights, biases, trueValues, layers, lossFunction
         tanH: TanHDerivative,
         softMax: SoftMaxDerivative,
     }
-    #lossDerivative = lossDerivatives[lossFunction](layerNodes[len(layers) - 1][0], trueValues, layers[len(layers) - 1][0])
     w, weightErrorTerms = outputLayerWeightChange(lossDerivatives[lossFunction], activationDerivatives[layers[len(layers) - 1][1]], layerNodes[len(layerNodes) - 1], layerNodes[len(layerNodes) - 2], trueValues)
     b, biasErrorTerms = outputLayerBiasChange(lossDerivatives[lossFunction], activationDerivatives[layers[len(layers) - 1][1]], layerNodes[len(layerNodes) - 1], trueValues)
     weightGradients = [w]

@@ -1,5 +1,5 @@
 import numpy as np
-from lossFunctions import MSELossFunction, MAELossFunction, CrossEntropyLossFunction
+from neuralLibrary.lossFunctions import MSELossFunction, MAELossFunction, CrossEntropyLossFunction
 
 def test_MSELossFunction():
     assert MSELossFunction(np.array([0.5, 0.5]), np.array([1, 0])) == 0.25

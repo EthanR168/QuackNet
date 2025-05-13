@@ -1,0 +1,15 @@
+setup.py
+neuralLibrary/__init__.py
+neuralLibrary/activationDerivativeFunctions.py
+neuralLibrary/activationFunctions.py
+neuralLibrary/backPropgation.py
+neuralLibrary/initialisers.py
+neuralLibrary/lossDerivativeFunctions.py
+neuralLibrary/lossFunctions.py
+neuralLibrary/main.py
+neuralLibrary/mnistTestFile.py
+neuralLibrary/optimisers.py
+neuralLibrary.egg-info/PKG-INFO
+neuralLibrary.egg-info/SOURCES.txt
+neuralLibrary.egg-info/dependency_links.txt
+neuralLibrary.egg-info/top_level.txt

@@ -1,0 +1,13 @@
+[
+  "unitTests/test_activationFunctions.py::test_linear",
+  "unitTests/test_activationFunctions.py::test_relu",
+  "unitTests/test_activationFunctions.py::test_sigmoid",
+  "unitTests/test_activationFunctions.py::test_softMax",
+  "unitTests/test_activationFunctions.py::test_tanH",
+  "unitTests/test_lossFunctions.py::test_CrossEntropyLossFunction",
+  "unitTests/test_lossFunctions.py::test_MAELossFunction",
+  "unitTests/test_lossFunctions.py::test_MSELossFunction",
+  "unitTests/test_main.py::TestNetwork::test_calculateLayerNodesTest1",
+  "unitTests/test_main.py::TestNetwork::test_calculateLayerNodesTest2",
+  "unitTests/test_main.py::TestNetwork::test_forwardPropogation"
+]

@@ -1,13 +1,9 @@
 from neuralLibrary.main import Network
-import time
+import numpy as np
 
 n = Network()
-n.addLayer(784, "relu")
-n.addLayer(64, "relu")
-n.addLayer(10, "softmax")
+n.addLayer(3)
+n.addLayer(2)
+n.addLayer(1)
 n.createWeightsAndBiases()
-
-print("started")
-start = time.time()
-n.train([[0] * 784], [0] * 10, 1)
-print(f"took: {time.time() - start} seconds")
+n.train([[0.5, 0.5, 0.5]], np.array([1]), 1)

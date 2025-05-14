@@ -7,7 +7,6 @@ neuralLibrary/initialisers.py
 neuralLibrary/lossDerivativeFunctions.py
 neuralLibrary/lossFunctions.py
 neuralLibrary/main.py
-neuralLibrary/mnistTestFile.py
 neuralLibrary/optimisers.py
 neuralLibrary.egg-info/PKG-INFO
 neuralLibrary.egg-info/SOURCES.txt

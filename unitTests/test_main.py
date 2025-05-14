@@ -2,18 +2,7 @@ import numpy as np
 from neuralLibrary.main import Network 
 from neuralLibrary.activationFunctions import relu, sigmoid, tanH, linear, softMax
 
-class TestNetwork:
-    def test_forwardPropogation(self):
-        n = Network()
-        n.addLayer(2)
-        n.addLayer(1)
-        n.weights = np.array([[0.75, 0.5]])
-        inputLayer = [0.25, 0.5]
-        n.biases = np.array([0.2])
-        resulting = n.forwardPropagation(inputLayer)
-        assert np.allclose(resulting[0], np.array([0.25, 0.5]))
-        assert np.allclose(resulting[1], np.array([0.6375]))
-
+class TestNetwork_CalculateLayerNodes:
     def test_calculateLayerNodes_Relu(self):
         currLayer = np.array([1, relu])
         lastLayerNodes = np.array([0.25, 0.5])
@@ -100,3 +89,44 @@ class TestNetwork:
         result = Network.calculateLayerNodes(self, lastLayerNodes, lastLayerWeights, biases, currLayer)
         assert np.allclose(s1, result[0])
         assert np.allclose(s2, result[1])
+
+class TestNetwork_ForwardPropogation:
+    def test_forwardPropogation_noHiddenLayer(self):
+        n = Network()
+        n.addLayer(2)
+        n.addLayer(1)
+        n.weights = np.array([[0.75, 0.5]])
+        inputLayer = [0.25, 0.5]
+        n.biases = np.array([0.2])
+        resulting = n.forwardPropagation(inputLayer)
+        assert np.allclose(resulting[0], np.array([0.25, 0.5]))
+        assert np.allclose(resulting[1], np.array([0.6375]))
+
+    def test_forwardPropogation_withHiddenLayer(self):
+        n = Network()
+        n.addLayer(2)
+        n.addLayer(3, "relu")
+        n.addLayer(2, "softmax")
+        n.weights = [
+            np.array([[0.75, 0.25, 0.1], [0.5, 0.75, 0.2]]),
+            np.array([[0.5, 0.2], [0.4, 0.1], [0.3, 0.6]])
+        ]
+        n.biases = [
+            np.array([0.2, 0.3, 0.1]),
+            np.array([0.4, 0.5])
+        ]
+        inputLayer = [0.25, 0.5]
+
+        #0.25 * 0.75 + 0.5 * 0.5 + 0.2 = 0.6375
+        #0.25 * 0.25 + 0.5 * 0.75 + 0.3 = 0.7375
+        #0.25 * 0.1 + 0.5 * 0.2 + 0.1 = 0.225
+
+        hidden = np.maximum(0, np.array([0.6375, 0.7375, 0.225]))
+        out = np.dot(hidden, n.weights[1]) + n.biases[1]
+        output = np.exp(out) / np.sum(np.exp(out))
+
+        resulting = n.forwardPropagation(inputLayer)
+
+        assert np.allclose(resulting[0], inputLayer)
+        assert np.allclose(resulting[1], hidden)
+        assert np.allclose(resulting[2], output)

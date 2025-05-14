@@ -1,4 +1,3 @@
-import math
 import numpy as np
 
 def relu(values):
@@ -10,7 +9,7 @@ def sigmoid(values):
 def tanH(values):
     return np.tanh(values)
 
-def linear(values):
+def linear(values): #Dont use too demanding on CPU
     return values
 
 def softMax(values): 

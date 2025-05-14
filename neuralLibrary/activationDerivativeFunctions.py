@@ -16,15 +16,19 @@ def TanHDerivative(values):
 def LinearDerivative(values):
     return np.ones_like(values)
 
-def SoftMaxDerivative(currValueIndex, trueValue, values, lossDerivative):
-    from lossDerivativeFunctions import CrossEntropyLossDerivative
-    if(lossDerivative == CrossEntropyLossDerivative):
-        return values[currValueIndex] - trueValue
-    summ = 0
-    for i in range(len(values)):
-        if(currValueIndex == i):
-            jacobianMatrix = values[currValueIndex] * (1 - values[currValueIndex])
-        else:
-            jacobianMatrix = -1 * values[currValueIndex] * values[i]
-        summ += lossDerivative(values[i], trueValue[i], len(values)) * jacobianMatrix
-    return summ
+def SoftMaxDerivative(trueValue, values, lossDerivative):
+    def SoftMaxDerivativeInner(currValueIndex, trueValue, values, lossDerivative):
+        from lossDerivativeFunctions import CrossEntropyLossDerivative
+        if(lossDerivative == CrossEntropyLossDerivative):
+            return values[currValueIndex] - trueValue
+        summ = 0
+        for i in range(len(values)):
+            if(currValueIndex == i):
+                jacobianMatrix = values[currValueIndex] * (1 - values[currValueIndex])
+            else:
+                jacobianMatrix = -1 * values[currValueIndex] * values[i]
+            summ += lossDerivative(values[i], trueValue[i], len(values)) * jacobianMatrix
+        return summ
+    vals = []
+    for i in values:
+        vals.append(SoftMaxDerivativeInner(i, trueValue, values, lossDerivative))

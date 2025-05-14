@@ -25,6 +25,19 @@ Feutures:
 -Extra:
     -momentum
 
+-Unit tests:
+    -Done:
+        -activation functions
+        -loss derivatives
+        -loss functions
+        -main
+
+    -To do:
+        -activation derivatives
+        -backpropogation
+        -initialisers 
+        -optimisers
+
 -To do:
     -add the option for convolutional neural network (CNN)
     -adams optimiser

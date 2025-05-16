@@ -1,6 +1,8 @@
-from neuralLibrary.backPropgation import outputLayerWeightChange, hiddenLayerWeightChange, outputLayerBiasChange, hiddenLayerBiasChange
+from neuralLibrary.backPropgation import outputLayerWeightChange, hiddenLayerWeightChange, outputLayerBiasChange, hiddenLayerBiasChange, backPropgation
 from neuralLibrary.lossDerivativeFunctions import CrossEntropyLossDerivative, MSEDerivative
 from neuralLibrary.activationDerivativeFunctions import SoftMaxDerivative, ReLUDerivative, SigmoidDerivative, TanHDerivative, LinearDerivative
+from neuralLibrary.activationFunctions import relu, sigmoid, linear, softMax, tanH
+from neuralLibrary.lossFunctions import MSELossFunction, CrossEntropyLossFunction
 import numpy as np
 
 class TestNetwork_BackPropgation_Weights_Output:
@@ -201,3 +203,38 @@ class TestNetwork_BackPropgation_Biases_Hidden:
 
         assert np.allclose(errorTerms, expectedErrorTerms)
         assert np.allclose(biasGradients, expectedBiasGradients)
+
+class Test_Network_BackPropgation_BackPropgation:
+    def test_BackPropgation_ShapeOfGradients(self):
+        layers = [[3, relu], [4, relu],[2, sigmoid]]
+        layerNodes = [np.array([1, 0.5, -0.5]), np.array([0.7, 0.2, 0.1, 0.4]), np.array([0.6, 0.4])]
+        weights = [
+            np.array([
+                [0.1, -0.2, 0.05, 0.3],
+                [-0.3, 0.4, 0.1, -0.1],
+                [0.2, 0.1, -0.4, 0.2]
+            ]),
+            np.array([
+                [0.3, -0.2],
+                [0.1, 0.4],
+                [-0.5, 0.2],
+                [0.2, 0.1]
+            ])
+        ]
+        biases = [
+            np.array([0.01, -0.02, 0.03, 0.04]),
+            np.array([0.05, -0.01])
+        ]
+        trueVales = np.array([1, 0])
+
+        weightGradients, biasGradients = backPropgation(layerNodes, weights, biases, trueVales, layers, MSELossFunction)
+
+        assert len(weightGradients) == len(weights)
+        assert len(biasGradients) == len(biases)
+
+        for i in range(len(weightGradients)):
+            assert weightGradients[i].T.shape == weights[i].shape
+            
+        for i in range(len(biasGradients)):
+            assert biasGradients[i].shape == biases[i].shape
+

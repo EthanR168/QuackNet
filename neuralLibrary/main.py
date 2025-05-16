@@ -70,15 +70,12 @@ class Network(Optimisers, Initialisers, writeAndRead):
     def train(self, inputData, labels, epochs):
         self.checkIfNetworkCorrect()
         correct = 0
-        print(self.weights[0][0][0])
         nodes, self.weights, self.biases, self.velocityWeight, self.velocityBias = self.optimisationFunction(inputData, labels, epochs, self.weights, self.biases, self.momentumCoefficient, self.momentumDecay, self.useMomentum, self.velocityWeight, self.velocityBias, self.learningRate, self.batchSize)        
         for i in range(len(nodes)):
             nodeIndex = np.argmax(nodes[i])
             labelIndex = np.argmax(labels[i])
-            print(nodeIndex, labelIndex)
             if(nodeIndex == labelIndex):
                 correct += 1
-        print("eeeeeeeeeeeeeeeee ", self.weights[0][0][0])
         return correct / len(labels)
     
     def checkIfNetworkCorrect(self): #this is to check if activation functions/loss functions adhere to certain rule

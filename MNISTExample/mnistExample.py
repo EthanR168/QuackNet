@@ -10,22 +10,27 @@ train_labels = np.load('MNISTExample/data/train_labels.npy')  # Shape: (60000, 1
 from neuralLibrary.main import Network
 
 def run(epochs):
-    n = Network(learningRate=1, lossFunc="cross")
+    n = Network(learningRate=0.001, lossFunc="cross")
     n.addLayer(784, "relu")
     n.addLayer(128, "relu")
     n.addLayer(128, "relu")
     n.addLayer(10, "softmax")
 
-    n.createWeightsAndBiases()
-    n.write()
+    inp = "n" #input("Create new weights/biases (y/n): ").lower()
+    if(inp == "y"):
+        n.createWeightsAndBiases()
+        n.write()
+    else:
+        n.read()
 
     for _ in range(epochs):
         print("started")
         start = time.time()
 
-        accuaracy = n.train(train_images[0:1], train_labels[0:1] , 1)
+        accuaracy = n.train(train_images, train_labels , 1)
+        print(n.weights[0][0][0])
         print(f"took: {(time.time() - start)} seconds, accuracy: {accuaracy}")
     
     n.write()
 
-run(100)
+run(10)

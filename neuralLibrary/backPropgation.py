@@ -88,10 +88,11 @@ def hiddenLayerBiasChange(pastLayerErrorTerms, pastLayerWeights, activationDeriv
     biasGradients = errorTerms
     return biasGradients, errorTerms
 
-def backPropgation(layerNodes, weights, biases, trueValues, layers, lossFunction):
+def backPropgation(layerNodes, weights, biases, trueValues, layers, lossFunction, forUnitTests = False):
     lossDerivatives = {
         MSELossFunction: MSEDerivative,
         MAELossFunction: MAEDerivative,
+        CrossEntropyLossFunction: CrossEntropyLossDerivative,
     }
     activationDerivatives = {
         relu: ReLUDerivative,
@@ -104,15 +105,14 @@ def backPropgation(layerNodes, weights, biases, trueValues, layers, lossFunction
     b, biasErrorTerms = outputLayerBiasChange(lossDerivatives[lossFunction], activationDerivatives[layers[len(layers) - 1][1]], layerNodes[len(layerNodes) - 1], trueValues)
     weightGradients = [w]
     biasGradients = [b]
-    print("hhhhhhhhhhhhhhhhhhh ", w[0][0])
     for i in range(len(layers) - 2, -1, -1):
         w, weightErrorTerms = hiddenLayerWeightChange(weightErrorTerms, weights[i], activationDerivatives[layers[i][1]], layerNodes[i], layerNodes[i + 1])
         b, biasErrorTerms = hiddenLayerBiasChange(biasErrorTerms, weights[i], activationDerivatives[layers[i][1]], layerNodes[i], layerNodes[i + 1])
         weightGradients.append(w)
         biasGradients.append(b)
-        print("hhhhhhhhhhhhhhhhhhh ", w[0][0])
-    weightGradients.pop(0)
-    biasGradients.pop(0)
-    weightGradients.reverse()
-    biasGradients.reverse()
+    if(forUnitTests == False):
+        weightGradients.pop(0) #removes the hidden layers since it doesnt have weights for the layer after it
+        weightGradients.reverse()
+        biasGradients.reverse()
+        biasGradients.pop(0) #removes the input layer since it doesnt have any biases
     return weightGradients, biasGradients

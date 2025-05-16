@@ -18,7 +18,7 @@ def LinearDerivative(values):
 def SoftMaxDerivative(currValueIndex, trueValue, values, lossDerivative):
     from .lossDerivativeFunctions import CrossEntropyLossDerivative
     if(lossDerivative == CrossEntropyLossDerivative):
-        return values[currValueIndex] - trueValue
+        return values - trueValue
     summ = 0
     for i in range(len(values)):
         if(currValueIndex == i):

@@ -47,7 +47,9 @@ def outputLayerWeightChange(lossDerivative, activationDerivative, currentLayerNo
         lossDerivativeValue = CrossEntropyLossDerivative(currentLayerNodes, trueValues, activationDerivative)
     else:
         lossDerivativeValue = lossDerivative(currentLayerNodes, trueValues, len(currentLayerNodes))
-    if(activationDerivative == SoftMaxDerivative):
+    if(activationDerivative == SoftMaxDerivative and lossDerivative == CrossEntropyLossDerivative):
+        errorTerms = currentLayerNodes - trueValues
+    elif(activationDerivative == SoftMaxDerivative):
         softs = []
         for i in range(len(trueValues)):
             softs.append(SoftMaxDerivative(i, trueValues, currentLayerNodes, lossDerivative))
@@ -59,6 +61,7 @@ def outputLayerWeightChange(lossDerivative, activationDerivative, currentLayerNo
 
 def hiddenLayerWeightChange(pastLayerErrorTerms, pastLayerWeights, activationDerivative, currentLayerNodes, pastLayerNodes):
     errorTerms = (pastLayerErrorTerms @ pastLayerWeights.T) * activationDerivative(currentLayerNodes)
+    errorTerms = errorTerms.squeeze()
     weightGradients = np.outer(pastLayerNodes, errorTerms)
     return weightGradients, errorTerms
 
@@ -99,11 +102,13 @@ def backPropgation(layerNodes, weights, biases, trueValues, layers, lossFunction
     b, biasErrorTerms = outputLayerBiasChange(lossDerivatives[lossFunction], activationDerivatives[layers[len(layers) - 1][1]], layerNodes[len(layerNodes) - 1], trueValues)
     weightGradients = [w]
     biasGradients = [b]
+    print("hhhhhhhhhhhhhhhhhhh ", w[0][0])
     for i in range(len(layers) - 2, -1, -1):
         w, weightErrorTerms = hiddenLayerWeightChange(weightErrorTerms, weights[i], activationDerivatives[layers[i][1]], layerNodes[i], layerNodes[i + 1])
         b, biasErrorTerms = hiddenLayerBiasChange(biasErrorTerms, weights[i], activationDerivatives[layers[i][1]], layerNodes[i], layerNodes[i + 1])
         weightGradients.append(w)
         biasGradients.append(b)
+        print("hhhhhhhhhhhhhhhhhhh ", w[0][0])
     weightGradients.pop(0)
     biasGradients.pop(0)
     weightGradients.reverse()

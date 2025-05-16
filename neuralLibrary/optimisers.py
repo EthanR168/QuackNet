@@ -2,25 +2,29 @@ import numpy as np
 
 class Optimisers:
     def trainGradientDescent(self, inputData, labels, epochs, weights, biases, momentumCoefficient, momentumDecay, useMomentum, velocityWeight, velocityBias, learningRate, _):
-        layerNodes = []
+        l = []
         if(useMomentum == True):
             self.initialiseVelocity()
         for _ in range(epochs):
             weightGradients, biasGradients = self.initialiseGradients(weights, biases)
             for data in range(len(inputData)):
                 layerNodes = self.forwardPropagation(inputData[data])
+                l.append(layerNodes[len(layerNodes) - 1])
                 w, b = self.backPropgation(layerNodes, weights, biases, labels[data])
-                self.addGradients(weightGradients, biasGradients, w, b)
-            self.updateWeightsBiases(len(inputData), weights, biases, weightGradients, biasGradients, velocityWeight, velocityBias, useMomentum, momentumCoefficient, learningRate)
+                print("nnnnn ", w[0][0][0])
+                velocityWeight, velocityBias = self.addGradients(weightGradients, biasGradients, w, b)
+            weights, biases, velocityWeight, velocityBias = self.updateWeightsBiases(len(inputData), weights, biases, weightGradients, biasGradients, velocityWeight, velocityBias, useMomentum, momentumCoefficient, learningRate)
             momentumCoefficient *= momentumDecay
+        return l, weights, biases, velocityWeight, velocityBias
 
     def trainStochasticGradientDescent(self, inputData, labels, epochs, weights, biases, momentumCoefficient, momentumDecay, useMomentum, velocityWeight, velocityBias, learningRate, _):
-        layerNodes = []
+        l = []
         if(useMomentum == True):
             self.initialiseVelocity()        
         for _ in range(epochs):
             for data in range(len(inputData)):
                 layerNodes = self.forwardPropagation(inputData[data])
+                l.append(layerNodes)
                 w, b = self.backPropgation(layerNodes, weights, biases, labels[data])
                 if(useMomentum == True):
                     velocityWeight = momentumCoefficient * velocityWeight - learningRate * w
@@ -32,9 +36,10 @@ class Optimisers:
                     biases -= learningRate * b
 
             momentumCoefficient *= momentumDecay
+        return l, self.weights, self.biases, self.velocityWeight, self.velocityBias
 
     def trainGradientDescentUsingBatching(self, inputData, labels, epochs, weights, biases, momentumCoefficient, momentumDecay, useMomentum, velocityWeight, velocityBias, learningRate, batchSize):
-        layerNodes = []
+        l = []
         if(useMomentum == True):
             velocityWeight, velocityBias = self.initialiseVelocity()
         for _ in range(epochs):
@@ -44,10 +49,12 @@ class Optimisers:
                 weightGradients, biasGradients = self.initialiseGradients()
                 for j in range(len(batchData)):
                     layerNodes = self.forwardPropagation(batchData[j])
+                    l.append(layerNodes)
                     w, b = self.backPropgation(layerNodes, weights, biases, batchLabels[j])
                     weightGradients, biasGradients = self.addGradients(weightGradients, biasGradients, w, b)
                 self.updateWeightsBiases(batchSize, weights, biases, weightGradients, biasGradients, velocityWeight, velocityBias, useMomentum, momentumCoefficient, learningRate)
             momentumCoefficient *= momentumDecay
+        return l, self.weights, self.biases, self.velocityWeight, self.velocityBias
 
     def initialiseVelocity(self, velocityWeight, velocityBias, weights, biases):
         if(velocityWeight == None):

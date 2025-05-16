@@ -9,11 +9,11 @@ trainset = datasets.MNIST(root='MNISTExample/data', train=True, download=True, t
 testset = datasets.MNIST(root='MNISTExample/data', train=False, download=True, transform=transform)
 
 # Preprocess and save the data as arrays
-train_images = trainset.data.view(-1, 28*28).numpy() / 255.0  # Normalize pixel values to [0,1]
-train_labels = np.eye(10)[trainset.targets.numpy()]          # One-hot encode labels
+train_images = trainset.data.view(-1, 28*28).numpy().astype('float16') / 255.0  # Normalize pixel values to [0,1]
+train_labels = np.eye(10, dtype='float16')[trainset.targets.numpy()]          # One-hot encode labels
 
-test_images = testset.data.view(-1, 28*28).numpy() / 255.0
-test_labels = np.eye(10)[testset.targets.numpy()]
+test_images = testset.data.view(-1, 28*28).numpy().astype('float16') / 255.0
+test_labels = np.eye(10, dtype='float16')[testset.targets.numpy()]
 
 # save to disk for reuse
 np.save('MNISTExample/data/train_images.npy', train_images)

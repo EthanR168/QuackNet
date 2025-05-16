@@ -4,3 +4,4 @@ neuralLibrary/__pycache__/
 unitTests/__pycache__/
 MNISTExample/data/
 unitTests/.pytest_cache
+MNISTExample/WeightsAndBiases/

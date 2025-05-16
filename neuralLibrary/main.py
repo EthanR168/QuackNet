@@ -3,9 +3,10 @@ from .activationFunctions import relu, sigmoid, tanH, linear, softMax
 from .lossFunctions import MSELossFunction, MAELossFunction, CrossEntropyLossFunction
 from .optimisers import Optimisers
 from .initialisers import Initialisers
+from .writeAndReadWeightBias import writeAndRead
 import numpy as np
 
-class Network(Optimisers, Initialisers):
+class Network(Optimisers, Initialisers, writeAndRead):
     def __init__(self, lossFunc = "MSE", learningRate = 0.01, optimisationFunc = "gd", useMomentum = False, momentumCoefficient = 0.9, momentumDecay = 0.99, useBatches = False, batchSize = 32):
         self.layers = []
         self.weights = []
@@ -67,13 +68,14 @@ class Network(Optimisers, Initialisers):
         return weightGradients, biasGradients
 
     def train(self, inputData, labels, epochs):
-        self.optimisationFunction(inputData, labels, epochs, self.weights, self.biases, self.momentumCoefficient, self.momentumDecay, self.useMomentum, self.velocityWeight, self.velocityBias, self.learningRate, self.batchSize)
-
-'''        
-n = Network()
-n.addLayer(3)
-n.addLayer(2)
-n.addLayer(1)
-n.createWeightsAndBiases()
-n.train([[0.5, 0.5, 0.5]], np.array([1]), 1)
-'''
+        correct = 0
+        print(self.weights[0][0][0])
+        nodes, self.weights, self.biases, self.velocityWeight, self.velocityBias = self.optimisationFunction(inputData, labels, epochs, self.weights, self.biases, self.momentumCoefficient, self.momentumDecay, self.useMomentum, self.velocityWeight, self.velocityBias, self.learningRate, self.batchSize)        
+        for i in range(len(nodes)):
+            nodeIndex = np.argmax(nodes[i])
+            labelIndex = np.argmax(labels[i])
+            print(nodeIndex, labelIndex)
+            if(nodeIndex == labelIndex):
+                correct += 1
+        print("eeeeeeeeeeeeeeeee ", self.weights[0][0][0])
+        return correct / len(labels)

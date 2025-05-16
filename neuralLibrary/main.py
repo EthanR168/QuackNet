@@ -16,7 +16,7 @@ class Network(Optimisers, Initialisers, writeAndRead):
         lossFunctionDict = {
             "mse": MSELossFunction,
             "mae": MAELossFunction,
-            "cross entropy": CrossEntropyLossFunction,
+            "cross entropy": CrossEntropyLossFunction,"cross": CrossEntropyLossFunction,
         }
         self.lossFunction = lossFunctionDict[lossFunc.lower()]
 
@@ -68,6 +68,7 @@ class Network(Optimisers, Initialisers, writeAndRead):
         return weightGradients, biasGradients
 
     def train(self, inputData, labels, epochs):
+        self.checkIfNetworkCorrect()
         correct = 0
         print(self.weights[0][0][0])
         nodes, self.weights, self.biases, self.velocityWeight, self.velocityBias = self.optimisationFunction(inputData, labels, epochs, self.weights, self.biases, self.momentumCoefficient, self.momentumDecay, self.useMomentum, self.velocityWeight, self.velocityBias, self.learningRate, self.batchSize)        
@@ -79,3 +80,12 @@ class Network(Optimisers, Initialisers, writeAndRead):
                 correct += 1
         print("eeeeeeeeeeeeeeeee ", self.weights[0][0][0])
         return correct / len(labels)
+    
+    def checkIfNetworkCorrect(self): #this is to check if activation functions/loss functions adhere to certain rule
+        for i in range(len(self.layers) - 1): #checks if softmax is used for any activation func that isnt output layer
+            if(self.layers[i][1] == softMax): #if so it stops the user
+                raise ValueError(f"Softmax shouldnt be used in non ouput layers. Error at Layer {i + 1}")
+        usingSoftMax = self.layers[len(self.layers) - 1][1] == softMax
+        if(usingSoftMax == True):
+            if(self.lossFunction != CrossEntropyLossFunction): #checks if softmax is used without cross entropy loss function
+                raise ValueError(f"Softmax output layer requires Cross Entropy loss function") #if so stops the user

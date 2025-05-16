@@ -10,7 +10,7 @@ train_labels = np.load('MNISTExample/data/train_labels.npy')  # Shape: (60000, 1
 from neuralLibrary.main import Network
 
 def run(epochs):
-    n = Network(learningRate=1)
+    n = Network(learningRate=1, lossFunc="cross")
     n.addLayer(784, "relu")
     n.addLayer(128, "relu")
     n.addLayer(128, "relu")

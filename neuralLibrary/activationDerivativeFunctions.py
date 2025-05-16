@@ -15,15 +15,17 @@ def TanHDerivative(values):
 def LinearDerivative(values):
     return np.ones_like(values)
 
-def SoftMaxDerivative(currValueIndex, trueValue, values, lossDerivative):
-    from .lossDerivativeFunctions import CrossEntropyLossDerivative
-    if(lossDerivative == CrossEntropyLossDerivative):
-        return values - trueValue
-    summ = 0
-    for i in range(len(values)):
-        if(currValueIndex == i):
-            jacobianMatrix = values[currValueIndex] * (1 - values[currValueIndex])
-        else:
-            jacobianMatrix = -1 * values[currValueIndex] * values[i]
-        summ += lossDerivative(values[i], trueValue[i], len(values)) * jacobianMatrix
-    return summ
+def SoftMaxDerivative(trueValue, values):
+    #from .lossDerivativeFunctions import CrossEntropyLossDerivative
+    #if(lossDerivative == CrossEntropyLossDerivative):
+    #    return values - trueValue
+    #summ = 0
+    #for i in range(len(values)):
+    #    if(currValueIndex == i):
+    #        jacobianMatrix = values[currValueIndex] * (1 - values[currValueIndex])
+    #    else:
+    #        jacobianMatrix = -1 * values[currValueIndex] * values[i]
+    #    summ += lossDerivative(values[i], trueValue[i], len(values)) * jacobianMatrix
+    #return summ
+
+    return values - trueValue #the simplification is due to cross entropy and softmax being used at the same time which is forced by library

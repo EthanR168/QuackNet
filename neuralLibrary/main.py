@@ -4,9 +4,10 @@ from .lossFunctions import MSELossFunction, MAELossFunction, CrossEntropyLossFun
 from .optimisers import Optimisers
 from .initialisers import Initialisers
 from .writeAndReadWeightBias import writeAndRead
+from .convulationalManager import CNNModel
 import numpy as np
 
-class Network(Optimisers, Initialisers, writeAndRead):
+class Network(Optimisers, Initialisers, writeAndRead, CNNModel):
     def __init__(self, lossFunc = "MSE", learningRate = 0.01, optimisationFunc = "gd", useMomentum = False, momentumCoefficient = 0.9, momentumDecay = 0.99, useBatches = False, batchSize = 32):
         self.layers = []
         self.weights = []

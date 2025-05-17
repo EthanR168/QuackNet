@@ -52,7 +52,12 @@ Here is an example of how to create and train a simple neural network using the 
 from neuralLibrary.main import Network
 
 # Define a neural network achitecture
-n = Network(lossFunc = "cross entropy", learningRate = 0.01)
+n = Network(
+    lossFunc = "cross entropy",
+    learningRate = 0.01
+    optimisationFunc = "sgd" #schostatic gradient descent
+)
+
 n.addLayer(3, "relu") # Input layer
 n.addLayer(2, "relu") # Hidden layer
 n.addLayer(1, "softmax") # Output layer

@@ -1,7 +1,8 @@
 import numpy as np
 
 def ReLUDerivative(values):
-    return np.where(values > 0, 1, 0)
+    #return np.where(values > 0, 1, 0)
+    return np.where(values > 0, 1, 0.01)  # This is leaky ReLU, to prevent weight gradeints all becoming 0
 
 def sigmoid(values):
     return 1 / (1 + np.exp(-values))

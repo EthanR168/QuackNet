@@ -2,6 +2,6 @@
 .venv/
 neuralLibrary/__pycache__/
 unitTests/__pycache__/
-MNISTExample/data/
+extra/MNISTExample/data/
 unitTests/.pytest_cache
-MNISTExample/WeightsAndBiases/
+extra/MNISTExample/WeightsAndBiases/

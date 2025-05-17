@@ -3,10 +3,10 @@ import numpy as np
 from neuralLibrary.activationFunctions import relu, sigmoid, tanH, linear, softMax
 
 def test_relu():
-    assert relu(-0.3) == 0
-    assert relu(0) == 0
-    assert relu(0.4) == 0.4
-    assert relu(1e6) == 1e6
+    assert relu(-0.3, 0.01) == -0.003
+    assert relu(0, 0.01) == 0
+    assert relu(0.4, 0.01) == 0.4
+    assert relu(1e6, 0.01) == 1e6
 
 def test_sigmoid():
     assert sigmoid(0) == 0.5

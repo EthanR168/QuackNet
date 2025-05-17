@@ -70,13 +70,20 @@ class Network(Optimisers, Initialisers, writeAndRead):
     def train(self, inputData, labels, epochs):
         self.checkIfNetworkCorrect()
         correct = 0
+        totalLoss = 0
         nodes, self.weights, self.biases, self.velocityWeight, self.velocityBias = self.optimisationFunction(inputData, labels, epochs, self.weights, self.biases, self.momentumCoefficient, self.momentumDecay, self.useMomentum, self.velocityWeight, self.velocityBias, self.learningRate, self.batchSize)        
-        for i in range(len(nodes)):
-            nodeIndex = np.argmax(nodes[i])
-            labelIndex = np.argmax(labels[i])
+        lastLayer = len(nodes[0]) - 1
+        index = 0
+        for i in range(len(nodes)): 
+            index += 1
+            if(index % 60000 == 0):
+                index = 0
+            totalLoss += CrossEntropyLossFunction(nodes[i][lastLayer], labels[index])
+            nodeIndex = np.argmax(nodes[i][lastLayer])
+            labelIndex = np.argmax(labels[index])
             if(nodeIndex == labelIndex):
                 correct += 1
-        return correct / len(labels)
+        return correct / (len(labels) * epochs), totalLoss / (len(labels) * epochs)
     
     def checkIfNetworkCorrect(self): #this is to check if activation functions/loss functions adhere to certain rule
         for i in range(len(self.layers) - 1): #checks if softmax is used for any activation func that isnt output layer

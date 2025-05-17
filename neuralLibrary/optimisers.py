@@ -76,7 +76,7 @@ class Optimisers:
 
     def addGradients(self, weightGradients, biasGradients, w, b):
         for i in range(len(weightGradients)):
-            weightGradients[i] += w[i].T
+            weightGradients[i] += w[i]
             weightGradients[i] = np.clip(weightGradients[i], -1, 1)
         for i in range(len(biasGradients)):
             biasGradients[i] += b[i].T

@@ -73,14 +73,10 @@ class Network(Optimisers, Initialisers, writeAndRead):
         totalLoss = 0
         nodes, self.weights, self.biases, self.velocityWeight, self.velocityBias = self.optimisationFunction(inputData, labels, epochs, self.weights, self.biases, self.momentumCoefficient, self.momentumDecay, self.useMomentum, self.velocityWeight, self.velocityBias, self.learningRate, self.batchSize)        
         lastLayer = len(nodes[0]) - 1
-        index = 0
         for i in range(len(nodes)): 
-            index += 1
-            if(index % 60000 == 0):
-                index = 0
-            totalLoss += CrossEntropyLossFunction(nodes[i][lastLayer], labels[index])
+            totalLoss += self.lossFunction(nodes[i][lastLayer], labels[i])
             nodeIndex = np.argmax(nodes[i][lastLayer])
-            labelIndex = np.argmax(labels[index])
+            labelIndex = np.argmax(labels[i])
             if(nodeIndex == labelIndex):
                 correct += 1
         return correct / (len(labels) * epochs), totalLoss / (len(labels) * epochs)

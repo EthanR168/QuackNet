@@ -89,7 +89,6 @@ def backPropgation(layerNodes, weights, biases, trueValues, layers, lossFunction
     weightGradients = [w]
     biasGradients = [b]
     for i in range(len(layers) - 2, 0, -1):
-        print("iiiiiiiiiiiiiiiiiiiiiiiii")
         w, weightErrorTerms = hiddenLayerWeightChange(
             weightErrorTerms, 
             weights[i], 

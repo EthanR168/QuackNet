@@ -5,6 +5,7 @@ Feutures:
     -weight initialisation
     -training
     -custom layers
+    -read/write weights and biases to a file 
 
 -Activation functions (also thier derivative functions):
     -ReLU 
@@ -24,6 +25,7 @@ Feutures:
 
 -Extra:
     -momentum
+    -read/write weights and biases to a file 
 
 -Unit tests:
     -Done:
@@ -31,17 +33,15 @@ Feutures:
         -loss derivatives
         -loss functions
         -main
+        -activation derivatives
 
     -To do:
-        -activation derivatives
         -backpropogation
         -initialisers 
         -optimisers
 
 -To do:
-    -add the option for convolutional neural network (CNN)
     -adams optimiser
-    -read/write weights and biases to a file 
     -create a example code using MNIST
     -compare MNIST with tensorflow/pytorch on MNIST
     

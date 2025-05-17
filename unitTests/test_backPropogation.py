@@ -147,10 +147,9 @@ class TestNetwork_BackPropgation_Biases_Hidden:
     def test_hiddenLayerBiasChange_ReLU(self):
         errorTermsNextLayer = np.array([0.1 , -0.2])
         currNodes = np.array([0.8, 0.0])
-        pastNodes = np.array([0.5, 0.4])
         pastWeights = np.array([[0.4, 0.3], [0.2, 0.1]])
 
-        biasGradients, errorTerms = hiddenLayerBiasChange(errorTermsNextLayer, pastWeights, ReLUDerivative, currNodes, pastNodes)
+        biasGradients, errorTerms = hiddenLayerBiasChange(errorTermsNextLayer, pastWeights, ReLUDerivative, currNodes)
     
         expectedErrorTerms = errorTermsNextLayer @ pastWeights.T
         expectedErrorTerms = expectedErrorTerms * ReLUDerivative(currNodes)
@@ -162,10 +161,9 @@ class TestNetwork_BackPropgation_Biases_Hidden:
     def test_hiddenLayerBiasChange_Sigmoid(self):
         errorTermsNextLayer = np.array([0.1 , -0.2])
         currNodes = np.array([0.8, 0.0])
-        pastNodes = np.array([0.5, 0.4])
         pastWeights = np.array([[0.4, 0.3], [0.2, 0.1]])
 
-        biasGradients, errorTerms = hiddenLayerBiasChange(errorTermsNextLayer, pastWeights, SigmoidDerivative, currNodes, pastNodes)
+        biasGradients, errorTerms = hiddenLayerBiasChange(errorTermsNextLayer, pastWeights, SigmoidDerivative, currNodes)
     
         expectedErrorTerms = errorTermsNextLayer @ pastWeights.T
         expectedErrorTerms = expectedErrorTerms * SigmoidDerivative(currNodes)
@@ -177,10 +175,9 @@ class TestNetwork_BackPropgation_Biases_Hidden:
     def test_hiddenLayerBiasChange_TanH(self):
         errorTermsNextLayer = np.array([0.1 , -0.2])
         currNodes = np.array([0.8, 0.0])
-        pastNodes = np.array([0.5, 0.4])
         pastWeights = np.array([[0.4, 0.3], [0.2, 0.1]])
 
-        biasGradients, errorTerms = hiddenLayerBiasChange(errorTermsNextLayer, pastWeights, TanHDerivative, currNodes, pastNodes)
+        biasGradients, errorTerms = hiddenLayerBiasChange(errorTermsNextLayer, pastWeights, TanHDerivative, currNodes)
     
         expectedErrorTerms = errorTermsNextLayer @ pastWeights.T
         expectedErrorTerms = expectedErrorTerms * TanHDerivative(currNodes)
@@ -192,10 +189,9 @@ class TestNetwork_BackPropgation_Biases_Hidden:
     def test_hiddenLayerBiasChange_Linear(self):
         errorTermsNextLayer = np.array([0.1 , -0.2])
         currNodes = np.array([0.8, 0.0])
-        pastNodes = np.array([0.5, 0.4])
         pastWeights = np.array([[0.4, 0.3], [0.2, 0.1]])
 
-        biasGradients, errorTerms = hiddenLayerBiasChange(errorTermsNextLayer, pastWeights, LinearDerivative, currNodes, pastNodes)
+        biasGradients, errorTerms = hiddenLayerBiasChange(errorTermsNextLayer, pastWeights, LinearDerivative, currNodes)
     
         expectedErrorTerms = errorTermsNextLayer @ pastWeights.T
         expectedErrorTerms = expectedErrorTerms * LinearDerivative(currNodes)
@@ -233,7 +229,7 @@ class Test_Network_BackPropgation_BackPropgation:
         assert len(biasGradients) == len(biases)
 
         for i in range(len(weightGradients)):
-            assert weightGradients[i].T.shape == weights[i].shape
+            assert weightGradients[i].shape == weights[i].shape
             
         for i in range(len(biasGradients)):
             assert biasGradients[i].shape == biases[i].shape

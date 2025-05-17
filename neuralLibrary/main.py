@@ -93,3 +93,5 @@ class Network(Optimisers, Initialisers, writeAndRead):
         if(usingSoftMax == True):
             if(self.lossFunction != CrossEntropyLossFunction): #checks if softmax is used without cross entropy loss function
                 raise ValueError(f"Softmax output layer requires Cross Entropy loss function") #if so stops the user
+        elif(self.lossFunction == CrossEntropyLossFunction):
+            raise ValueError(f"Cross Entropy loss function requires Softmax output layer") #if so stops the user

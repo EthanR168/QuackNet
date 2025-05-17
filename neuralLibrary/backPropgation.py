@@ -43,52 +43,35 @@ r = learning rate
 '''
 
 def outputLayerWeightChange(lossDerivative, activationDerivative, currentLayerNodes, pastLayerNodes, trueValues): 
-    if(lossDerivative == CrossEntropyLossDerivative):
-        lossDerivativeValue = CrossEntropyLossDerivative(currentLayerNodes, trueValues, activationDerivative)
-    else:
-        lossDerivativeValue = lossDerivative(currentLayerNodes, trueValues, len(currentLayerNodes))
     if(activationDerivative == SoftMaxDerivative and lossDerivative == CrossEntropyLossDerivative):
         errorTerms = currentLayerNodes - trueValues
-    #elif(activationDerivative == SoftMaxDerivative):
-    #    softs = []
-    #    for i in range(len(trueValues)):
-    #        softs.append(SoftMaxDerivative(trueValues, currentLayerNodes))
-    #    errorTerms = lossDerivativeValue * np.array([softs])
     else:
+        lossDerivativeValue = lossDerivative(currentLayerNodes, trueValues, len(currentLayerNodes))
         errorTerms = lossDerivativeValue * activationDerivative(currentLayerNodes)
     weightGradients = np.outer(pastLayerNodes, errorTerms)
     return weightGradients, errorTerms
 
 def hiddenLayerWeightChange(pastLayerErrorTerms, pastLayerWeights, activationDerivative, currentLayerNodes, pastLayerNodes):
     errorTerms = (pastLayerErrorTerms @ pastLayerWeights.T) * activationDerivative(currentLayerNodes)
-    errorTerms = errorTerms.squeeze()
     weightGradients = np.outer(pastLayerNodes, errorTerms)
     return weightGradients, errorTerms
 
 def outputLayerBiasChange(lossDerivative, activationDerivative, currentLayerNodes, trueValues):
-    if(lossDerivative == CrossEntropyLossDerivative):
-        lossDerivativeValue = CrossEntropyLossDerivative(currentLayerNodes, trueValues, activationDerivative)
-    else:
-        lossDerivativeValue = lossDerivative(currentLayerNodes, trueValues, len(currentLayerNodes))
     if(activationDerivative == SoftMaxDerivative and lossDerivative == CrossEntropyLossDerivative):
         errorTerms = currentLayerNodes - trueValues
-    #elif(activationDerivative == SoftMaxDerivative):
-    #    softs = []
-    #    for i in range(len(trueValues)):
-    #        softs.append(SoftMaxDerivative(i, trueValues, currentLayerNodes, lossDerivative))
-    #    errorTerms = lossDerivativeValue * np.array([softs])
     else:
+        lossDerivativeValue = lossDerivative(currentLayerNodes, trueValues, len(currentLayerNodes))
         errorTerms = lossDerivativeValue * activationDerivative(currentLayerNodes)
     biasGradients = errorTerms
     return biasGradients, errorTerms
 
 
-def hiddenLayerBiasChange(pastLayerErrorTerms, pastLayerWeights, activationDerivative, currentLayerNodes, pastLayerNodes):
+def hiddenLayerBiasChange(pastLayerErrorTerms, pastLayerWeights, activationDerivative, currentLayerNodes):
     errorTerms = (pastLayerErrorTerms @ pastLayerWeights.T) * activationDerivative(currentLayerNodes)
     biasGradients = errorTerms
     return biasGradients, errorTerms
 
-def backPropgation(layerNodes, weights, biases, trueValues, layers, lossFunction, forUnitTests = False):
+def backPropgation(layerNodes, weights, biases, trueValues, layers, lossFunction):
     lossDerivatives = {
         MSELossFunction: MSEDerivative,
         MAELossFunction: MAEDerivative,
@@ -105,14 +88,23 @@ def backPropgation(layerNodes, weights, biases, trueValues, layers, lossFunction
     b, biasErrorTerms = outputLayerBiasChange(lossDerivatives[lossFunction], activationDerivatives[layers[len(layers) - 1][1]], layerNodes[len(layerNodes) - 1], trueValues)
     weightGradients = [w]
     biasGradients = [b]
-    for i in range(len(layers) - 2, -1, -1):
-        w, weightErrorTerms = hiddenLayerWeightChange(weightErrorTerms, weights[i], activationDerivatives[layers[i][1]], layerNodes[i], layerNodes[i + 1])
-        b, biasErrorTerms = hiddenLayerBiasChange(biasErrorTerms, weights[i], activationDerivatives[layers[i][1]], layerNodes[i], layerNodes[i + 1])
+    for i in range(len(layers) - 2, 0, -1):
+        print("iiiiiiiiiiiiiiiiiiiiiiiii")
+        w, weightErrorTerms = hiddenLayerWeightChange(
+            weightErrorTerms, 
+            weights[i], 
+            activationDerivatives[layers[i][1]], 
+            layerNodes[i], 
+            layerNodes[i - 1]
+        )
+        b, biasErrorTerms = hiddenLayerBiasChange(
+            biasErrorTerms, 
+            weights[i], 
+            activationDerivatives[layers[i][1]], 
+            layerNodes[i]
+        )
         weightGradients.append(w)
         biasGradients.append(b)
-    if(forUnitTests == False):
-        weightGradients.pop(0) #removes the hidden layers since it doesnt have weights for the layer after it
-        weightGradients.reverse()
-        biasGradients.reverse()
-        biasGradients.pop(0) #removes the input layer since it doesnt have any biases
+    weightGradients.reverse()
+    biasGradients.reverse()
     return weightGradients, biasGradients

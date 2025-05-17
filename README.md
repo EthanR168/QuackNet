@@ -1,6 +1,14 @@
 # Neural Network Library
 
-The Neural Network Library is a python based library designed for creating and training neural network and convolutional neural networks. It focuses on providing a foundational implementation of key components such as forward propagation, backpropagation and optimisation algorithms, without relying on machine learning libraries like TensorFlow or PyTorch.
+The **Neural Network Library** is a python bases library designed for building and training neural networks and convolutional networks from scratch. It offers foundational implementations of key components such as forward propagtion, backpropgation and optimisation algorithms, without relying on machine learning frameworks like TensorFlow or Pytorch
+
+## Why this Library?
+
+This project was developed to:
+
+-   **Deepen understanding** of neural network by implementing them from scratch
+-   **Provide a light weight alternative** to large scale frameworks for educational purposes
+-   **Offer flexibility** for experimentation with custom architectures
 
 ## Feutures
 
@@ -17,6 +25,18 @@ The Neural Network Library is a python based library designed for creating and t
 -   ability to experiment with different optimisation techniques.
 
 ## Roadmap
+- [X] **Forward propagation**
+    Implemented the feed forward pass for neural network layers
+- [X] **Activation functions**
+    Added support for Leaky ReLU, Sigmoid, Softmax and others
+- [X] **Loss functions**
+    Implemented MSE, MAE and cross entropy loss with their derivatives
+- [X] **Backpropagation**
+    Completed backpropagation for gradient caculation and paramter updates
+- [X] **Optimisers**
+    Added support for batching, stochastic gradient descent and gradient descent
+- [X] **Convulational Neural Network**
+    Implemented kernals, pooling and dense layers for Convulational Neural Network
 - [ ] **Skin Lesion detector**    
     use the neural network library to create a model for detecting skin lesions
 - [ ] **Add Adams optimiser**  

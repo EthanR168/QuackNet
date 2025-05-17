@@ -4,14 +4,14 @@ The Neural Network Library is a python based library designed for creating and t
 
 ## Feutures
 **1. Custom Implementation:**
-    - Fully handwritten implementations for neural network layers, activation functions and loss functions.
-    - No reliance on external libraries for machine learning (except for numpy)
+    -   Fully handwritten implementations for neural network layers, activation functions and loss functions.
+    -   No reliance on external libraries for machine learning (except for numpy)
 **2. Core neural network functionality:**
-    - Support for common activation functions (eg.Leaky ReLU, Sigmoid, Softmax)
-    - Multiple loss functions with derivatives (eg. MSE, MAE, Cross entropy)
+    -   Support for common activation functions (eg.Leaky ReLU, Sigmoid, Softmax)
+    -   Multiple loss functions with derivatives (eg. MSE, MAE, Cross entropy)
 **3. Training:**
-    - includes backpropagation for gradient calculation and parameter updates
-    - ability to experiment with different optimisation techniques.
+    -   includes backpropagation for gradient calculation and parameter updates
+    -   ability to experiment with different optimisation techniques.
 
 ## Roadmap
 - [ ] **Skin Lesion detector**

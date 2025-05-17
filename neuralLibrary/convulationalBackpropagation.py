@@ -44,3 +44,42 @@ class CNNbackpropagation:
         
         return weightGradients, biasGradients, inputErrorTerms
             
+    def MaxPoolingDerivative(self, errorPatch, inputTensor, sizeOfGrid, strideLength):
+        inputGradient = np.zeros_like(inputTensor)
+        outputHeight = (inputTensor.shape[1] - sizeOfGrid) // strideLength + 1
+        outputWidth = (inputTensor.shape[2] - sizeOfGrid) // strideLength + 1
+        for image in range(len(inputTensor)): # tensor is a 3d structures, so it is turning it into a 2d array (eg. an layer or image)
+            for x in range(outputHeight):
+                for y in range(outputWidth):
+                    indexX = x * strideLength
+                    indexY = y * strideLength
+
+                    gridOfValues = inputTensor[image, indexX: indexX + sizeOfGrid, indexY: indexY + sizeOfGrid]
+                    indexMax = np.argmax(gridOfValues)
+                    maxX, maxY = divmod(indexMax, sizeOfGrid)
+
+                    newValues = np.zeros((sizeOfGrid, sizeOfGrid))
+                    newValues[maxX, maxY] = 1
+
+                    inputGradient[image, indexX: indexX + sizeOfGrid, indexY: indexY + sizeOfGrid] += newValues * errorPatch[image, x, y]
+        return inputGradient
+
+    def AveragePoolingDerivative(self, errorPatch, inputTensor, sizeOfGrid, strideLength):
+        inputGradient = np.zeros_like(inputTensor)
+        outputHeight = (inputTensor.shape[1] - sizeOfGrid) // strideLength + 1
+        outputWidth = (inputTensor.shape[2] - sizeOfGrid) // strideLength + 1
+        for image in range(len(inputTensor)): # tensor is a 3d structures, so it is turning it into a 2d array (eg. an layer or image)
+            for x in range(outputHeight):
+                for y in range(outputWidth):
+                    indexX = x * strideLength
+                    indexY = y * strideLength
+                    
+                    newValues = np.ones((sizeOfGrid, sizeOfGrid)) * errorPatch[image, x, y] / (sizeOfGrid ** 2)
+
+                    inputGradient[image, indexX: indexX + sizeOfGrid, indexY: indexY + sizeOfGrid] += newValues 
+        return inputGradient
+    
+    def ActivationLayerDerivative(self, errorPatch, activationDerivative, inputTensor):
+        return errorPatch * activationDerivative(inputTensor)
+    
+    

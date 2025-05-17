@@ -25,3 +25,23 @@ The Neural Network Library is a python based library designed for creating and t
     implement advanced activation functions (eg. GELU and Swish)
 - [ ] **Visualisation tools**  
     add support for visualising training, such as loss and accuracy graphs
+
+## Usage
+Here is an example of how to create and train a simple neural network using the library:
+```python
+from neuralLibrary.main import Network
+
+# Define a neural network achitecture
+n = Network(lossFunc = "cross entropy", learningRate = 0.01)
+n.addLayer(3, "relu") # Input layer
+n.addLayer(2, "relu") # Hidden layer
+n.addLayer(1, "softmax") # Output layer
+n.createWeightsAndBiases()
+
+# Train the network
+accauracy, averageLoss = n.train(inputData, Labels, epochs = 10)
+
+# Evaluate
+print(f"Accauracy: {accauracy}%")
+print(f"Average loss: {averageLoss}")
+```

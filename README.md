@@ -1,6 +1,6 @@
-# Neural Network Library
+# QuackNet
 
-The **Neural Network Library** is a python based library designed for building and training neural networks and convolutional networks from scratch. It offers foundational implementations of key components such as forward propagation, backpropagation and optimisation algorithms, without relying on machine learning frameworks like TensorFlow or Pytorch
+The **QuackNet** is a python based library designed for building and training neural networks and convolutional networks from scratch. It offers foundational implementations of key components such as forward propagation, backpropagation and optimisation algorithms, without relying on machine learning frameworks like TensorFlow or Pytorch
 
 ## Why this Library?
 
@@ -37,8 +37,10 @@ This project was developed to:
     Added support for batching, stochastic gradient descent and gradient descent
 - [X] **Convolutional Neural Network**
     Implemented kernels, pooling and dense layers for Convolutional Neural Network
+- [ ] **Benchmark against PyTorch/TensorFlow**
+    Benchmark against popular machine learning framworks on MNIST library
 - [ ] **Skin Lesion detector**    
-    use the neural network library to create a model for detecting skin lesions
+    use the neural network library to create a model for detecting skin lesions using HAM10000 for skin lesion images
 - [ ] **Add Adams optimiser**  
     Implement the Adam optimiser to improve training performance and convergence
 - [ ] **Additional activation functions**  
@@ -82,14 +84,14 @@ print(f"Average loss: {averageLoss}")
 
 ## Code structure
 
-# Neural Network Class
+## Neural Network Class
 -   **Purpose** Handles fully connected layers for standard neural network
 -   **Key Componets:**
     -   Layers: Dense Layer
     -   Functions: Forward propagation, backpropgation
     -   Optimisers: SGD, GD, GD using batching
 
-# Convolutional Neural Network Class
+## Convolutional Neural Network Class
 -   **Purpose** Specialised for image data processing using covolutional layers
 -   **Key Components:**
     -   Layers: Convolutional, pooling, dense and activation layers

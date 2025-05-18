@@ -1,16 +1,16 @@
 # Neural Network Library
 
-The **Neural Network Library** is a python bases library designed for building and training neural networks and convolutional networks from scratch. It offers foundational implementations of key components such as forward propagtion, backpropgation and optimisation algorithms, without relying on machine learning frameworks like TensorFlow or Pytorch
+The **Neural Network Library** is a python based library designed for building and training neural networks and convolutional networks from scratch. It offers foundational implementations of key components such as forward propagation, backpropagation and optimisation algorithms, without relying on machine learning frameworks like TensorFlow or Pytorch
 
 ## Why this Library?
 
 This project was developed to:
 
 -   **Deepen understanding** of neural network by implementing them from scratch
--   **Provide a light weight alternative** to large scale frameworks for educational purposes
+-   **Provide a lightweight alternative** to large scale frameworks for educational purposes
 -   **Offer flexibility** for experimentation with custom architectures
 
-## Feutures
+## Features
 
 **1. Custom Implementation:**
 -   Fully handwritten implementations for neural network layers, activation functions and loss functions.
@@ -22,7 +22,7 @@ This project was developed to:
 
 **3. Training:**
 -   includes backpropagation for gradient calculation and parameter updates
--   ability to experiment with different optimisation techniques.
+-   ability to experiment with different optimization techniques.
 
 ## Roadmap
 - [X] **Forward propagation**
@@ -32,11 +32,11 @@ This project was developed to:
 - [X] **Loss functions**
     Implemented MSE, MAE and cross entropy loss with their derivatives
 - [X] **Backpropagation**
-    Completed backpropagation for gradient caculation and paramter updates
+    Completed backpropagation for gradient calculation and parameter updates
 - [X] **Optimisers**
     Added support for batching, stochastic gradient descent and gradient descent
-- [X] **Convulational Neural Network**
-    Implemented kernals, pooling and dense layers for Convulational Neural Network
+- [X] **Convolutional Neural Network**
+    Implemented kernels, pooling and dense layers for Convolutional Neural Network
 - [ ] **Skin Lesion detector**    
     use the neural network library to create a model for detecting skin lesions
 - [ ] **Add Adams optimiser**  
@@ -51,11 +51,11 @@ Here is an example of how to create and train a simple neural network using the 
 ```python
 from neuralLibrary.main import Network
 
-# Define a neural network achitecture
+# Define a neural network architecture
 n = Network(
     lossFunc = "cross entropy",
     learningRate = 0.01
-    optimisationFunc = "sgd" #schostatic gradient descent
+    optimisationFunc = "sgd" #stochastic gradient descent
 )
 n.addLayer(3, "relu") # Input layer
 n.addLayer(2, "relu") # Hidden layer
@@ -67,15 +67,15 @@ inputData = [[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]]
 labels = [[1], [0]]
 
 # Train the network
-accauracy, averageLoss = n.train(inputData, Labels, epochs = 10)
+accuracy, averageLoss = n.train(inputData, Labels, epochs = 10)
 
 # Evaluate
-print(f"Accauracy: {accauracy}%")
+print(f"Accuracy: {accuracy}%")
 print(f"Average loss: {averageLoss}")
 ```
 
 ## Examples
 
--   [Simple Neural Network Example](/ExampleCode/NNExample.py): A basic neural network implementation demsotrating forward and backward propgation
+-   [Simple Neural Network Example](/ExampleCode/NNExample.py): A basic neural network implementation demonstrating forward and backpropagation
 -   [Convolutional Neural Network Example](/ExampleCode/CNNExample.py): Shows how to use the convolutional layers in the library
 -   [MNIST Neural Network Example](/ExampleCode/MNISTExample/mnistExample.py): Shows how to use neural network to train on MNIST

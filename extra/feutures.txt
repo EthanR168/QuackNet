@@ -12,6 +12,7 @@ Feutures:
     -sigmoid
     -linear
     -softmax
+    -tanH
 
 -Loss functions (also thier derivative functions):
     -MSE
@@ -25,7 +26,7 @@ Feutures:
 
 -Extra:
     -momentum
-    -read/write weights and biases to a file 
+    -create a example code using MNIST
 
 -Unit tests:
     -Done:
@@ -42,6 +43,5 @@ Feutures:
 
 -To do:
     -adams optimiser
-    -create a example code using MNIST
     -compare MNIST with tensorflow/pytorch on MNIST
     

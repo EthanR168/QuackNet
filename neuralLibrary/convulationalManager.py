@@ -11,12 +11,14 @@ class CNNModel():
         self.layers.append(layer)
     
     def forward(self, inputTensor):
+        allTensors = []
         for layer in self.layers:
             inputTensor = layer.forward(inputTensor)
-        return inputTensor
+            allTensors.append(inputTensor)
+        return allTensors
 
     def backpropagation(self, allTensors):
-        errorTerms = self.layers[0].backpropagation() # <-- this is a neural network
+        errorTerms = self.layers[-1].backpropagation() # <-- this is a neural network
         for i in range(len(self.layers) - 2, -1, -1):
             if(self.layers[i] == ConvLayer or self.layers[i] == PoolingLayer):
                 self.layers[i].backpropagation(errorTerms, allTensors[len(allTensors) - i])
@@ -64,8 +66,8 @@ class DenseLayer: # basically a fancy neural network
         inputArray = ConvulationalNetwork.flatternTensor(self, inputTensor)
         return np.array(self.NeuralNetworkClass.forwardPropagation(inputArray)[-1])
     
-    def backpropagation(self):
-        raise ValueError("Couldnt not be bothered, yet ...")
+    def backpropagation(self, inputTensor):
+        self.NeuralNetworkClass.backPropgation(inputTensor)
 
 class ActivationLayer: # basically aplies an activation function over the whole network (eg. leaky relu)
     def forward(self, inputTensor):

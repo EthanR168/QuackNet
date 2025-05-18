@@ -20,13 +20,14 @@ CNN.addLayer(ActivationLayer())
 CNN.addLayer(PoolingLayer(2, 1, "max"))
 CNN.addLayer(DenseLayer(net))
 
-# outputs a 1d array due to the dense layer
-output = CNN.forward(inputTensor)
+allTensors = CNN.forward(inputTensor)
 
 print("input tensor:")
 print(inputTensor)
 print("output tensor:")
-print(output)
+print(allTensors[-1])
 
 print(f"input shape: {inputTensor.shape}")
-print(f"output shape: {output.shape}")
+print(f"output shape: {allTensors[-1].shape}")
+
+CNN.backpropagation(allTensors)

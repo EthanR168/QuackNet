@@ -79,3 +79,19 @@ print(f"Average loss: {averageLoss}")
 -   [Simple Neural Network Example](/ExampleCode/NNExample.py): A basic neural network implementation demonstrating forward and backpropagation
 -   [Convolutional Neural Network Example](/ExampleCode/CNNExample.py): Shows how to use the convolutional layers in the library
 -   [MNIST Neural Network Example](/ExampleCode/MNISTExample/mnistExample.py): Shows how to use neural network to train on MNIST
+
+## Code structure
+
+# Neural Network Class
+-   **Purpose** Handles fully connected layers for standard neural network
+-   **Key Componets:**
+    -   Layers: Dense Layer
+    -   Functions: Forward propagation, backpropgation
+    -   Optimisers: SGD, GD, GD using batching
+
+# Convolutional Neural Network Class
+-   **Purpose** Specialised for image data processing using covolutional layers
+-   **Key Components:**
+    -   Layers: Convolutional, pooling, dense and activation layers
+    -   Functions: Forward propagation, backpropgation
+    -   Optimsers: SGD, GD, GD using batching

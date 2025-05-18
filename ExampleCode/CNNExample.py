@@ -6,6 +6,7 @@ import numpy as np
 inputTensor = np.random.randn(4, 4, 4) #(depth, height, width)
 kernalWeights = np.random.randn(3, 4, 2, 2)
 kernalBiases = np.random.randn(3)
+trueValues = np.array([[1]])
 
 # Define the dense layer
 net = Network()  
@@ -30,4 +31,4 @@ print(allTensors[-1])
 print(f"input shape: {inputTensor.shape}")
 print(f"output shape: {allTensors[-1].shape}")
 
-CNN.backpropagation(allTensors)
+CNN.backpropagation(allTensors, trueValues)

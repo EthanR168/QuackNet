@@ -64,10 +64,9 @@ class Network(Optimisers, Initialisers, writeAndRead, CNNModel):
             layerNodes.append(np.array(self.calculateLayerNodes(layerNodes[i - 1], self.weights[i - 1], self.biases[i - 1], self.layers[i])))
         return layerNodes
     
-    def backPropgation(self, layerNodes, weights, biases, trueValues):
-        weightGradients, biasGradients = backPropgation.backPropgation(layerNodes, weights, biases, trueValues, self.layers, self.lossFunction)
-        return weightGradients, biasGradients
-
+    def backPropgation(self, layerNodes, weights, biases, trueValues, returnErrorTermForCNN = False):
+        return backPropgation.backPropgation(layerNodes, weights, biases, trueValues, self.layers, self.lossFunction, returnErrorTermForCNN)
+    
     def train(self, inputData, labels, epochs):
         self.checkIfNetworkCorrect()
         correct = 0

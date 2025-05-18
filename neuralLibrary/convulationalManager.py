@@ -17,11 +17,15 @@ class CNNModel():
             allTensors.append(inputTensor)
         return allTensors
 
-    def backpropagation(self, allTensors):
-        errorTerms = self.layers[-1].backpropagation() # <-- this is a neural network
+    def backpropagation(self, allTensors, trueValues):
+        weightGradients, biasGradients, errorTerms = self.layers[-1].backpropagation(trueValues) # <-- this is a neural network
+        allWeightGradients = [weightGradients]
+        allBiasGradients = [biasGradients]
         for i in range(len(self.layers) - 2, -1, -1):
             if(self.layers[i] == ConvLayer or self.layers[i] == PoolingLayer):
                 self.layers[i].backpropagation(errorTerms, allTensors[len(allTensors) - i])
+        
+        return allWeightGradients, allBiasGradients
 
 class ConvLayer(ConvulationalNetwork, CNNbackpropagation):
     def __init__(self, kernalSize, kernalWeights, kernalBiases, numKernals, stride, padding = "no"):
@@ -64,10 +68,16 @@ class DenseLayer: # basically a fancy neural network
     
     def forward(self, inputTensor):
         inputArray = ConvulationalNetwork.flatternTensor(self, inputTensor)
-        return np.array(self.NeuralNetworkClass.forwardPropagation(inputArray)[-1])
+        self.layerNodes = self.NeuralNetworkClass.forwardPropagation(inputArray)
+        return self.layerNodes[-1]
     
-    def backpropagation(self, inputTensor):
-        self.NeuralNetworkClass.backPropgation(inputTensor)
+    def backpropagation(self, trueValues): #return weigtGradients, biasGradients, errorTerms
+        return self.NeuralNetworkClass.backPropgation(
+            self.layerNodes, 
+            self.NeuralNetworkClass.weights,
+            self.NeuralNetworkClass.biases,
+            trueValues
+        )
 
 class ActivationLayer: # basically aplies an activation function over the whole network (eg. leaky relu)
     def forward(self, inputTensor):

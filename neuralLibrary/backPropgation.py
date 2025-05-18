@@ -71,7 +71,7 @@ def hiddenLayerBiasChange(pastLayerErrorTerms, pastLayerWeights, activationDeriv
     biasGradients = errorTerms
     return biasGradients, errorTerms
 
-def backPropgation(layerNodes, weights, biases, trueValues, layers, lossFunction):
+def backPropgation(layerNodes, weights, biases, trueValues, layers, lossFunction, returnErrorTermForCNN = False):
     lossDerivatives = {
         MSELossFunction: MSEDerivative,
         MAELossFunction: MAEDerivative,
@@ -106,4 +106,6 @@ def backPropgation(layerNodes, weights, biases, trueValues, layers, lossFunction
         biasGradients.append(b)
     weightGradients.reverse()
     biasGradients.reverse()
+    if(returnErrorTermForCNN == True):
+        return weightGradients, biasGradients, weightErrorTerms
     return weightGradients, biasGradients

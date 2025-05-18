@@ -1,6 +1,7 @@
 from .convulationalFeutures import ConvulationalNetwork
 from .convulationalBackpropagation import CNNbackpropagation
 from .activationDerivativeFunctions import ReLUDerivative
+import numpy as np
 
 class CNNModel():
     def __init__(self):
@@ -61,7 +62,7 @@ class DenseLayer: # basically a fancy neural network
     
     def forward(self, inputTensor):
         inputArray = ConvulationalNetwork.flatternTensor(self, inputTensor)
-        self.NeuralNetworkClass.forward(self, inputArray)
+        return np.array(self.NeuralNetworkClass.forwardPropagation(inputArray)[-1])
     
     def backpropagation(self):
         raise ValueError("Couldnt not be bothered, yet ...")

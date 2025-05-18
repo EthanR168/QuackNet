@@ -24,33 +24,37 @@ Neural Network:
 '''
 
 class ConvulationalNetwork:
-    def padImage(self, image, kernalSize, strideLength, typeOfPadding): #pads image
-        paddingSize = math.ceil(((strideLength - 1) * len(image) - strideLength + kernalSize) / 2)
-        padding = np.full((image.shape[0] + paddingSize * 2, image.shape[1] + paddingSize * 2), typeOfPadding) #creates an 2d numpy array of size paddingSize x paddingSize
-        padding[paddingSize: paddingSize + image.shape[0], paddingSize: paddingSize + image.shape[1]] = image
-        return padding
+    def padImage(self, inputTensor, kernalSize, strideLength, typeOfPadding): #pads image
+        paddingTensor = []
+        for image in inputTensor:
+            paddingSize = math.ceil(((strideLength - 1) * len(image) - strideLength + kernalSize) / 2)
+            padding = np.full((image.shape[0] + paddingSize * 2, image.shape[1] + paddingSize * 2), typeOfPadding) #creates an 2d numpy array of size paddingSize x paddingSize
+            padding[paddingSize: paddingSize + image.shape[0], paddingSize: paddingSize + image.shape[1]] = image
+            paddingTensor.append(padding)
+        return np.array(paddingTensor)
 
-    def kernalisation(self, inputTensor, kernals, kernalsBiases, sizeOfGrid = 2, usePadding = True, typeOfPadding= 0, strideLength = 1):
+    def kernalisation(self, inputTensor, kernalsWeights, kernalsBiases, sizeOfGrid = 2, usePadding = True, typeOfPadding= 0, strideLength = 1):
         tensorKernals = []
         if(usePadding == True):
-            image = self.padImage(inputTensor, sizeOfGrid, strideLength, typeOfPadding)
+            imageTensor = self.padImage(inputTensor, sizeOfGrid, strideLength, typeOfPadding)
         else:
-            image = inputTensor
-        outputHeight = (image.shape[0] - sizeOfGrid) // strideLength + 1
-        outputWidth = (image.shape[1] - sizeOfGrid) // strideLength + 1
-        for i in range(len(kernals)):
+            imageTensor = inputTensor
+        outputHeight = (imageTensor.shape[1] - sizeOfGrid) // strideLength + 1
+        outputWidth = (imageTensor.shape[2] - sizeOfGrid) // strideLength + 1
+        for i in range(len(kernalsWeights)):
             output = np.zeros((outputHeight, outputWidth))
-            kernal = kernals[i]
+            kernal = kernalsWeights[i]
             biases = kernalsBiases[i]
-            for x in range(outputHeight):
-                for y in range(outputWidth):
-                    indexX = x * strideLength
-                    indexY = y * strideLength
-                    gridOfValues = image[indexX: indexX + sizeOfGrid, indexY: indexY + sizeOfGrid, :] # 3d tensor
-                    dotProduct = np.sum(gridOfValues * kernal) + biases
-                    output[x, y] = dotProduct
+            for layer in range(len(imageTensor)):
+                for x in range(outputHeight):
+                    for y in range(outputWidth):
+                        indexX = x * strideLength
+                        indexY = y * strideLength
+                        gridOfValues = imageTensor[layer, indexX: indexX + sizeOfGrid, indexY: indexY + sizeOfGrid] # 2d grid
+                        dotProduct = np.sum(gridOfValues * kernal[layer]) + biases
+                        output[x, y] = dotProduct
             tensorKernals.append(output)
-        return np.stack(tensorKernals, axis = -1) #tensorKernals = (outputHeight, outputWidth, numberOfKernals)
+        return np.stack(tensorKernals, axis = 0) #tensorKernals = (outputHeight, outputWidth, numberOfKernals)
                     
     def activation(self, inputTensor):
         alpha = 0.01
@@ -73,8 +77,10 @@ class ConvulationalNetwork:
                         value = np.mean(gridOfValues)
                     output[x, y] = value
             tensorPools.append(output)
-        return tensorPools
+        return np.array(tensorPools)
 
     def flatternTensor(self, inputTensor):
         return inputTensor.reshape(-1)
 
+    def denseLayer(self, inputTensor):
+        raise ValueError("Havent completeted yet")

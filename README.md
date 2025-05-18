@@ -57,11 +57,14 @@ n = Network(
     learningRate = 0.01
     optimisationFunc = "sgd" #schostatic gradient descent
 )
-
 n.addLayer(3, "relu") # Input layer
 n.addLayer(2, "relu") # Hidden layer
 n.addLayer(1, "softmax") # Output layer
 n.createWeightsAndBiases()
+
+# Example data
+inputData = [[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]]
+labels = [[1], [0]]
 
 # Train the network
 accauracy, averageLoss = n.train(inputData, Labels, epochs = 10)
@@ -70,3 +73,9 @@ accauracy, averageLoss = n.train(inputData, Labels, epochs = 10)
 print(f"Accauracy: {accauracy}%")
 print(f"Average loss: {averageLoss}")
 ```
+
+## Examples
+
+-   [Simple Neural Network Example](/ExampleCode/NNExample.py): A basic neural network implementation demsotrating forward and backward propgation
+-   [Convolutional Neural Network Example](/ExampleCode/CNNExample.py): Shows how to use the convolutional layers in the library
+-   [MNIST Neural Network Example](/ExampleCode/MNISTExample/mnistExample.py): Shows how to use neural network to train on MNIST

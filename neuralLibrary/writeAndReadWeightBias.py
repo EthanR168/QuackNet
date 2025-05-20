@@ -1,7 +1,7 @@
 import numpy as np
 
 class writeAndRead:
-    def write(self, pathToWeight="MNISTExample/WeightsAndBiases/weights.txt", pathToBias="MNISTExample/WeightsAndBiases/biases.txt"):
+    def write(self, pathToWeight="ExampleCode/MNISTExample/WeightsAndBiases/weights.txt", pathToBias="ExampleCode/MNISTExample/WeightsAndBiases/biases.txt"):
         weightFile = open(pathToWeight, "w")
         for a in range(len(self.weights)):
             for b in range(len(self.weights[a])):
@@ -16,7 +16,7 @@ class writeAndRead:
             biasFile.write(currLine + "\n")
         biasFile.close()
     
-    def read(self, pathToWeight="MNISTExample/WeightsAndBiases/weights.txt", pathToBias="MNISTExample/WeightsAndBiases/biases.txt"):
+    def read(self, pathToWeight="ExampleCode/MNISTExample/WeightsAndBiases/weights.txt", pathToBias="ExampleCode/MNISTExample/WeightsAndBiases/biases.txt"):
         weightFile = open(pathToWeight, "r")
         layerWeights = []
         for line in weightFile:

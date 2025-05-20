@@ -35,9 +35,9 @@ Feutures:
         -loss functions
         -main
         -activation derivatives
+        -backpropogation
 
     -To do:
-        -backpropogation
         -initialisers 
         -optimisers
 

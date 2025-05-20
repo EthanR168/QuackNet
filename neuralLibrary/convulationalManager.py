@@ -76,7 +76,8 @@ class DenseLayer: # basically a fancy neural network
             self.layerNodes, 
             self.NeuralNetworkClass.weights,
             self.NeuralNetworkClass.biases,
-            trueValues
+            trueValues,
+            True
         )
 
 class ActivationLayer: # basically aplies an activation function over the whole network (eg. leaky relu)

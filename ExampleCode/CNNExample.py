@@ -31,4 +31,4 @@ print(allTensors[-1])
 print(f"input shape: {inputTensor.shape}")
 print(f"output shape: {allTensors[-1].shape}")
 
-CNN.backpropagation(allTensors, trueValues)
+weightGradients, biasGradients = CNN.backpropagation(allTensors, trueValues)

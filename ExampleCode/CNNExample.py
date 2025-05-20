@@ -16,7 +16,7 @@ net.createWeightsAndBiases()
 
 # Define the CNN model
 CNN = CNNModel()
-CNN.addLayer(ConvLayer(kernalWeights.shape[2], kernalWeights, kernalBiases, len(kernalWeights), 1, padding = "1"))
+CNN.addLayer(ConvLayer(kernalWeights.shape[2], kernalWeights, kernalBiases, len(kernalWeights), 2, padding = "1"))
 CNN.addLayer(ActivationLayer())
 CNN.addLayer(PoolingLayer(2, 1, "max"))
 CNN.addLayer(DenseLayer(net))

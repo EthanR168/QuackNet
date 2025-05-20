@@ -33,7 +33,7 @@ class ConvulationalNetwork:
             paddingTensor.append(padding)
         return np.array(paddingTensor)
 
-    def kernalisation(self, inputTensor, kernalsWeights, kernalsBiases, sizeOfGrid = 2, usePadding = True, typeOfPadding= 0, strideLength = 1):
+    def kernalisation(self, inputTensor, kernalsWeights, kernalsBiases, sizeOfGrid = 2, usePadding = True, typeOfPadding= 0, strideLength = 2):
         tensorKernals = []
         if(usePadding == True):
             imageTensor = self.padImage(inputTensor, sizeOfGrid, strideLength, typeOfPadding)
@@ -60,7 +60,7 @@ class ConvulationalNetwork:
         alpha = 0.01
         return np.maximum(inputTensor, inputTensor * alpha)
 
-    def pooling(self, inputTensor, sizeOfGrid = 2, strideLength = 1, typeOfPooling = "max"):
+    def pooling(self, inputTensor, sizeOfGrid = 2, strideLength = 2, typeOfPooling = "max"):
         if(typeOfPooling == "global" or typeOfPooling == "ga"):
             return self.poolingGlobalAverage(inputTensor)
         tensorPools = []

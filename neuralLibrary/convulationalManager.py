@@ -18,12 +18,16 @@ class CNNModel():
         return allTensors
 
     def backpropagation(self, allTensors, trueValues):
-        weightGradients, biasGradients, errorTerms = self.layers[-1].backpropagation(trueValues) # <-- this is a neural network
+        weightGradients, biasGradients, errorTerms = self.layers[-1].backpropagation(trueValues) # <-- this is a neural network 
         allWeightGradients = [weightGradients]
         allBiasGradients = [biasGradients]
         for i in range(len(self.layers) - 2, -1, -1):
-            if(self.layers[i] == ConvLayer or self.layers[i] == PoolingLayer):
-                self.layers[i].backpropagation(errorTerms, allTensors[len(allTensors) - i])
+            if(self.layers[i] == PoolingLayer or self.layers[i] == ActivationLayer):
+                errorTerms = self.layers[i].backpropagation(errorTerms, allTensors[len(allTensors) - i])
+            elif(self.layers[i] == ConvLayer):
+                weightGradients, biasGradients, errorTerms = self.layers[i].backpropagation(errorTerms, allTensors[len(allTensors) - i])
+                allWeightGradients.append(weightGradients)
+                allBiasGradients.append(biasGradients)
         
         return allWeightGradients, allBiasGradients
 
@@ -88,3 +92,4 @@ class ActivationLayer: # basically aplies an activation function over the whole 
 
     def backpropagation(self, errorPatch, inputTensor):
         return CNNbackpropagation.ActivationLayerDerivative(self, errorPatch, ReLUDerivative, inputTensor)
+    

@@ -58,8 +58,8 @@ from neuralLibrary.main import Network
 # Define a neural network architecture
 n = Network(
     lossFunc = "cross entropy",
-    learningRate = 0.01
-    optimisationFunc = "sgd" #stochastic gradient descent
+    learningRate = 0.01,
+    optimisationFunc = "sgd", #stochastic gradient descent
 )
 n.addLayer(3, "relu") # Input layer
 n.addLayer(2, "relu") # Hidden layer
@@ -71,7 +71,7 @@ inputData = [[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]]
 labels = [[1], [0]]
 
 # Train the network
-accuracy, averageLoss = n.train(inputData, Labels, epochs = 10)
+accuracy, averageLoss = n.train(inputData, labels, epochs = 10)
 
 # Evaluate
 print(f"Accuracy: {accuracy}%")
@@ -97,5 +97,5 @@ print(f"Average loss: {averageLoss}")
 -   **Purpose** Specialised for image data processing using covolutional layers
 -   **Key Components:**
     -   Layers: Convolutional, pooling, dense and activation layers
-    -   Functions: Forward propagation, backpropgation
+    -   Functions: Forward propagation, backpropgation, flattening, global average pooling
     -   Optimsers: SGD, GD, GD using batching

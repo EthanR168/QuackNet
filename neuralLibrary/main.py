@@ -58,7 +58,7 @@ class Network(Optimisers, Initialisers, writeAndRead, CNNModel):
         else:
             return softMax(summ)
         
-    def forwardPropagation(self, inputData) -> list[np.ndarray]:
+    def forwardPropagation(self, inputData):
         layerNodes = [np.array(inputData)]
         for i in range(1, len(self.layers)):
             layerNodes.append(np.array(self.calculateLayerNodes(layerNodes[i - 1], self.weights[i - 1], self.biases[i - 1], self.layers[i])))

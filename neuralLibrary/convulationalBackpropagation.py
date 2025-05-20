@@ -80,7 +80,7 @@ class CNNbackpropagation:
         return inputGradient
     
     def GlobalAveragePoolingDerivative(self, inputTensor):
-        return inputTensor.fill(1 / (inputTensor.shape[1] * inputTensor.shape[2]))
+        return np.ones_like(inputTensor) * (1 / (inputTensor.shape[1] * inputTensor.shape[2]))
     
     def ActivationLayerDerivative(self, errorPatch, activationDerivative, inputTensor):
         return errorPatch * activationDerivative(inputTensor)

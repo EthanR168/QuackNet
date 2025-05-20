@@ -82,10 +82,8 @@ class ConvulationalNetwork:
         return np.array(tensorPools)
     
     def poolingGlobalAverage(self, inputTensor):
-        output = []
-        for layer in inputTensor:
-            output.append(np.mean(layer))
-        return np.array(output)
+        output = np.mean(inputTensor, axis = (2, 3))
+        return output
 
     def flatternTensor(self, inputTensor):
         return inputTensor.reshape(-1)

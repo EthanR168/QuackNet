@@ -79,6 +79,9 @@ class CNNbackpropagation:
                     inputGradient[image, indexX: indexX + sizeOfGrid, indexY: indexY + sizeOfGrid] += newValues 
         return inputGradient
     
+    def GlobalAveragePoolingDerivative(self, inputTensor):
+        return inputTensor.fill(1 / (inputTensor.shape[1] * inputTensor.shape[2]))
+    
     def ActivationLayerDerivative(self, errorPatch, activationDerivative, inputTensor):
         return errorPatch * activationDerivative(inputTensor)
     

@@ -47,6 +47,8 @@ This project was developed to:
     implement advanced activation functions (eg. GELU and Swish)
 - [ ] **Visualisation tools**  
     add support for visualising training, such as loss and accuracy graphs
+- [ ] **Data augmentation**
+    add data augmentation such as flipping, rotation and cropping
 
 ## Usage
 Here is an example of how to create and train a simple neural network using the library:

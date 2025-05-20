@@ -61,6 +61,8 @@ class ConvulationalNetwork:
         return np.maximum(inputTensor, inputTensor * alpha)
 
     def pooling(self, inputTensor, sizeOfGrid = 2, strideLength = 1, typeOfPooling = "max"):
+        if(typeOfPooling == "global" or typeOfPooling == "ga"):
+            return self.poolingGlobalAverage(inputTensor)
         tensorPools = []
         for image in inputTensor: # tensor is a 3d structures, so it is turning it into a 2d array (eg. an layer or image)
             outputHeight = (image.shape[0] - sizeOfGrid) // strideLength + 1
@@ -78,9 +80,12 @@ class ConvulationalNetwork:
                     output[x, y] = value
             tensorPools.append(output)
         return np.array(tensorPools)
+    
+    def poolingGlobalAverage(self, inputTensor):
+        output = []
+        for layer in inputTensor:
+            output.append(np.mean(layer))
+        return np.array(output)
 
     def flatternTensor(self, inputTensor):
         return inputTensor.reshape(-1)
-
-    def denseLayer(self, inputTensor):
-        raise ValueError("Havent completeted yet")

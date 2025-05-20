@@ -51,7 +51,7 @@ class PoolingLayer(CNNbackpropagation):
     def __init__(self, gridSize, stride, mode = "max"):
         self.gridSize = gridSize
         self.stride = stride
-        self.mode = mode
+        self.mode = mode.lower()
     
     def forward(self, inputTensor):
         return ConvulationalNetwork.pooling(self, inputTensor, self.gridSize, self.stride, self.mode)
@@ -59,8 +59,10 @@ class PoolingLayer(CNNbackpropagation):
     def backpropagation(self, errorPatch, inputTensor):
         if(self.mode == "max"):
             return CNNbackpropagation.MaxPoolingDerivative(self, errorPatch, inputTensor, self.gridSize, self.stride)
-        else:
+        elif(self.mode == "ave"):
             return CNNbackpropagation.AveragePoolingDerivative(self, errorPatch, inputTensor, self.gridSize, self.stride)
+        else:
+            return CNNbackpropagation.GlobalAveragePoolingDerivative(self, inputTensor)
 
 class DenseLayer: # basically a fancy neural network
     def __init__(self, NeuralNetworkClass):

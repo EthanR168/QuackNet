@@ -11,10 +11,10 @@ from neuralLibrary.main import Network
 
 def run(epochs):
     learningRate = 0.005
-    n = Network(learningRate=learningRate, lossFunc="cross", optimisationFunc="batches", useBatches=True, batchSize=512, useMomentum=True)
+    n = Network(learningRate=learningRate, lossFunc="cross", optimisationFunc="batches", useBatches=True, batchSize=64, useMomentum=True)
     n.addLayer(784, "relu")
-    n.addLayer(256, "relu")
     n.addLayer(128, "relu")
+    n.addLayer(64, "relu")
     n.addLayer(10, "softmax")
 
     inp = "y" #input("Create new weights/biases (y/n): ").lower()

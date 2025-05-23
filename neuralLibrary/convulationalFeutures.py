@@ -51,8 +51,9 @@ class ConvulationalNetwork:
                         indexX = x * strideLength
                         indexY = y * strideLength
                         gridOfValues = imageTensor[layer, indexX: indexX + sizeOfGrid, indexY: indexY + sizeOfGrid] # 2d grid
-                        dotProduct = np.sum(gridOfValues * kernal[layer]) + biases
-                        output[x, y] = dotProduct
+                        dotProduct = np.sum(gridOfValues * kernal) # + biases
+                        output[x, y] += dotProduct
+            output = output + biases
             tensorKernals.append(output)
         return np.stack(tensorKernals, axis = 0) #tensorKernals = (outputHeight, outputWidth, numberOfKernals)
                     
@@ -82,7 +83,7 @@ class ConvulationalNetwork:
         return np.array(tensorPools)
     
     def poolingGlobalAverage(self, inputTensor):
-        output = np.mean(inputTensor, axis = (2, 3))
+        output = np.mean(inputTensor, axis = (1, 2))
         return output
 
     def flatternTensor(self, inputTensor):

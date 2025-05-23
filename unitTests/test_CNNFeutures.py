@@ -33,7 +33,7 @@ class Test_Padding:
         assert np.allclose(paddingTensor, expectedPaddedTensor)
 
 class Test_kernalisation:
-    def test_kernalisation(self):
+    def test_kernalisation1(self):
         inputTensor = np.array([
             [
                 [1, 2, 1, 2],
@@ -49,8 +49,10 @@ class Test_kernalisation:
             ],
         ])
         kernalWeights = np.array([
+        [
             [4, 3],
             [2, 1]
+        ]
         ])
         kernalBias = [2]
         kernalSize = strideLength = 2
@@ -59,25 +61,286 @@ class Test_kernalisation:
         output = ConvulationalNetwork.kernalisation(self, inputTensor, kernalWeights, kernalBias, kernalSize, strideLength=strideLength, usePadding=usePadding)
 
         '''
-        [1, 2]      X       [4, 3]     =   [6, 8]     +   2   =   30
-        [3, 4]              [2, 1]         [8, 6]
+        [1, 2]      X       [4, 3]    =   [4, 6]     =  20
+        [3, 4]              [2, 1]        [6, 4]
 
-        [3, 4]      X       [4, 3]     =   [14, 14]   +   2   =  38
-        [1, 2]              [2, 1]         [4, 4]
+        [1, 2]      X       [4, 3]    =   [4, 6]     =  20
+        [3, 4]              [2, 1]        [6, 4]
 
-        [1, 2]      X       [4, 3]     =   [6, 8]     +   2   =  30
-        [3, 4]              [2, 1]         [8, 6]
+        [20, 20]
+        [20, 20]
 
-        [30, 30]
-        [38, 38]
-        [30, 30]
+        [1, 1]      X       [4, 3]    =   [4, 3]     =  10
+        [1, 1]              [2, 1]        [2, 1]
+
+        [1, 1]      X       [4, 3]    =   [4, 3]     =  10
+        [1, 1]              [2, 1]        [2, 1]
+
+        [10, 10]    +     [20, 20]     +     2    =    [32, 32]
+        [10, 10]    +     [20, 20]                     [32, 32]
         '''
 
-        expected = np.array(
-            [30, 30],
-            [38, 38],
-            [30, 30],
-        )
+        expected = np.array([
+        [
+            [32, 32],
+            [32, 32],
+        ]
+        ])
+        
+        assert expected.shape == output.shape
+        assert np.allclose(expected, output)
+    
+    def test_kernalisation2(self):
+        inputTensor = np.array([
+            [
+                [1, 2, 1, 2],
+                [3, 4, 3, 4],
+                [1, 2, 1, 2],
+                [3, 4, 3, 4],
+            ],
+            [
+                [1, 1, 1, 1],
+                [1, 1, 1, 1],
+                [1, 1, 1, 1],
+                [1, 1, 1, 1],
+            ],
+        ])
+        kernalWeights = np.array([
+        [
+            [4, 3],
+            [2, 1]
+        ],
+        [
+            [2, 2],
+            [2, 2]
+        ]
+        ])
+        kernalBias = [2, 4]
+        kernalSize = strideLength = 2
+        usePadding = False
+
+        output = ConvulationalNetwork.kernalisation(self, inputTensor, kernalWeights, kernalBias, kernalSize, strideLength=strideLength, usePadding=usePadding)
+
+        '''
+        Kernal 1:
+        [1, 2]      X       [4, 3]    =   [4, 6]     =  20
+        [3, 4]              [2, 1]        [6, 4]
+
+        [1, 2]      X       [4, 3]    =   [4, 6]     =  20
+        [3, 4]              [2, 1]        [6, 4]
+
+        [20, 20]
+        [20, 20]
+
+        [1, 1]      X       [4, 3]    =   [4, 3]     =  10
+        [1, 1]              [2, 1]        [2, 1]
+
+        [1, 1]      X       [4, 3]    =   [4, 3]     =  10
+        [1, 1]              [2, 1]        [2, 1]
+
+        [10, 10]    +     [20, 20]     +     2    =    [32, 32]
+        [10, 10]    +     [20, 20]                     [32, 32]
+
+        
+        Kernal 2:
+        [1, 2]      X       [2, 2]    =   [2, 4]     =  20
+        [3, 4]              [2, 2]        [6, 8]
+
+        [1, 2]      X       [2, 2]    =   [2, 4]     =  20
+        [3, 4]              [2, 2]        [6, 8]
+
+        [20, 20]
+        [20, 20]
+
+        [1, 1]      X       [2, 2]    =   [2, 2]     =  8
+        [1, 1]              [2, 2]        [2, 2]
+
+        [1, 1]      X       [2, 2]    =   [2, 2]     =  8
+        [1, 1]              [2, 2]        [2, 2]
+
+        [8, 8]    +     [20, 20]     +     4    =    [32, 32]
+        [8, 8]    +     [20, 20]                     [32, 32]
+        '''
+
+        expected = np.array([
+        [
+            [32, 32],
+            [32, 32],
+        ],
+        [
+            [32, 32],
+            [32, 32],
+        ]
+        ])
+        
+        print(expected)
+        print(output)
 
         assert expected.shape == output.shape
-        assert expected == output
+        assert np.allclose(expected, output)
+
+class Test_Pooling:
+    def test_maxPooling(self):
+        inputTensor = np.array([
+            [
+                [1, 2, 1, 2],
+                [3, 4, 3, 4],
+                [1, 2, 1, 2],
+                [3, 4, 3, 4],
+            ],
+            [
+                [1, 1, 1, 1],
+                [1, 1, 1, 1],
+                [1, 1, 1, 1],
+                [1, 1, 1, 1],
+            ],
+            [
+                [1, 2, 3, 4],
+                [5, 6, 7, 8],
+                [9, 10, 11, 12],
+                [13, 14, 15, 16],
+            ],
+        ]) 
+        sizeOfGrid = strideLength = 2
+
+        output = ConvulationalNetwork.pooling(self, inputTensor, sizeOfGrid, strideLength, "max")
+
+        expected = np.array([
+        [
+            [4, 4],
+            [4, 4],
+        ],
+        [
+            [1, 1],
+            [1, 1],
+        ],
+        [
+            [6, 8],
+            [14, 16],
+        ]
+        ])
+
+        assert expected.shape == output.shape
+        assert np.allclose(expected, output)
+
+    def test_averagePooling2(self):
+        inputTensor = np.array([
+            [
+                [1, 2, 1, 2],
+                [3, 4, 3, 4],
+                [1, 2, 1, 2],
+                [3, 4, 3, 4],
+            ],
+            [
+                [1, 1, 1, 1],
+                [1, 1, 1, 1],
+                [1, 1, 1, 1],
+                [1, 1, 1, 1],
+            ],
+            [
+                [1, 2, 3, 4],
+                [5, 6, 7, 8],
+                [9, 10, 11, 12],
+                [13, 14, 15, 16],
+            ],
+        ]) 
+        sizeOfGrid = strideLength = 2
+
+        output = ConvulationalNetwork.pooling(self, inputTensor, sizeOfGrid, strideLength, "ave")
+
+        expected = np.array([
+        [
+            [2.5, 2.5],
+            [2.5, 2.5],
+        ],
+        [
+            [1, 1],
+            [1, 1],
+        ],
+        [
+            [3.5, 5.5],
+            [11.5, 13.5],
+        ]
+        ])
+        assert expected.shape == output.shape
+        assert np.allclose(expected, output)
+
+class Test_PoolingGlobalAverage:
+    def test_poolingGlobalAverage(self):
+        inputTensor = np.array([
+            [
+                [1, 2, 1, 2],
+                [3, 4, 3, 4],
+                [1, 2, 1, 2],
+                [3, 4, 3, 4],
+            ],
+            [
+                [1, 1, 1, 1],
+                [1, 1, 1, 1],
+                [1, 1, 1, 1],
+                [1, 1, 1, 1],
+            ],
+            [
+                [1, 2, 3, 4],
+                [5, 6, 7, 8],
+                [9, 10, 11, 12],
+                [13, 14, 15, 16],
+            ],
+        ]) 
+
+        output = ConvulationalNetwork.poolingGlobalAverage(self, inputTensor)
+
+        expected = np.array([2.5, 1, 8.5])
+
+        assert expected.shape == output.shape
+        assert np.allclose(expected, output)
+
+class Test_Flattening:
+    def test_flattening(self):
+        inputTensor = np.array([
+            [
+                [1, 2, 1, 2],
+                [3, 4, 3, 4],
+                [1, 2, 1, 2],
+                [3, 4, 3, 4],
+            ],
+            [
+                [1, 1, 1, 1],
+                [1, 1, 1, 1],
+                [1, 1, 1, 1],
+                [1, 1, 1, 1],
+            ],
+            [
+                [1, 2, 3, 4],
+                [5, 6, 7, 8],
+                [9, 10, 11, 12],
+                [13, 14, 15, 16],
+            ],
+        ]) 
+
+        output = ConvulationalNetwork.flatternTensor(self, inputTensor)
+
+        expected = np.array([1, 2, 1, 2, 3, 4, 3, 4, 1, 2, 1, 2, 3, 4, 3, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16])
+        
+        assert expected.shape == output.shape
+        assert np.allclose(expected, output)
+
+class Test_ActivationLayer:
+    def test_activationLayer(self):
+        inputTensor = np.array([
+            [
+                [10, -10, -1, 0],
+            ]
+        ]) 
+
+        output = ConvulationalNetwork.activation(self, inputTensor)
+
+        expected = np.array([
+            [
+                [10, -0.1, -0.01, 0],
+            ]
+        ])
+        
+        assert expected.shape == output.shape
+        assert np.allclose(expected, output)
+

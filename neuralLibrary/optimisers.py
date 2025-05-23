@@ -51,7 +51,7 @@ class Optimisers:
                     l.append(layerNodes)
                     w, b = self.backPropgation(layerNodes, weights, biases, batchLabels[j])
                     weightGradients, biasGradients = self.addGradients(weightGradients, biasGradients, w, b)
-                self.updateWeightsBiases(batchSize, weights, biases, weightGradients, biasGradients, velocityWeight, velocityBias, useMomentum, momentumCoefficient, learningRate)
+                weights, biases, velocityWeight, velocityBias = self.updateWeightsBiases(batchSize, weights, biases, weightGradients, biasGradients, velocityWeight, velocityBias, useMomentum, momentumCoefficient, learningRate)
             momentumCoefficient *= momentumDecay
         return l, weights, biases, velocityWeight, velocityBias
 
@@ -88,7 +88,6 @@ class Optimisers:
             for i in range(len(weights)):
                 velocityWeight[i] -= momentumCoefficient * velocityWeight[i] - learningRate * (weightGradients[i] / size)
                 weights[i] += velocityWeight[i]
-
             for i in range(len(biases)):
                 velocityBias[i] = momentumCoefficient * velocityBias[i] - learningRate * (biasGradients[i] / size)
                 biases[i] += velocityBias[i]

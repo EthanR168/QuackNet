@@ -6,6 +6,7 @@ from .initialisers import Initialisers
 from .writeAndReadWeightBias import writeAndRead
 from .convulationalManager import CNNModel
 import numpy as np
+import matplotlib.pyplot as plt
 
 class Network(Optimisers, Initialisers, writeAndRead, CNNModel):
     def __init__(self, lossFunc = "MSE", learningRate = 0.01, optimisationFunc = "gd", useMomentum = False, momentumCoefficient = 0.9, momentumDecay = 0.99, useBatches = False, batchSize = 32):
@@ -91,3 +92,25 @@ class Network(Optimisers, Initialisers, writeAndRead, CNNModel):
                 raise ValueError(f"Softmax output layer requires Cross Entropy loss function") #if so stops the user
         elif(self.lossFunction == CrossEntropyLossFunction):
             raise ValueError(f"Cross Entropy loss function requires Softmax output layer") #if so stops the user
+    
+    def drawGraphs(self, averageAccuracy, averageLoss):
+        epochs = list(range(1, len(averageAccuracy[0]) + 1))
+        figure, axis = plt.subplots(1, 2)
+        for i in range(len(averageAccuracy)):
+            axis[0].plot(epochs, averageAccuracy[i], marker="o", label=f'Run {i+1}', alpha=0.3)
+        axis[0].set_xticks(epochs)
+        axis[0].set_xlabel("epochs")
+        axis[0].set_ylabel("accauracy")
+        axis[0].set_title("model accuracy")
+        axis[0].grid(True)
+
+        for i in range(len(averageLoss)):
+            axis[1].plot(epochs, averageLoss[i], marker="o", label=f'Run {i+1}', alpha=0.3)
+        axis[1].set_xticks(epochs)
+        axis[1].set_xlabel("epochs")
+        axis[1].set_ylabel("loss")
+        axis[1].set_title("model loss")
+        axis[1].grid(True)
+
+        plt.tight_layout()
+        plt.show()

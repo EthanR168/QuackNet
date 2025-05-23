@@ -9,28 +9,38 @@ train_labels = np.load('ExampleCode/MNISTExample/data/train_labels.npy')  # Shap
 
 from neuralLibrary.main import Network
 
-def run(epochs):
-    learningRate = 0.005
-    n = Network(learningRate=learningRate, lossFunc="cross", optimisationFunc="batches", useBatches=True, batchSize=64, useMomentum=True)
+def run(epochs, steps, skipInput):
+    learningRate = 0.01
+    n = Network(learningRate=learningRate, lossFunc="cross", optimisationFunc="batches", useBatches=True, batchSize=64)
     n.addLayer(784, "relu")
     n.addLayer(128, "relu")
     n.addLayer(64, "relu")
     n.addLayer(10, "softmax")
 
-    inp = "y" #input("Create new weights/biases (y/n): ").lower()
+    if(skipInput == True):
+        inp = input("Create new weights/biases (y/n): ").lower()
+    else:
+        inp = "y"
     if(inp == "y"):
         n.createWeightsAndBiases()
         n.write()
     else:
         n.read()
 
-    for epoch in range(epochs):
-        print("started")
+    accuracies, losses = [], []
+    for epoch in range(0, epochs, steps):
         start = time.time()
-        accuaracy, averageLoss = n.train(train_images, train_labels, 1)
-        print(f"epoch: {1 * (epoch + 1)}/{epochs*1}, took: {(time.time() - start)} seconds, accuracy: {round(accuaracy*100,2)}%, average loss: {averageLoss}")
+        accuaracy, averageLoss = n.train(train_images, train_labels, steps)
+        print(f"epoch: {steps * (epoch + 1)}/{epochs*steps}, took: {(time.time() - start)} seconds, accuracy: {round(accuaracy*100,2)}%, average loss: {averageLoss}")
         n.write()
-    
+        accuracies.append(accuaracy)
+        losses.append(averageLoss)
+    allAc.append(accuracies)
+    allLos.append(losses)
+
     n.write()
 
-run(5)
+allAc, allLos = [], []
+for _ in range(5):
+    run(10, 1, False)
+Network.drawGraphs(None, allAc, allLos)

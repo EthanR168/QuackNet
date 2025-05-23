@@ -104,7 +104,7 @@ print(f"Average loss: {averageLoss}")
 
 The library was benchmarked on the MNIST dataset using the following setup:
 
--   **Model Architecture:** 784 (input) -> 128 -> 64 -> 10 (output)
+-   **Model Architecture:** 784 (input) \u2192 128 \u2192 64 \u2192 10 (output)
 -   **Activation Function:** Leaky Relu for input and hidden layer, and softmax for hidden layer
 -   **Optimiser:** Batches
 -   **Batch Size:** 64
@@ -113,6 +113,7 @@ The library was benchmarked on the MNIST dataset using the following setup:
 
 ### Results:
 -   **Training Accauracy:** 97.5%
+-   **Average Loss:** 0.1
 -   **Training Time:** 30 seconds per epoch
 
 ### Code:

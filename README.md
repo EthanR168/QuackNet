@@ -99,3 +99,28 @@ print(f"Average loss: {averageLoss}")
     -   Layers: Convolutional, pooling, dense and activation layers
     -   Functions: Forward propagation, backpropgation, flattening, global average pooling
     -   Optimsers: SGD, GD, GD using batching
+
+## Benchmark
+
+The library was benchmarked on the MNIST dataset using the following setup:
+
+-   **Model Architecture:** 784 (input) -> 128 -> 64 -> 10 (output)
+-   **Activation Function:** Leaky Relu for input and hidden layer, and softmax for hidden layer
+-   **Optimiser:** Batches
+-   **Batch Size:** 64
+-   **Learning rate:** 0.01
+-   **Epochs** 10
+
+### Results:
+-   **Training Accauracy:** 97.5%
+-   **Training Time:** 30 seconds per epoch
+
+### Code:
+
+The code for this benchmark can be found [here](benchmarkFolder/MNISTBenchmark/mnistExample.py)
+
+### Training Performance
+
+Below is the graph showing the training accauracy over 10 epochs, across 5 runs:
+
+![Training Accuaracy](benchmarkFolder/MNISTBenchmark/benchmark.png)

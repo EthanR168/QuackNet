@@ -5,3 +5,4 @@ unitTests/__pycache__/
 ExampleCode/MNISTExample/data/
 unitTests/.pytest_cache
 ExampleCode/MNISTExample/WeightsAndBiases/
+unitTests/test_convulutionalUnitTests/__pycache__

@@ -10,7 +10,7 @@ trueValues = np.array([[1]])
 
 # Define the dense layer
 net = Network()  
-net.addLayer(48)
+net.addLayer(27)
 net.addLayer(1)
 net.createWeightsAndBiases()
 

@@ -9,7 +9,7 @@ train_labels = np.load('benchmarkFolder/MNISTBenchmark/data/train_labels.npy')  
 
 from neuralLibrary.main import Network
 
-def run(epochs, steps, skipInput):
+def run(epochs, steps, skipInput = True):
     learningRate = 0.01
     n = Network(learningRate=learningRate, lossFunc="cross", optimisationFunc="batches", useBatches=True, batchSize=64)
     n.addLayer(784, "relu")
@@ -35,12 +35,12 @@ def run(epochs, steps, skipInput):
         n.write()
         accuracies.append(accuaracy)
         losses.append(averageLoss)
-    allAc.append(accuracies)
-    allLos.append(losses)
+    allAccuracies.append(accuracies)
+    allLosses.append(losses)
 
     n.write()
 
-allAc, allLos = [], []
+allAccuracies, allLosses = [], []
 for _ in range(5):
     run(10, 1, False)
-Network.drawGraphs(None, allAc, allLos)
+Network.drawGraphs(None, allAccuracies, allLosses)

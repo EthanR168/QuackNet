@@ -37,6 +37,8 @@ This project was developed to:
     Added support for batching, stochastic gradient descent and gradient descent
 - [X] **Convolutional Neural Network**
     Implemented kernels, pooling and dense layers for Convolutional Neural Network
+- [X] **Visualisation tools**  
+    Added support for visualising training, such as loss and accuracy graphs
 - [ ] **Benchmark against PyTorch/TensorFlow**
     Benchmark against popular machine learning framworks on MNIST library
 - [ ] **Skin Lesion detector**    
@@ -45,8 +47,6 @@ This project was developed to:
     Implement the Adam optimiser to improve training performance and convergence
 - [ ] **Additional activation functions**  
     implement advanced activation functions (eg. GELU and Swish)
-- [ ] **Visualisation tools**  
-    add support for visualising training, such as loss and accuracy graphs
 - [ ] **Data augmentation**
     add data augmentation such as flipping, rotation and cropping
 
@@ -86,14 +86,14 @@ print(f"Average loss: {averageLoss}")
 
 ## Code structure
 
-## Neural Network Class
+### Neural Network Class
 -   **Purpose** Handles fully connected layers for standard neural network
 -   **Key Componets:**
     -   Layers: Dense Layer
     -   Functions: Forward propagation, backpropgation
     -   Optimisers: SGD, GD, GD using batching
 
-## Convolutional Neural Network Class
+### Convolutional Neural Network Class
 -   **Purpose** Specialised for image data processing using covolutional layers
 -   **Key Components:**
     -   Layers: Convolutional, pooling, dense and activation layers
@@ -104,7 +104,7 @@ print(f"Average loss: {averageLoss}")
 
 The library was benchmarked on the MNIST dataset using the following setup:
 
--   **Model Architecture:** 784 (input) \u2192 128 \u2192 64 \u2192 10 (output)
+-   **Model Architecture:** 784 (input) → 128 → 64 → 10 (output)
 -   **Activation Function:** Leaky Relu for input and hidden layer, and softmax for hidden layer
 -   **Optimiser:** Batches
 -   **Batch Size:** 64
@@ -112,8 +112,8 @@ The library was benchmarked on the MNIST dataset using the following setup:
 -   **Epochs** 10
 
 ### Results:
--   **Training Accauracy:** 97.5%
--   **Average Loss:** 0.1
+-   **Training Accauracy:** 97.1%
+-   **Average Loss:** 0.10
 -   **Training Time:** 30 seconds per epoch
 
 ### Code:
@@ -122,6 +122,41 @@ The code for this benchmark can be found [here](benchmarkFolder/MNISTBenchmark/m
 
 ### Training Performance
 
-Below is the graph showing the training accauracy over 10 epochs, across 5 runs:
+Below is the graph showing the training accauracy and loss over 10 epochs, across 5 runs:
 
 ![Training Accuaracy](benchmarkFolder/MNISTBenchmark/benchmark.png)
+
+## Benchmark Against Pytorch and Tensorflow
+
+The library was benchmarked on the MNIST dataset using the following setup:
+
+-   **Model Architecture:** 784 (input) → 128 → 64 → 10 (output)
+-   **Activation Function:** Leaky Relu for input and hidden layer, and softmax for hidden layer
+-   **Optimiser:** Batches
+-   **Batch Size:** 64
+-   **Learning rate:** 0.01
+-   **Epochs** 10
+
+### Results For QuackNet:
+-   **Training Accauracy:** 97.1%
+-   **Average Loss:** 0.10
+
+### Results For Pytorch:
+-   **Training Accauracy:** 93.4%
+-   **Average Loss:** 0.23
+
+### Results For Tensorflow:
+-   **Training Accauracy:** 95.1%
+-   **Average Loss:** 0.17
+
+### Code:
+
+The code for the QuackNet benchmark can be found [here](benchmarkFolder/MNISTBenchmark/mnistExample.py)
+The code for the Pytorch benchmark can be found [here](benchmarkFolder/MNISTBenchmark/pytorchBenchmark.py)
+The code for the Tensorflow benchmark can be found [here](benchmarkFolder/MNISTBenchmark/tensorflowBenchmark.py)
+
+### Training Performance
+
+Below is the graph showing the training accauracy and loss over 10 epochs, across 5 runs:
+
+![Training Accuaracy](benchmarkFolder/MNISTBenchmark/frameworkBenchmark.png)

@@ -39,7 +39,7 @@ This project was developed to:
     Implemented kernels, pooling and dense layers for Convolutional Neural Network
 - [X] **Visualisation tools**  
     Added support for visualising training, such as loss and accuracy graphs
-- [ ] **Benchmark against PyTorch/TensorFlow**
+- [X] **Benchmark against PyTorch/TensorFlow**
     Benchmark against popular machine learning framworks on MNIST library
 - [ ] **Skin Lesion detector**    
     use the neural network library to create a model for detecting skin lesions using HAM10000 for skin lesion images
@@ -151,9 +151,9 @@ The library was benchmarked on the MNIST dataset using the following setup:
 
 ### Code:
 
-The code for the QuackNet benchmark can be found [here](benchmarkFolder/MNISTBenchmark/mnistExample.py)
-The code for the Pytorch benchmark can be found [here](benchmarkFolder/MNISTBenchmark/pytorchBenchmark.py)
-The code for the Tensorflow benchmark can be found [here](benchmarkFolder/MNISTBenchmark/tensorflowBenchmark.py)
+-   The code for the QuackNet benchmark can be found [here](benchmarkFolder/MNISTBenchmark/mnistExample.py)
+-   The code for the Pytorch benchmark can be found [here](benchmarkFolder/MNISTBenchmark/pytorchBenchmark.py)
+-   The code for the Tensorflow benchmark can be found [here](benchmarkFolder/MNISTBenchmark/tensorflowBenchmark.py)
 
 ### Training Performance
 

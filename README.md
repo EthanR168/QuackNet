@@ -26,7 +26,7 @@ This project was developed to:
 
 ## Highlights
 
--   **Custom Architecures:** Define and train neural networks with fully customisable architectures
+-   **Custom Architectures:** Define and train neural networks with fully customisable architectures
 -   **Optimisation Algorithms:** Includes Gradient Descent, Schostatstic Gradient Descent and Adam optimiser for efficient training
 -   **Loss and Activation Functions:** Prebuilt support for common loss and activation functions with the option to make your own
 -   **Layer Support:**
@@ -35,7 +35,7 @@ This project was developed to:
     -   Pooling (max and Average)
     -   Global Average Pooling
     -   Activation layer
--   **Evaluation Tools:** Includes metrics for model evalaution such as accauracy and loss
+-   **Evaluation Tools:** Includes metrics for model evaluation such as accuracy and loss
 -   **Save and Load:** Save weights and biases for reuse for further training
 -   **Demo Projects:** Includes example implementations such as MNIST digit classification
 
@@ -55,7 +55,7 @@ This project was developed to:
 - [X] **Visualisation tools**  
     Added support for visualising training, such as loss and accuracy graphs
 - [X] **Benchmark against PyTorch/TensorFlow**
-    Benchmark against popular machine learning framworks on MNIST library
+    Benchmark against popular machine learning frameworks on MNIST library
 - [X] **Add Adams optimiser**  
     Implement the Adam optimiser to improve training performance and convergence
 - [ ] **Skin Lesion detector**    
@@ -103,16 +103,16 @@ print(f"Average loss: {averageLoss}")
 
 ### Neural Network Class
 -   **Purpose** Handles fully connected layers for standard neural network
--   **Key Componets:**
+-   **Key Components:**
     -   Layers: Dense Layer
-    -   Functions: Forward propagation, backpropgation
+    -   Functions: Forward propagation, backpropagation
     -   Optimisers: SGD, GD, GD using batching
 
 ### Convolutional Neural Network Class
--   **Purpose** Specialised for image data processing using covolutional layers
+-   **Purpose** Specialised for image data processing using convolutional layers
 -   **Key Components:**
     -   Layers: Convolutional, pooling, dense and activation layers
-    -   Functions: Forward propagation, backpropgation, flattening, global average pooling
+    -   Functions: Forward propagation, backpropagation, flattening, global average pooling
     -   Optimsers: SGD, GD, GD using batching
 
 ## Benchmark
@@ -127,7 +127,7 @@ The library was benchmarked on the MNIST dataset using the following setup:
 -   **Epochs** 10
 
 ### Results:
--   **Training Accauracy:** 97.1%
+-   **Training accuracy:** 97.1%
 -   **Average Loss:** 0.10
 -   **Training Time:** 30 seconds per epoch
 
@@ -137,7 +137,7 @@ The code for this benchmark can be found [here](benchmarkFolder/MNISTBenchmark/m
 
 ### Training Performance
 
-Below is the graph showing the training accauracy and loss over 10 epochs, across 5 runs:
+Below is the graph showing the training accuracy and loss over 10 epochs, across 5 runs:
 
 ![Training Accuaracy](benchmarkFolder/MNISTBenchmark/benchmark.png)
 
@@ -153,15 +153,15 @@ The library was benchmarked on the MNIST dataset using the following setup:
 -   **Epochs** 10
 
 ### Results For QuackNet:
--   **Training Accauracy:** 97.1%
+-   **Training Accuracy:** 97.1%
 -   **Average Loss:** 0.10
 
 ### Results For Pytorch:
--   **Training Accauracy:** 93.4%
+-   **Training Accuracy:** 93.4%
 -   **Average Loss:** 0.23
 
 ### Results For Tensorflow:
--   **Training Accauracy:** 95.1%
+-   **Training Accuracy:** 95.1%
 -   **Average Loss:** 0.17
 
 ### Code:
@@ -172,6 +172,6 @@ The library was benchmarked on the MNIST dataset using the following setup:
 
 ### Training Performance
 
-Below is the graph showing the training accauracy and loss over 10 epochs, across 5 runs:
+Below is the graph showing the training accuracy and loss over 10 epochs, across 5 runs:
 
 ![Training Accuaracy](benchmarkFolder/MNISTBenchmark/frameworkBenchmark.png)

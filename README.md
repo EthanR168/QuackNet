@@ -24,6 +24,21 @@ This project was developed to:
 -   includes backpropagation for gradient calculation and parameter updates
 -   ability to experiment with different optimization techniques.
 
+## Highlights
+
+-   **Custom Architecures:** Define and train neural networks with fully customisable architectures
+-   **Optimisation Algorithms:** Includes Gradient Descent, Schostatstic Gradient Descent and Adam optimiser for efficient training
+-   **Loss and Activation Functions:** Prebuilt support for common loss and activation functions with the option to make your own
+-   **Layer Support:**
+    -   Fully Connected (Dense)
+    -   Convolutional
+    -   Pooling (max and Average)
+    -   Global Average Pooling
+    -   Activation layer
+-   **Evaluation Tools:** Includes metrics for model evalaution such as accauracy and loss
+-   **Save and Load:** Save weights and biases for reuse for further training
+-   **Demo Projects:** Includes example implementations such as MNIST digit classification
+
 ## Roadmap
 - [X] **Forward propagation**
     Implemented the feed forward pass for neural network layers

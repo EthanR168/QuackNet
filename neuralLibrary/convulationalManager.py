@@ -1,11 +1,14 @@
 from .convulationalFeutures import ConvulationalNetwork
 from .convulationalBackpropagation import CNNbackpropagation
 from .activationDerivativeFunctions import ReLUDerivative
+from .convulationalOptimiser import CNNoptimiser
 import numpy as np
 
 class CNNModel():
     def __init__(self):
         self.layers = []
+        self.weights = []
+        self.biases = []
     
     def addLayer(self, layer):
         self.layers.append(layer)
@@ -30,6 +33,23 @@ class CNNModel():
                 allBiasGradients.append(biasGradients)
         
         return allWeightGradients, allBiasGradients
+    
+    def optimser(self, inputData, labels, weights, biases, batchSize, alpha, beta1, beta2, epsilon):
+        CNNoptimiser.AdamsOptimiser(self, inputData, labels, weights, biases, batchSize, alpha, beta1, beta2, epsilon)
+    
+    def train(self, inputData, labels, batchSize, alpha, beta1, beta2, epsilon):
+        correct, totalLoss = 0, 0
+        
+        nodes, self.weights, self.biases, self.velocityWeight, self.velocityBias = self.optimser(self, inputData, labels, self.weights, self.biases, batchSize, alpha, beta1, beta2, epsilon)        
+        
+        lastLayer = len(nodes[0]) - 1
+        for i in range(len(nodes)): 
+            totalLoss += self.lossFunction(nodes[i][lastLayer], labels[i])
+            nodeIndex = np.argmax(nodes[i][lastLayer])
+            labelIndex = np.argmax(labels[i])
+            if(nodeIndex == labelIndex):
+                correct += 1
+        return correct / len(labels), totalLoss / len(labels)
 
 class ConvLayer(ConvulationalNetwork, CNNbackpropagation):
     def __init__(self, kernalSize, kernalWeights, kernalBiases, numKernals, stride, padding = "no"):

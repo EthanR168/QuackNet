@@ -84,5 +84,3 @@ class CNNbackpropagation:
     
     def ActivationLayerDerivative(self, errorPatch, activationDerivative, inputTensor):
         return errorPatch * activationDerivative(inputTensor)
-    
-    

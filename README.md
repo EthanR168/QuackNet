@@ -41,10 +41,10 @@ This project was developed to:
     Added support for visualising training, such as loss and accuracy graphs
 - [X] **Benchmark against PyTorch/TensorFlow**
     Benchmark against popular machine learning framworks on MNIST library
+- [X] **Add Adams optimiser**  
+    Implement the Adam optimiser to improve training performance and convergence
 - [ ] **Skin Lesion detector**    
     use the neural network library to create a model for detecting skin lesions using HAM10000 for skin lesion images
-- [ ] **Add Adams optimiser**  
-    Implement the Adam optimiser to improve training performance and convergence
 - [ ] **Additional activation functions**  
     implement advanced activation functions (eg. GELU and Swish)
 - [ ] **Data augmentation**

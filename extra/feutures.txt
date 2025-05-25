@@ -23,6 +23,7 @@ Feutures:
     -gradient descent
     -stochastic gradient descent 
     -batch gradient descent
+    -adams optimiser
 
 -Extra:
     -momentum
@@ -42,6 +43,5 @@ Feutures:
         -optimisers
 
 -To do:
-    -adams optimiser
     -compare MNIST with tensorflow/pytorch on MNIST
     

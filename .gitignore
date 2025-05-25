@@ -8,3 +8,5 @@ ExampleCode/MNISTExample/WeightsAndBiases/
 unitTests/test_convulutionalUnitTests/__pycache__
 benchmarkFolder/MNISTBenchmark/data
 benchmarkFolder/MNISTBenchmark/WeightsAndBiases
+unitTests/CNN/__pycache__
+unitTests/NN/__pycache__

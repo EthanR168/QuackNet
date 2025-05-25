@@ -86,6 +86,7 @@ def backPropgation(layerNodes, weights, biases, trueValues, layers, lossFunction
     }
     w, weightErrorTerms = outputLayerWeightChange(lossDerivatives[lossFunction], activationDerivatives[layers[len(layers) - 1][1]], layerNodes[len(layerNodes) - 1], layerNodes[len(layerNodes) - 2], trueValues)
     b, biasErrorTerms = outputLayerBiasChange(lossDerivatives[lossFunction], activationDerivatives[layers[len(layers) - 1][1]], layerNodes[len(layerNodes) - 1], trueValues)
+    hiddenWeightErrorTermsForCNNBackpropgation = weightErrorTerms
     weightGradients = [w]
     biasGradients = [b]
     for i in range(len(layers) - 2, 0, -1):
@@ -107,5 +108,5 @@ def backPropgation(layerNodes, weights, biases, trueValues, layers, lossFunction
     weightGradients.reverse()
     biasGradients.reverse()
     if(returnErrorTermForCNN == True):
-        return weightGradients, biasGradients, weightErrorTerms
+        return weightGradients, biasGradients, hiddenWeightErrorTermsForCNNBackpropgation
     return weightGradients, biasGradients

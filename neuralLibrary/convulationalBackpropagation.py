@@ -84,3 +84,8 @@ class CNNbackpropagation:
     
     def ActivationLayerDerivative(self, errorPatch, activationDerivative, inputTensor):
         return errorPatch * activationDerivative(inputTensor)
+    
+    def reshapeErrorPatch(self, expectedShape, errorPatch):
+        if(np.array(errorPatch).shape != expectedShape):
+            return np.array(errorPatch).reshape(expectedShape)
+        return errorPatch

@@ -82,7 +82,7 @@ class ConvLayer(ConvulationalNetwork, CNNbackpropagation):
         self.depth = depth
         self.stride = stride
         self.padding = padding
-        if(padding.lower() == "no"):
+        if(padding.lower() == "no" or padding.lower() == "n"):
             self.usePadding = False
         else:
             self.padding = int(self.padding)
@@ -101,6 +101,8 @@ class PoolingLayer(CNNbackpropagation):
         self.mode = mode.lower()
     
     def forward(self, inputTensor):
+        if(self.mode == "gap" or self.mode == "global"):
+            return ConvulationalNetwork.poolingGlobalAverage(self, inputTensor)
         return ConvulationalNetwork.pooling(self, inputTensor, self.gridSize, self.stride, self.mode)
 
     def backpropagation(self, errorPatch, inputTensor):
@@ -115,9 +117,9 @@ class DenseLayer: # basically a fancy neural network
     def __init__(self, NeuralNetworkClass):
         self.NeuralNetworkClass = NeuralNetworkClass
         self.orignalShape = 0
-    
+        
     def forward(self, inputTensor):
-        self.orignalShape = inputTensor.shape
+        self.orignalShape = np.array(inputTensor).shape
         inputArray = ConvulationalNetwork.flatternTensor(self, inputTensor)
         self.layerNodes = self.NeuralNetworkClass.forwardPropagation(inputArray)
         return self.layerNodes[-1]

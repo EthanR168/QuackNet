@@ -45,7 +45,7 @@ class CNNbackpropagation:
         return weightGradients, biasGradients, inputErrorTerms
             
     def MaxPoolingDerivative(self, errorPatch, inputTensor, sizeOfGrid, strideLength):
-        inputGradient = np.zeros_like(inputTensor)
+        inputGradient = np.zeros_like(inputTensor, dtype=np.float64)
         outputHeight = (inputTensor.shape[1] - sizeOfGrid) // strideLength + 1
         outputWidth = (inputTensor.shape[2] - sizeOfGrid) // strideLength + 1
         for image in range(len(inputTensor)): # tensor is a 3d structures, so it is turning it into a 2d array (eg. an layer or image)
@@ -65,7 +65,7 @@ class CNNbackpropagation:
         return inputGradient
 
     def AveragePoolingDerivative(self, errorPatch, inputTensor, sizeOfGrid, strideLength):
-        inputGradient = np.zeros_like(inputTensor)
+        inputGradient = np.zeros_like(inputTensor, dtype=np.float64)
         outputHeight = (inputTensor.shape[1] - sizeOfGrid) // strideLength + 1
         outputWidth = (inputTensor.shape[2] - sizeOfGrid) // strideLength + 1
         for image in range(len(inputTensor)): # tensor is a 3d structures, so it is turning it into a 2d array (eg. an layer or image)
@@ -84,8 +84,3 @@ class CNNbackpropagation:
     
     def ActivationLayerDerivative(self, errorPatch, activationDerivative, inputTensor):
         return errorPatch * activationDerivative(inputTensor)
-    
-    def reshapeErrorPatch(self, expectedShape, errorPatch):
-        if(np.array(errorPatch).shape != expectedShape):
-            return np.array(errorPatch).reshape(expectedShape)
-        return errorPatch

@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: QuackNet
-Version: 0.1
+Version: 0.2
 Summary: A lightweight educational neural network library
 Home-page: https://github.com/SirQuackPng/QuackNet
 Requires-Python: >=3.7
@@ -89,7 +89,7 @@ This project was developed to:
 ## Usage
 Here is an example of how to create and train a simple neural network using the library:
 ```python
-from neuralLibrary.main import Network
+from quacknet.main import Network
 
 # Define a neural network architecture
 n = Network(

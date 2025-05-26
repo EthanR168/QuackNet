@@ -15,7 +15,7 @@ class CNNModel(CNNoptimiser):
         self.layers.append(layer)
     
     def forward(self, inputTensor):
-        allTensors = []
+        allTensors = [inputTensor]
         for layer in self.layers:
             inputTensor = layer.forward(inputTensor)
             allTensors.append(inputTensor)
@@ -92,7 +92,7 @@ class ConvLayer(ConvulationalNetwork, CNNbackpropagation):
         return ConvulationalNetwork.kernalisation(self, inputTensor, self.kernalWeights, self.kernalBiases, self.kernalSize, self.usePadding, self.padding, self.stride)
 
     def backpropagation(self, errorPatch, inputTensor):
-        return CNNbackpropagation.ConvolutionDerivative(errorPatch, self.kernals, inputTensor, self.stride)
+        return CNNbackpropagation.ConvolutionDerivative(self, errorPatch, self.kernalWeights, inputTensor, self.stride)
 
 class PoolingLayer(CNNbackpropagation):
     def __init__(self, gridSize, stride, mode = "max"):
@@ -130,11 +130,16 @@ class DenseLayer: # basically a fancy neural network
             trueValues,
             True
         )
-        errorTerms = np.array(self.NeuralNetworkClass.weights).T @ errorTerms 
+        #errorTerms = np.array(self.NeuralNetworkClass.weights).T @ errorTerms 
+        #errorTerms = errorTerms.reshape(self.orignalShape)
+
+        for i in reversed(range(len(self.NeuralNetworkClass.weights))):
+            errorTerms = self.NeuralNetworkClass.weights[i] @ errorTerms
         errorTerms = errorTerms.reshape(self.orignalShape)
+
         return weightGradients, biasGradients, errorTerms
 
-class ActivationLayer: # basically aplies an activation function over the whole network (eg. leaky relu)
+class ActivationLayer: # basically aplies an activation function over the whole Tensor (eg. leaky relu)
     def forward(self, inputTensor):
         return ConvulationalNetwork.activation(self, inputTensor)
 

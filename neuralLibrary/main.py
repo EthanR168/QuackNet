@@ -122,3 +122,7 @@ class Network(Optimisers, Initialisers, writeAndRead, CNNModel):
 
         plt.tight_layout()
         plt.show()
+
+
+# use this to get how many functions are tests or not: coverage run -m pytest unitTests/
+# then to see results do: coverage report -m

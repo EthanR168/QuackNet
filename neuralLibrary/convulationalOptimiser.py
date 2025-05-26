@@ -2,7 +2,8 @@ import numpy as np
 
 class CNNoptimiser:
     def AdamsOptimiserWithBatches(self, inputData, labels, weights, biases, batchSize, alpha, beta1, beta2, epsilon):
-        firstMomentWeight, firstMomentBias, secondMomentWeight, secondMomentBias = self.initialiseMoment(weights, biases)
+        firstMomentWeight, firstMomentBias = self.initialiseMoment(weights, biases)
+        secondMomentWeight, secondMomentBias = self.initialiseMoment(weights, biases)
         weightGradients, biasGradients = self.initialiseGradients(weights, biases)
         allNodes = []
         for i in range(0, len(inputData), batchSize):
@@ -18,7 +19,8 @@ class CNNoptimiser:
         return allNodes, weights, biases
 
     def AdamsOptimiserWithoutBatches(self, inputData, labels, weights, biases, alpha, beta1, beta2, epsilon):
-        firstMomentWeight, firstMomentBias, secondMomentWeight, secondMomentBias = self.initialiseMoment(weights, biases)
+        firstMomentWeight, firstMomentBias = self.initialiseMoment(weights, biases)
+        secondMomentWeight, secondMomentBias = self.initialiseMoment(weights, biases)
         weightGradients, biasGradients = self.initialiseGradients(weights, biases)
         allNodes = []
         for i in range(len(inputData)):
@@ -32,51 +34,65 @@ class CNNoptimiser:
 
     def Adams(self, weightGradients, biasGradients, weights, biases, timeStamp, firstMomentWeight, firstMomentBias, secondMomentWeight, secondMomentBias, alpha, beta1, beta2, epsilon):
         for i in range(len(weights)):
-            firstMomentWeight[i] = beta1 * firstMomentWeight[i] + (1 - beta1) * weightGradients[i]
-            secondMomentWeight[i] = beta2 * secondMomentWeight[i] + (1 - beta2) * (weightGradients[i] ** 2)
+            for j in range(len(weights[i])):
+                firstMomentWeight[i][j] = beta1 * np.array(firstMomentWeight[i][j]) + (1 - beta1) * weightGradients[i][j]
+                secondMomentWeight[i][j] = beta2 * np.array(secondMomentWeight[i][j]) + (1 - beta2) * (weightGradients[i][j] ** 2)
 
-            firstMomentWeightHat = firstMomentWeight[i] / (1 - beta1 ** timeStamp)
-            secondMomentWeightHat = secondMomentWeight[i] / (1 - beta2 ** timeStamp)
+                firstMomentWeightHat = firstMomentWeight[i][j] / (1 - beta1 ** timeStamp)
+                secondMomentWeightHat = secondMomentWeight[i][j] / (1 - beta2 ** timeStamp)
 
-            weights[i] -= alpha * firstMomentWeightHat / (np.sqrt(secondMomentWeightHat) + epsilon)
-        
+                weights[i][j] -= alpha * firstMomentWeightHat / (np.sqrt(secondMomentWeightHat) + epsilon)
+            
         for i in range(len(biases)):
-            firstMomentBias[i] = beta1 * firstMomentBias[i] + (1 - beta1) * biasGradients[i]
-            secondMomentBias[i] = beta2 * secondMomentBias[i] + (1 - beta2) * (biasGradients[i] ** 2)
+            for j in range(len(biases[i])):
+                firstMomentBias[i][j] = beta1 * np.array(firstMomentBias[i][j]) + (1 - beta1) * np.array(biasGradients[i][j])
+                secondMomentBias[i][j] = beta2 * np.array(secondMomentBias[i][j]) + (1 - beta2) * (np.array(biasGradients[i][j]) ** 2)
 
-            firstMomentBiasHat = firstMomentBias[i] / (1 - beta1 ** timeStamp)
-            secondMomentBiasHat = secondMomentBias[i] / (1 - beta2 ** timeStamp)
+                firstMomentBiasHat = firstMomentBias[i][j] / (1 - beta1 ** timeStamp)
+                secondMomentBiasHat = secondMomentBias[i][j] / (1 - beta2 ** timeStamp)
 
-            biases[i] -= alpha * firstMomentBiasHat / (np.sqrt(secondMomentBiasHat) + epsilon)
+                biases[i][j] -= alpha * firstMomentBiasHat / (np.sqrt(secondMomentBiasHat) + epsilon)
         return weights, biases, firstMomentWeight, firstMomentBias, secondMomentWeight, secondMomentBias
 
     def initialiseGradients(self, weights, biases):
         weightGradients, biasGradients = [], []
         for i in weights:
-            weightGradients.append(np.zeros_like(i))
+            w = []
+            for j in i:
+                w.append(np.zeros_like(j))
+            weightGradients.append(w)
         for i in biases:
-            biasGradients.append(np.zeros_like(i))
+            b = []
+            for j in i:
+                b.append(np.zeros_like(j))
+            biasGradients.append(b)
         return weightGradients, biasGradients
 
     def addGradients(self, weightGradients, biasGradients, w, b):
-        print(np.array(weightGradients[0]).shape)
-        print(np.array(weightGradients[1]).shape)
-        print(np.array(w[0]).shape)
         for i in range(len(weightGradients)):
-            weightGradients[i] += w[i]
-            weightGradients[i] = np.clip(weightGradients[i], -1, 1)
+            for j in range(len(weightGradients[i])):
+                weightGradients[i][j] += np.array(w[i][j])
+            #weightGradients[i] = np.clip(weightGradients[i], -1, 1)
+
         for i in range(len(biasGradients)):
-            biasGradients[i] += b[i].T
-            biasGradients[i] = np.clip(biasGradients[i], -1, 1)
+            for j in range(len(biasGradients[i])):
+                biasGradients[i][j] += np.array(b[i][j])
+            #biasGradients[i] = np.clip(biasGradients[i], -1, 1)
         return weightGradients, biasGradients
 
     def initialiseMoment(self, weights, biases):
         momentWeight = []
-        for i in weights:
-            momentWeight.append(np.zeros_like(i))
         momentBias = []
+        for i in weights:
+            w = []
+            for j in i:
+                w.append(np.zeros_like(j))
+            momentWeight.append(w)
         for i in biases:
-            momentBias.append(np.zeros_like(i))
-        return momentWeight, momentBias, momentWeight, momentBias
+            b = []
+            for j in i:
+                b.append(np.zeros_like(j))
+            momentBias.append(b)
+        return momentWeight, momentBias
 
     

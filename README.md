@@ -22,12 +22,12 @@ This project was developed to:
 
 **3. Training:**
 -   includes backpropagation for gradient calculation and parameter updates
--   ability to experiment with different optimization techniques.
+-   ability to experiment with different optimisation techniques.
 
 ## Highlights
 
 -   **Custom Architectures:** Define and train neural networks with fully customisable architectures
--   **Optimisation Algorithms:** Includes Gradient Descent, Schostatstic Gradient Descent and Adam optimiser for efficient training
+-   **Optimisation Algorithms:** Includes Gradient Descent, Stochastic Gradient Descent and Adam optimiser for efficient training
 -   **Loss and Activation Functions:** Prebuilt support for common loss and activation functions with the option to make your own
 -   **Layer Support:**
     -   Fully Connected (Dense)
@@ -113,7 +113,7 @@ print(f"Average loss: {averageLoss}")
 -   **Key Components:**
     -   Layers: Convolutional, pooling, dense and activation layers
     -   Functions: Forward propagation, backpropagation, flattening, global average pooling
-    -   Optimsers: SGD, GD, GD using batching
+    -   Optimsers: Adams optimiser, SGD, GD, GD using batching
 
 ## Benchmark
 
@@ -145,7 +145,7 @@ Below is the graph showing the training accuracy and loss over 10 epochs, across
 
 The library was benchmarked on the MNIST dataset using the following setup:
 
--   **Model Architecture:** 784 (input) → 128 → 64 → 10 (output)
+-   **Neural Network Model Architecture:** 784 (input) → 128 → 64 → 10 (output)
 -   **Activation Function:** Leaky Relu for input and hidden layer, and softmax for hidden layer
 -   **Optimiser:** Batches
 -   **Batch Size:** 64

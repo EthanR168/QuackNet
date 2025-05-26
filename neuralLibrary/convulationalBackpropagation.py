@@ -16,8 +16,8 @@ class CNNbackpropagation:
         the gradient of one pixel, is the summ of each error term multiplied by the flipped kernal 
         '''
 
-        kernalSize = len(kernals[0]) #all kernals are the same shape and squares
-        weightGradients = np.zeros_like(kernals) #kernals are the same size
+        kernalSize = self.kernalSize #all kernals are the same shape and squares
+        weightGradients = np.zeros((len(inputTensor), len(kernals), kernalSize, kernalSize)) #kernals are the same size
         outputHeight = len(inputTensor[0]) - kernalSize + 1
         outputWidth = len(inputTensor[0][0]) - kernalSize + 1
         for output in range(len(kernals)):
@@ -26,22 +26,22 @@ class CNNbackpropagation:
                     for j in range(0, outputWidth, stride):
                         kernal = inputTensor[layer][i: i + kernalSize, j: j + kernalSize]
                         kernal = kernal * errorPatch[output][i // stride][j // stride]
-                        weightGradients[:, :, layer, output] += kernal
+                        weightGradients[layer, output] += kernal
         
         biasGradients = np.zeros(len(kernals))
         for output in range(len(kernals)):
             biasGradients[output] = np.sum(errorPatch[output])
 
         inputErrorTerms = np.zeros_like(inputTensor)
-        kernalSize = len(kernals[0]) 
         for output in range(len(errorPatch)):
             for layer in range(len(inputTensor)):
-                flipped = kernal[output, layer, ::-1, ::-1]
+                flipped = kernals[output, layer, ::-1, ::-1]
                 for i in range(0, outputHeight, stride):
                     for j in range(0, outputWidth, stride):
                         errorKernal = errorPatch[output, i, j]
                         inputErrorTerms[layer, i: i + kernalSize, j: j + kernalSize] += errorKernal * flipped
         
+        weightGradients = np.transpose(weightGradients, (1, 0, 2, 3))
         return weightGradients, biasGradients, inputErrorTerms
             
     def MaxPoolingDerivative(self, errorPatch, inputTensor, sizeOfGrid, strideLength):

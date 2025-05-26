@@ -73,6 +73,15 @@ class CNNModel(CNNoptimiser):
                 self.weights.append(self.layers[i].NeuralNetworkClass.weights)
                 self.biases.append(self.layers[i].NeuralNetworkClass.biases)
 
+    def saveModel(self, weights, biases, filename = "modelWeights.npz"):
+        np.savez_compressed(filename, weights = weights, biases = biases)
+
+    def loadModel(self, filename = "modelWeights.npz"):
+        data = np.load(filename, allow_pickle = True)
+        weights = data["weights"]
+        biases = data["biases"]
+        return weights, biases
+
 class ConvLayer(ConvulationalNetwork, CNNbackpropagation):
     def __init__(self, kernalSize, depth, numKernals, stride, padding = "no"):
         self.kernalSize = kernalSize

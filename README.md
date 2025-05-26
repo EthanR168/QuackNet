@@ -58,12 +58,14 @@ This project was developed to:
     Benchmark against popular machine learning frameworks on MNIST library
 - [X] **Add Adams optimiser**  
     Implement the Adam optimiser to improve training performance and convergence
+- [X] **Data augmentation**
+    add data augmentation such as flipping, rotation and cropping
+- [X] **Input Data augmentation:**
+    add normalisation of pixels and one hot labels
 - [ ] **Skin Lesion detector**    
     use the neural network library to create a model for detecting skin lesions using HAM10000 for skin lesion images
 - [ ] **Additional activation functions**  
     implement advanced activation functions (eg. GELU and Swish)
-- [ ] **Data augmentation**
-    add data augmentation such as flipping, rotation and cropping
 
 ## Usage
 Here is an example of how to create and train a simple neural network using the library:

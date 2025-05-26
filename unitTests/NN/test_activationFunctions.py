@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from neuralLibrary.activationFunctions import relu, sigmoid, tanH, linear, softMax
+from quacknet.activationFunctions import relu, sigmoid, tanH, linear, softMax
 
 def test_relu():
     assert relu(-0.3, 0.01) == -0.003

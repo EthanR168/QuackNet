@@ -1,8 +1,8 @@
-from neuralLibrary.backPropgation import outputLayerWeightChange, hiddenLayerWeightChange, outputLayerBiasChange, hiddenLayerBiasChange, backPropgation
-from neuralLibrary.lossDerivativeFunctions import CrossEntropyLossDerivative, MSEDerivative
-from neuralLibrary.activationDerivativeFunctions import SoftMaxDerivative, ReLUDerivative, SigmoidDerivative, TanHDerivative, LinearDerivative
-from neuralLibrary.activationFunctions import relu, sigmoid, linear, softMax, tanH
-from neuralLibrary.lossFunctions import MSELossFunction, CrossEntropyLossFunction
+from quacknet.backPropgation import outputLayerWeightChange, hiddenLayerWeightChange, outputLayerBiasChange, hiddenLayerBiasChange, backPropgation
+from quacknet.lossDerivativeFunctions import CrossEntropyLossDerivative, MSEDerivative
+from quacknet.activationDerivativeFunctions import SoftMaxDerivative, ReLUDerivative, SigmoidDerivative, TanHDerivative, LinearDerivative
+from quacknet.activationFunctions import relu, sigmoid, linear, softMax, tanH
+from quacknet.lossFunctions import MSELossFunction, CrossEntropyLossFunction
 import numpy as np
 
 class TestNetwork_BackPropgation_Weights_Output:

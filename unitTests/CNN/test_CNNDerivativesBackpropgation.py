@@ -1,5 +1,5 @@
-from neuralLibrary.convulationalBackpropagation import CNNbackpropagation
-from neuralLibrary.convulationalManager import ConvLayer
+from quacknet.convulationalBackpropagation import CNNbackpropagation
+from quacknet.convulationalManager import ConvLayer
 import numpy as np
 
 def test_ConvulutionalDerivative():

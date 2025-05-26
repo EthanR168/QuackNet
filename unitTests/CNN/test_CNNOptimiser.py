@@ -1,4 +1,4 @@
-from neuralLibrary.convulationalOptimiser import CNNoptimiser
+from quacknet.convulationalOptimiser import CNNoptimiser
 import numpy as np
 
 def test_adamsWeightBiasUpdateWithoutBatches():

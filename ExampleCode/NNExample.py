@@ -1,4 +1,4 @@
-from neuralLibrary.main import Network
+from quacknet.main import Network
 
 # Define a neural network architecture
 n = Network(

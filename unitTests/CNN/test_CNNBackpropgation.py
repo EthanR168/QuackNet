@@ -1,9 +1,9 @@
-from neuralLibrary.convulationalManager import ConvLayer, PoolingLayer, ActivationLayer, DenseLayer
-from neuralLibrary.activationFunctions import relu, linear
-from neuralLibrary.activationDerivativeFunctions import ReLUDerivative, LinearDerivative
-from neuralLibrary.lossDerivativeFunctions import MSEDerivative
-from neuralLibrary.lossFunctions import MSELossFunction
-from neuralLibrary.main import Network
+from quacknet.convulationalManager import ConvLayer, PoolingLayer, ActivationLayer, DenseLayer
+from quacknet.activationFunctions import relu, linear
+from quacknet.activationDerivativeFunctions import ReLUDerivative, LinearDerivative
+from quacknet.lossDerivativeFunctions import MSEDerivative
+from quacknet.lossFunctions import MSELossFunction
+from quacknet.main import Network
 import numpy as np
 
 def test_ConvulutionalBackpropagation():

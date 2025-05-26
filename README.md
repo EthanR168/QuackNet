@@ -70,7 +70,7 @@ This project was developed to:
 ## Usage
 Here is an example of how to create and train a simple neural network using the library:
 ```python
-from neuralLibrary.main import Network
+from quacknet.main import Network
 
 # Define a neural network architecture
 n = Network(

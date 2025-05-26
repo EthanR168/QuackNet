@@ -7,7 +7,7 @@ train_labels = np.load('benchmarkFolder/MNISTBenchmark/data/train_labels.npy')  
 #test_images = np.load('benchmarkFolder/MNISTBenchmark/data/test_images.npy')   # Shape: (10000, 784)
 #test_labels = np.load('EbenchmarkFolder/MNISTBenchmark/data/test_labels.npy')    # Shape: (10000, 10)
 
-from neuralLibrary.main import Network
+from quacknet.main import Network
 
 def run(epochs, steps, skipInput = True):
     learningRate = 0.01

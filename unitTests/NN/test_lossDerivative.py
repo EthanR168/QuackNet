@@ -1,6 +1,6 @@
 import numpy as np
-from neuralLibrary.lossDerivativeFunctions import MSEDerivative, MAEDerivative, CrossEntropyLossDerivative
-from neuralLibrary.activationDerivativeFunctions import SoftMaxDerivative
+from quacknet.lossDerivativeFunctions import MSEDerivative, MAEDerivative, CrossEntropyLossDerivative
+from quacknet.activationDerivativeFunctions import SoftMaxDerivative
 
 def test_MSELossDerivative():
     assert np.allclose(MSEDerivative(np.array([0.5, 0.5]), np.array([1, 0]), 2), np.array([-0.5, 0.5]))

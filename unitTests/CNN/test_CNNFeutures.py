@@ -1,4 +1,4 @@
-from neuralLibrary.convulationalFeutures import ConvulationalNetwork
+from quacknet.convulationalFeutures import ConvulationalNetwork
 import numpy as np
 
 class Test_Padding:

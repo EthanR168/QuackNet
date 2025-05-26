@@ -1,5 +1,5 @@
-from neuralLibrary.convulationalManager import CNNModel, ConvLayer, PoolingLayer, DenseLayer, ActivationLayer
-from neuralLibrary.main import Network
+from quacknet.convulationalManager import CNNModel, ConvLayer, PoolingLayer, DenseLayer, ActivationLayer
+from quacknet.main import Network
 import numpy as np
 
 # Creating parameters for convulational layer

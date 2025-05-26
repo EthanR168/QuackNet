@@ -7,7 +7,7 @@ train_labels = np.load('ExampleCode/MNISTExample/data/train_labels.npy')  # Shap
 #test_images = np.load('ExampleCode/MNISTExample/data/test_images.npy')   # Shape: (10000, 784)
 #test_labels = np.load('ExampleCode/MNISTExample/data/test_labels.npy')    # Shape: (10000, 10)
 
-from neuralLibrary.main import Network
+from quacknet.main import Network
 
 def run(epochs, steps, skipInput):
     learningRate = 0.01

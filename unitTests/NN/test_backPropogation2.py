@@ -1,9 +1,9 @@
 import numpy as np
-from neuralLibrary.activationFunctions import relu, linear
-from neuralLibrary.backPropgation import backPropgation
-from neuralLibrary.activationDerivativeFunctions import ReLUDerivative, LinearDerivative
-from neuralLibrary.lossDerivativeFunctions import MSEDerivative
-from neuralLibrary.lossFunctions import MSELossFunction
+from quacknet.activationFunctions import relu, linear
+from quacknet.backPropgation import backPropgation
+from quacknet.activationDerivativeFunctions import ReLUDerivative, LinearDerivative
+from quacknet.lossDerivativeFunctions import MSEDerivative
+from quacknet.lossFunctions import MSELossFunction
 
 np.random.seed(55)
 

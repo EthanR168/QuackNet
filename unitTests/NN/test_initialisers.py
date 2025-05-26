@@ -1,5 +1,5 @@
-from neuralLibrary.initialisers import Initialisers
-from neuralLibrary.main import Network
+from quacknet.initialisers import Initialisers
+from quacknet.main import Network
 import numpy as np
 
 def test_initialiser():

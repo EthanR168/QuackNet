@@ -14,7 +14,7 @@ class CNNoptimiser:
                 allNodes.append(layerNodes)
                 w, b = self.backpropagation(layerNodes, batchLabels[j])
                 weightGradients, biasGradients = self.addGradients(weightGradients, biasGradients, w, b)
-            weights, biases, firstMomentWeight, firstMomentBias, secondMomentWeight, secondMomentBias = self.Adams(weightGradients, biasGradients, weights, biases, i + 1, firstMomentWeight, firstMomentBias, secondMomentWeight, secondMomentBias, alpha, beta1, beta2, epsilon)
+            weights, biases, firstMomentWeight, firstMomentBias, secondMomentWeight, secondMomentBias = self._Adams(weightGradients, biasGradients, weights, biases, i + 1, firstMomentWeight, firstMomentBias, secondMomentWeight, secondMomentBias, alpha, beta1, beta2, epsilon)
             weightGradients, biasGradients = self.initialiseGradients(weights, biases)
         return allNodes, weights, biases
 
@@ -28,11 +28,11 @@ class CNNoptimiser:
             allNodes.append(layerNodes)
             w, b = self.backpropagation(layerNodes, labels[i])
             weightGradients, biasGradients = self.addGradients(weightGradients, biasGradients, w, b)
-            weights, biases, firstMomentWeight, firstMomentBias, secondMomentWeight, secondMomentBias = self.Adams(weightGradients, biasGradients, weights, biases, i + 1, firstMomentWeight, firstMomentBias, secondMomentWeight, secondMomentBias, alpha, beta1, beta2, epsilon)
+            weights, biases, firstMomentWeight, firstMomentBias, secondMomentWeight, secondMomentBias = self._Adams(weightGradients, biasGradients, weights, biases, i + 1, firstMomentWeight, firstMomentBias, secondMomentWeight, secondMomentBias, alpha, beta1, beta2, epsilon)
             weightGradients, biasGradients = self.initialiseGradients(weights, biases)
         return allNodes, weights, biases
 
-    def Adams(self, weightGradients, biasGradients, weights, biases, timeStamp, firstMomentWeight, firstMomentBias, secondMomentWeight, secondMomentBias, alpha, beta1, beta2, epsilon):
+    def _Adams(self, weightGradients, biasGradients, weights, biases, timeStamp, firstMomentWeight, firstMomentBias, secondMomentWeight, secondMomentBias, alpha, beta1, beta2, epsilon):
         for i in range(len(weights)):
             for j in range(len(weights[i])):
                 firstMomentWeight[i][j] = beta1 * np.array(firstMomentWeight[i][j]) + (1 - beta1) * weightGradients[i][j]
@@ -59,12 +59,12 @@ class CNNoptimiser:
         for i in weights:
             w = []
             for j in i:
-                w.append(np.zeros_like(j))
+                w.append(np.zeros_like(j, dtype=np.float64))
             weightGradients.append(w)
         for i in biases:
             b = []
             for j in i:
-                b.append(np.zeros_like(j))
+                b.append(np.zeros_like(j, dtype=np.float64))
             biasGradients.append(b)
         return weightGradients, biasGradients
 

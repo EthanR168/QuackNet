@@ -74,7 +74,9 @@ class CNNModel(CNNoptimiser):
                 self.biases.append(self.layers[i].NeuralNetworkClass.biases)
 
     def saveModel(self, weights, biases, filename = "modelWeights.npz"):
-        np.savez_compressed(filename, weights = weights, biases = biases)
+        weights = np.array(weights, dtype=object)
+        biases = np.array(biases, dtype=object)
+        np.savez_compressed(filename, weights = weights, biases = biases, allow_pickle = True)
 
     def loadModel(self, filename = "modelWeights.npz"):
         data = np.load(filename, allow_pickle = True)

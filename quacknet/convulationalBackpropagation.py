@@ -21,26 +21,35 @@ class CNNbackpropagation:
         #outputHeight = len(inputTensor[0]) - kernalSize + 1
         #outputWidth = len(inputTensor[0][0]) - kernalSize + 1
         outputHeight, outputWidth = errorPatch.shape[1], errorPatch.shape[2]
+        #for output in range(len(kernals)):
+        #    for layer in range(len(inputTensor)):
+        #        for i in range(0, outputHeight, stride):
+        #            for j in range(0, outputWidth, stride):
+        #                kernal = inputTensor[layer][i: i + kernalSize, j: j + kernalSize]
+        #                kernal = kernal * errorPatch[output][i // stride][j // stride]
+        #                weightGradients[layer, output] += kernal
+        
         for output in range(len(kernals)):
             for layer in range(len(inputTensor)):
-                for i in range(0, outputHeight, stride):
-                    for j in range(0, outputWidth, stride):
-                        kernal = inputTensor[layer][i: i + kernalSize, j: j + kernalSize]
-                        kernal = kernal * errorPatch[output][i // stride][j // stride]
-                        weightGradients[layer, output] += kernal
+                for i in range(outputHeight):
+                    for j in range(outputWidth):
+                        kernal = inputTensor[layer, i * stride: i * stride + kernalSize, j * stride: j * stride + kernalSize]
+                        weightGradients[layer, output] += kernal * errorPatch[output, i, j]
         
-        biasGradients = np.zeros(len(kernals))
-        for output in range(len(kernals)):
-            biasGradients[output] = np.sum(errorPatch[output])
+        #biasGradients = np.zeros(len(kernals))
+        #for output in range(len(kernals)):
+        #    biasGradients[output] = np.sum(errorPatch[output])
+
+        biasGradients = np.sum(errorPatch, axis=(1, 2))
 
         inputErrorTerms = np.zeros_like(inputTensor)
         for output in range(len(errorPatch)):
             for layer in range(len(inputTensor)):
                 flipped = kernals[output, layer, ::-1, ::-1]
                 for i in range(outputHeight):
+                    inputI = i * stride
                     for j in range(outputWidth):
                         errorKernal = errorPatch[output, i, j]
-                        inputI = i * stride
                         inputJ = j * stride
                         inputErrorTerms[layer, inputI: inputI + kernalSize, inputJ: inputJ + kernalSize] += errorKernal * flipped
         
@@ -62,24 +71,25 @@ class CNNbackpropagation:
                     indexMax = np.argmax(gridOfValues)
                     maxX, maxY = divmod(indexMax, sizeOfGrid)
 
-                    newValues = np.zeros((sizeOfGrid, sizeOfGrid))
-                    newValues[maxX, maxY] = 1
+                    #newValues = np.zeros((sizeOfGrid, sizeOfGrid))
+                    #newValues[maxX, maxY] = 1
+                    #inputGradient[image, indexX: indexX + sizeOfGrid, indexY: indexY + sizeOfGrid] += newValues * errorPatch[image, x, y]
 
-                    inputGradient[image, indexX: indexX + sizeOfGrid, indexY: indexY + sizeOfGrid] += newValues * errorPatch[image, x, y]
+                    inputGradient[image, indexX + maxX, indexY + maxY] += errorPatch[image, x, y]
         return inputGradient
 
     def AveragePoolingDerivative(self, errorPatch, inputTensor, sizeOfGrid, strideLength):
-        inputGradient = np.zeros_like(inputTensor, dtype=np.float64)
+        inputGradient = np.zeros_like(inputTensor, dtype=np.float32)
         outputHeight = (inputTensor.shape[1] - sizeOfGrid) // strideLength + 1
         outputWidth = (inputTensor.shape[2] - sizeOfGrid) // strideLength + 1
+        avgMultiplier = 1 / (sizeOfGrid ** 2)
         for image in range(len(inputTensor)): # tensor is a 3d structures, so it is turning it into a 2d array (eg. an layer or image)
             for x in range(outputHeight):
                 for y in range(outputWidth):
                     indexX = x * strideLength
                     indexY = y * strideLength
-                    
-                    newValues = np.ones((sizeOfGrid, sizeOfGrid)) * errorPatch[image, x, y] / (sizeOfGrid ** 2)
-
+                    #newValues = np.ones((sizeOfGrid, sizeOfGrid)) * errorPatch[image, x, y] / (sizeOfGrid ** 2)
+                    newValues = errorPatch[image, x, y] * avgMultiplier
                     inputGradient[image, indexX: indexX + sizeOfGrid, indexY: indexY + sizeOfGrid] += newValues 
         return inputGradient
     

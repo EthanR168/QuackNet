@@ -18,8 +18,9 @@ class CNNbackpropagation:
 
         kernalSize = self.kernalSize #all kernals are the same shape and squares
         weightGradients = np.zeros((len(inputTensor), len(kernals), kernalSize, kernalSize)) #kernals are the same size
-        outputHeight = len(inputTensor[0]) - kernalSize + 1
-        outputWidth = len(inputTensor[0][0]) - kernalSize + 1
+        #outputHeight = len(inputTensor[0]) - kernalSize + 1
+        #outputWidth = len(inputTensor[0][0]) - kernalSize + 1
+        outputHeight, outputWidth = errorPatch.shape[1], errorPatch.shape[2]
         for output in range(len(kernals)):
             for layer in range(len(inputTensor)):
                 for i in range(0, outputHeight, stride):
@@ -36,13 +37,16 @@ class CNNbackpropagation:
         for output in range(len(errorPatch)):
             for layer in range(len(inputTensor)):
                 flipped = kernals[output, layer, ::-1, ::-1]
-                for i in range(0, outputHeight, stride):
-                    for j in range(0, outputWidth, stride):
+                for i in range(outputHeight):
+                    for j in range(outputWidth):
                         errorKernal = errorPatch[output, i, j]
-                        inputErrorTerms[layer, i: i + kernalSize, j: j + kernalSize] += errorKernal * flipped
+                        inputI = i * stride
+                        inputJ = j * stride
+                        inputErrorTerms[layer, inputI: inputI + kernalSize, inputJ: inputJ + kernalSize] += errorKernal * flipped
         
         weightGradients = np.transpose(weightGradients, (1, 0, 2, 3))
         return weightGradients, biasGradients, inputErrorTerms
+            
             
     def MaxPoolingDerivative(self, errorPatch, inputTensor, sizeOfGrid, strideLength):
         inputGradient = np.zeros_like(inputTensor, dtype=np.float64)

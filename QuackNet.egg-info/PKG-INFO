@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: QuackNet
-Version: 0.3
+Version: 0.4
 Summary: A lightweight educational neural network library
 Home-page: https://github.com/SirQuackPng/QuackNet
 Requires-Python: >=3.7

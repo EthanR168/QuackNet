@@ -89,7 +89,7 @@ def test_GlobalAveragePooling():
     assert np.allclose(errorTerm, expectedInputErrorTerms)
 
 def test_ActivationLayer():
-    from neuralLibrary.activationDerivativeFunctions import ReLUDerivative
+    from quacknet.activationDerivativeFunctions import ReLUDerivative
     inputTensor = np.array([[
         [1, -3, 2, -4],
         [2, -4, -1, 3],

@@ -1,7 +1,7 @@
-from .convulationalFeutures import ConvulationalNetwork
-from .convulationalBackpropagation import CNNbackpropagation
-from .activationDerivativeFunctions import ReLUDerivative
-from .convulationalOptimiser import CNNoptimiser
+from quacknet.convulationalFeutures import ConvulationalNetwork
+from quacknet.convulationalBackpropagation import CNNbackpropagation
+from quacknet.activationDerivativeFunctions import ReLUDerivative
+from quacknet.convulationalOptimiser import CNNoptimiser
 import numpy as np
 
 class CNNModel(CNNoptimiser):

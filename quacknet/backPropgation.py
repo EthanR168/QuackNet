@@ -1,7 +1,7 @@
-from .activationFunctions import relu, sigmoid, tanH, linear, softMax
-from .activationDerivativeFunctions import ReLUDerivative, SigmoidDerivative, TanHDerivative, LinearDerivative, SoftMaxDerivative
-from .lossDerivativeFunctions import MSEDerivative, MAEDerivative, CrossEntropyLossDerivative
-from .lossFunctions import MSELossFunction, MAELossFunction, CrossEntropyLossFunction
+from quacknet.activationFunctions import relu, sigmoid, tanH, linear, softMax
+from quacknet.activationDerivativeFunctions import ReLUDerivative, SigmoidDerivative, TanHDerivative, LinearDerivative, SoftMaxDerivative
+from quacknet.lossDerivativeFunctions import MSEDerivative, MAEDerivative, CrossEntropyLossDerivative
+from quacknet.lossFunctions import MSELossFunction, MAELossFunction, CrossEntropyLossFunction
 import numpy as np
 
 '''

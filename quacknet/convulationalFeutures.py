@@ -45,15 +45,14 @@ class ConvulationalNetwork:
             output = np.zeros((outputHeight, outputWidth))
             kernal = kernalsWeights[i]
             biases = kernalsBiases[i]
-            for layer in range(len(imageTensor)):
-                for x in range(outputHeight):
-                    for y in range(outputWidth):
-                        indexX = x * strideLength
-                        indexY = y * strideLength
-                        gridOfValues = imageTensor[layer, indexX: indexX + sizeOfGrid, indexY: indexY + sizeOfGrid] # 2d grid
-                        dotProduct = np.sum(gridOfValues * kernal) # + biases
-                        output[x, y] += dotProduct
-            output = output + biases
+            for x in range(outputHeight):
+                indexX = x * strideLength
+                for y in range(outputWidth):
+                    indexY = y * strideLength
+                    gridOfValues = imageTensor[:, indexX: indexX + sizeOfGrid, indexY: indexY + sizeOfGrid] # 2d grid
+                    dotProduct = np.sum(gridOfValues * kernal) 
+                    output[x, y] = dotProduct + biases
+                    
             tensorKernals.append(output)
         return np.stack(tensorKernals, axis = 0) #tensorKernals = (outputHeight, outputWidth, numberOfKernals)
                     
@@ -62,9 +61,15 @@ class ConvulationalNetwork:
         return np.maximum(inputTensor, inputTensor * alpha)
 
     def pooling(self, inputTensor, sizeOfGrid = 2, strideLength = 2, typeOfPooling = "max"):
-        if(typeOfPooling == "global" or typeOfPooling == "gap"):
+        if(typeOfPooling.lower()== "global" or typeOfPooling.lower() == "gap"):
             return self.poolingGlobalAverage(inputTensor)
         tensorPools = []
+
+        if(typeOfPooling.lower() == "max"):
+            poolFunc = np.max
+        else:
+            poolFunc = np.mean
+
         for image in inputTensor: # tensor is a 3d structures, so it is turning it into a 2d array (eg. an layer or image)
             outputHeight = (image.shape[0] - sizeOfGrid) // strideLength + 1
             outputWidth = (image.shape[1] - sizeOfGrid) // strideLength + 1
@@ -74,11 +79,7 @@ class ConvulationalNetwork:
                     indexX = x * strideLength
                     indexY = y * strideLength
                     gridOfValues = image[indexX: indexX + sizeOfGrid, indexY: indexY + sizeOfGrid]
-                    if(typeOfPooling == "max"):
-                        value = np.max(gridOfValues)
-                    else:
-                        value = np.mean(gridOfValues)
-                    output[x, y] = value
+                    output[x, y] = poolFunc(gridOfValues)
             tensorPools.append(output)
         return np.array(tensorPools)
     

@@ -1,11 +1,11 @@
 from . import backPropgation
-from .activationFunctions import relu, sigmoid, tanH, linear, softMax
-from .lossFunctions import MSELossFunction, MAELossFunction, CrossEntropyLossFunction
-from .optimisers import Optimisers
-from .initialisers import Initialisers
-from .writeAndReadWeightBias import writeAndRead
-from .convulationalManager import CNNModel
-from .dataAugmentation import Augementation
+from quacknet.activationFunctions import relu, sigmoid, tanH, linear, softMax
+from quacknet.lossFunctions import MSELossFunction, MAELossFunction, CrossEntropyLossFunction
+from quacknet.optimisers import Optimisers
+from quacknet.initialisers import Initialisers
+from quacknet.writeAndReadWeightBias import writeAndRead
+from quacknet.convulationalManager import CNNModel
+from quacknet.dataAugmentation import Augementation
 import numpy as np
 import matplotlib.pyplot as plt
 

@@ -13,9 +13,10 @@ class CNNoptimiser:
                 layerNodes = self.forward(batchData[j])
                 allNodes.append(layerNodes)
                 w, b = self.backpropagation(layerNodes, batchLabels[j])
-                weightGradients, biasGradients = self.addGradients(weightGradients, biasGradients, w, b)
+                weightGradients, biasGradients = self.addGradients(batchSize, weightGradients, biasGradients, w, b)
             weights, biases, firstMomentWeight, firstMomentBias, secondMomentWeight, secondMomentBias = self._Adams(weightGradients, biasGradients, weights, biases, i + 1, firstMomentWeight, firstMomentBias, secondMomentWeight, secondMomentBias, alpha, beta1, beta2, epsilon)
             weightGradients, biasGradients = self.initialiseGradients(weights, biases)
+            print(f"finished batch: {(i // batchSize) + 1}/{len(inputData) // batchSize}")
         return allNodes, weights, biases
 
     def AdamsOptimiserWithoutBatches(self, inputData, labels, weights, biases, alpha, beta1, beta2, epsilon):
@@ -27,7 +28,7 @@ class CNNoptimiser:
             layerNodes = self.forward(inputData[i])
             allNodes.append(layerNodes)
             w, b = self.backpropagation(layerNodes, labels[i])
-            weightGradients, biasGradients = self.addGradients(weightGradients, biasGradients, w, b)
+            weightGradients, biasGradients = self.addGradients(1, weightGradients, biasGradients, w, b)
             weights, biases, firstMomentWeight, firstMomentBias, secondMomentWeight, secondMomentBias = self._Adams(weightGradients, biasGradients, weights, biases, i + 1, firstMomentWeight, firstMomentBias, secondMomentWeight, secondMomentBias, alpha, beta1, beta2, epsilon)
             weightGradients, biasGradients = self.initialiseGradients(weights, biases)
         return allNodes, weights, biases
@@ -68,15 +69,15 @@ class CNNoptimiser:
             biasGradients.append(b)
         return weightGradients, biasGradients
 
-    def addGradients(self, weightGradients, biasGradients, w, b):
+    def addGradients(self, batchSize, weightGradients, biasGradients, w, b):
         for i in range(len(weightGradients)):
             for j in range(len(weightGradients[i])):
-                weightGradients[i][j] += np.array(w[i][j])
+                weightGradients[i][j] += np.array(w[i][j]) / batchSize
             #weightGradients[i] = np.clip(weightGradients[i], -1, 1)
 
         for i in range(len(biasGradients)):
             for j in range(len(biasGradients[i])):
-                biasGradients[i][j] += np.array(b[i][j])
+                biasGradients[i][j] += np.array(b[i][j]) / batchSize
             #biasGradients[i] = np.clip(biasGradients[i], -1, 1)
         return weightGradients, biasGradients
 

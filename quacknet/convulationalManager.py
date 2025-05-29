@@ -73,16 +73,33 @@ class CNNModel(CNNoptimiser):
                 self.weights.append(self.layers[i].NeuralNetworkClass.weights)
                 self.biases.append(self.layers[i].NeuralNetworkClass.biases)
 
-    def saveModel(self, weights, biases, filename = "modelWeights.npz"):
-        weights = np.array(weights, dtype=object)
-        biases = np.array(biases, dtype=object)
-        np.savez_compressed(filename, weights = weights, biases = biases, allow_pickle = True)
+    def saveModel(self, NNweights, NNbiases, CNNweights, CNNbiases, filename = "modelWeights.npz"):
+        CNNweights = np.array(CNNweights, dtype=object)
+        CNNbiases = np.array(CNNbiases, dtype=object)
+        NNweights = np.array(NNweights, dtype=object)
+        NNbiases = np.array(NNbiases, dtype=object)
+        np.savez_compressed(filename, CNNweights = CNNweights, CNNbiases = CNNbiases, NNweights = NNweights, NNbiases = NNbiases, allow_pickle = True)
 
-    def loadModel(self, filename = "modelWeights.npz"):
+    def loadModel(self, neuralNetwork, filename = "modelWeights.npz"):
         data = np.load(filename, allow_pickle = True)
-        weights = data["weights"]
-        biases = data["biases"]
-        return weights, biases
+        CNNweights = data["CNNweights"]
+        CNNbiases = data["CNNbiases"]
+        NNweights = data["NNweights"]
+        NNbiases = data["NNbiases"]
+
+        self.layers[-1].NeuralNetworkClass.weights = NNweights
+        self.layers[-1].NeuralNetworkClass.biases = NNbiases
+        neuralNetwork.weights = NNweights
+        neuralNetwork.biases = NNbiases
+        self.weights = CNNweights
+        self.biases = CNNbiases
+
+        currWeightIndex = 0
+        for i in range(len(self.layers)):
+            if(type(self.layers[i]) == ConvLayer):
+                self.layers[i].kernalWeights = CNNweights[currWeightIndex]
+                self.layers[i].kernalBiases = CNNbiases[currWeightIndex]
+                currWeightIndex += 1
 
 class ConvLayer(ConvulationalNetwork, CNNbackpropagation):
     def __init__(self, kernalSize, depth, numKernals, stride, padding = "no"):

@@ -14,6 +14,7 @@ def linear(values): #Dont use too demanding on CPU
     return values
 
 def softMax(values): 
+    values = np.array(values, dtype=np.float64)
     maxVal = np.max(values)
     values = values - maxVal
     summ = np.sum(np.exp(values))

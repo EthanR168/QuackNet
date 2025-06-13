@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='QuackNet',
-    version='0.7',
+    version='0.9',
     description='A lightweight educational neural network library',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',

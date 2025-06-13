@@ -177,3 +177,12 @@ The library was benchmarked on the MNIST dataset using the following setup:
 Below is the graph showing the training accuracy and loss over 10 epochs, across 5 runs:
 
 ![Training Accuaracy](benchmarkFolder/MNISTBenchmark/frameworkBenchmark.png)
+
+## Related Projects
+
+### Skin Lesion Detector
+
+A convolutional neural network (CNN) based skin lesion classification model, trained using the HAM10000 dataset. This model acheived 60.2% accuracy on a balanced validation set.
+
+You can exlpore the full project here:
+[Skin Lesion Detector Repository](https://github.com/SirQuackPng/skinLesionDetector)

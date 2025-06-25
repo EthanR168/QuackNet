@@ -25,6 +25,18 @@ Neural Network:
 
 class ConvulationalNetwork:
     def padImage(self, inputTensor, kernalSize, strideLength, typeOfPadding): #pads image
+        """
+        Pads each image in the input tensor.
+
+        Args:
+            inputTensor (ndarray): A 3D array representing the images with shape (number of images, height, width).
+            kernalSize (int): The size of the covolution kernel (assumed it is a square).
+            strideLength (int): The stride length for convolution.
+            typeOfPadding (int): The value used for padding the images.
+        
+        Returns:
+            ndarray: A 3D array of padded images.
+        """
         paddingTensor = []
         for image in inputTensor:
             paddingSize = math.ceil(((strideLength - 1) * len(image) - strideLength + kernalSize) / 2)
@@ -34,6 +46,21 @@ class ConvulationalNetwork:
         return np.array(paddingTensor)
 
     def kernalisation(self, inputTensor, kernalsWeights, kernalsBiases, sizeOfGrid = 2, usePadding = True, typeOfPadding= 0, strideLength = 2):
+        """
+        Performs the convolution operation on the input tensor.
+
+        Args:
+            inputTensor (ndarray): A 3D array representing the images with shape (number of images, height, width).
+            kernalsWeights (ndarray): A 4D array containing weights of the convolution kernels.
+            kernalsWeights (ndarray): A 1D array containing biases for each kernels.
+            sizeOfGrid (int, optional): The size of the covolution grid. Default is 2.
+            usePadding (bool, optional): Whether to pad the input images. Default is True.
+            typeOfPadding (int, optional): The value used for padding. Defaults to 0.
+            strideLength (int): The stride length for convolution. Defaults to 2.
+
+        Returns:
+            ndarray: A 3D array of feuture maps with shape.
+        """
         tensorKernals = []
         if(usePadding == True):
             imageTensor = self.padImage(inputTensor, sizeOfGrid, strideLength, typeOfPadding)
@@ -57,10 +84,31 @@ class ConvulationalNetwork:
         return np.stack(tensorKernals, axis = 0) #tensorKernals = (outputHeight, outputWidth, numberOfKernals)
                     
     def activation(self, inputTensor):
+        """
+        Applies the Leaky ReLU activation function to the input tensor.
+
+        Args:
+            inputTensor (ndarray): A 3D array representing the input.
+        
+        Returns:
+            ndarray: A tensor with the same shape as the input with Leaky ReLU applied to it.
+        """
         alpha = 0.01
         return np.maximum(inputTensor, inputTensor * alpha)
 
     def pooling(self, inputTensor, sizeOfGrid = 2, strideLength = 2, typeOfPooling = "max"):
+        """
+        Applies pooling (max or average) to reduce the size of the batch of inputs.
+
+        Args:
+            inputTensor (ndarray): A 3D array representing the images with shape (number of images, height, width).
+            sizeOfGrid (int, optional): The size of the pooling grid. Default is 2.
+            strideLength (int, optional): The stride length for pooling. Defult is 2.
+            typeOfPadding (int, optional): The type of pooling to apply ('max', 'min', 'global'), Defaults to "max".
+
+        Returns:
+            ndarray: A 3D array of feuture maps with reduced shape.
+        """
         if(typeOfPooling.lower()== "global" or typeOfPooling.lower() == "gap"):
             return self.poolingGlobalAverage(inputTensor)
         tensorPools = []
@@ -84,8 +132,26 @@ class ConvulationalNetwork:
         return np.array(tensorPools)
     
     def poolingGlobalAverage(self, inputTensor):
+        """
+        Performs global average pooling, reducing each feuture map to a single value.
+
+        Args:
+            inputTensor (ndarray): A 3D array representing the images with shape (number of images, height, width).
+        
+        Returns:
+            ndarray: A 2D array containing global averages for each feuture map.
+        """
         output = np.mean(inputTensor, axis = (1, 2))
         return output
 
     def flatternTensor(self, inputTensor):
+        """
+        Flattens a tensor into a 1D array.
+
+        Args:
+            inputTensor (ndarray): A tensor of any shape.
+        
+        Returns:
+            ndarray: A 1D array containing every element of the input tensor.
+        """
         return np.array(inputTensor).reshape(-1)

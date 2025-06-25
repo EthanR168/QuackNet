@@ -2,6 +2,25 @@ import numpy as np
 
 class CNNoptimiser:
     def AdamsOptimiserWithBatches(self, inputData, labels, weights, biases, batchSize, alpha, beta1, beta2, epsilon):
+        """
+        Performs Adam optimisation on the CNN weights and biases using mini batches.
+
+        Args:
+            inputData (ndarray): All the training data.
+            labels (ndarray): All the true labels for the training data.
+            weights (list of ndarray): Current weights of the CNN layers.
+            biases (list of ndarray): Current biases of the CNN layers.
+            batchSize (int): Size of batches.
+            alpha (float): Learning rate.
+            beta1 (float): Decay rate for the first moment.
+            beta2 (float): Decay rate for the second moment. 
+            epsilon (float): Small constant to avoid division by zero.
+        
+        Returns: 
+            allNodes (list): List of layers for each input processed.
+            weights (list of ndarray): Updated weights after optimisation.
+            biases (list of ndarray): Updated biases after optimisation.
+        """
         firstMomentWeight, firstMomentBias = self.initialiseMoment(weights, biases)
         secondMomentWeight, secondMomentBias = self.initialiseMoment(weights, biases)
         weightGradients, biasGradients = self.initialiseGradients(weights, biases)
@@ -20,6 +39,24 @@ class CNNoptimiser:
         return allNodes, weights, biases
 
     def AdamsOptimiserWithoutBatches(self, inputData, labels, weights, biases, alpha, beta1, beta2, epsilon):
+        """
+        Performs Adam optimisation on the CNN weights and biases without using batches.
+
+        Args:
+            inputData (ndarray): All the training data.
+            labels (ndarray): All the true labels for the training data.
+            weights (list of ndarray): Current weights of the CNN layers.
+            biases (list of ndarray): Current biases of the CNN layers.
+            alpha (float): Learning rate.
+            beta1 (float): Decay rate for the first moment.
+            beta2 (float): Decay rate for the second moment. 
+            epsilon (float): Small constant to avoid division by zero.
+        
+        Returns: 
+            allNodes (list): List of layers for each input processed.
+            weights (list of ndarray): Updated weights after optimisation.
+            biases (list of ndarray): Updated biases after optimisation.
+        """
         firstMomentWeight, firstMomentBias = self.initialiseMoment(weights, biases)
         secondMomentWeight, secondMomentBias = self.initialiseMoment(weights, biases)
         weightGradients, biasGradients = self.initialiseGradients(weights, biases)
@@ -34,6 +71,32 @@ class CNNoptimiser:
         return allNodes, weights, biases
 
     def _Adams(self, weightGradients, biasGradients, weights, biases, timeStamp, firstMomentWeight, firstMomentBias, secondMomentWeight, secondMomentBias, alpha, beta1, beta2, epsilon):
+        """
+        Performs a single Adam optimisation update on weights and biases.
+
+        Args:
+            weightGradients (list of ndarray): Gradients of the weights.
+            biasGradients (list of ndarray): Gradients of the biases.
+            weights (list of ndarray): Current weights.
+            biases (list of ndarray): Current biases.
+            timeStamp (int): The current time step, used for bias correction.
+            firstMomentWeight (list of ndarray): First moment estimates for weights.
+            firstMomentBias (list of ndarray): First moment estimates for biases.
+            secondMomentWeight (list of ndarray): Second moment estimates for weights.
+            secondMomentBias (list of ndarray): Second moment estimates for biases.
+            alpha (float): Learning rate.
+            beta1 (float): Decay rate for the first moment.
+            beta2 (float): Decay rate for the second moment. 
+            epsilon (float): Small constant to avoid division by zero.
+        
+        Returns: 
+            weights (list of ndarray): Updated weights after optimisation.
+            biases (list of ndarray): Updated biases after optimisation.
+            firstMomentWeight (list of ndarray): Updated firstMomentWeight after optimisation.
+            firstMomentBias (list of ndarray): Updated firstMomentBias after optimisation.
+            secondMomentWeight (list of ndarray): Updated secondMomentWeight after optimisation.
+            secondMomentBias (list of ndarray): Updated secondMomentBias after optimisation.
+        """
         for i in range(len(weights)):
             for j in range(len(weights[i])):
                 firstMomentWeight[i][j] = beta1 * np.array(firstMomentWeight[i][j]) + (1 - beta1) * weightGradients[i][j]
@@ -56,6 +119,17 @@ class CNNoptimiser:
         return weights, biases, firstMomentWeight, firstMomentBias, secondMomentWeight, secondMomentBias
 
     def initialiseGradients(self, weights, biases):
+        """
+        Initialise the weight and bias gradients as zero arrays with the same shape as weights and biases.
+
+        Args:
+            weights (list of ndarray): The weights of the CNN layers.
+            biases (list of ndarray): The biases of the CNN layers.
+
+        Returns:
+            weightGradients (list of ndarray): Initialised gradients for weights.
+            biasGradients (list of ndarray): Initialised gradients for biases.
+        """
         weightGradients, biasGradients = [], []
         for i in weights:
             w = []
@@ -70,6 +144,20 @@ class CNNoptimiser:
         return weightGradients, biasGradients
 
     def addGradients(self, batchSize, weightGradients, biasGradients, w, b):
+        """
+        Adds gardients from a batch to the accumulated gradients.
+
+        Args:
+            batchSize (int): Number of samples in the current batch.
+            weightGradients (list of ndarray): Accumulated weight gradients.
+            biasGradients (list of ndarray): Accumulated bias gradients. 
+            w (list of ndarray): Gradients of the weights from the current batch.
+            b (list of ndarray): Gradients of the biases from the current batch.
+        
+        Returns:
+            weightGradients (list of ndarray): Updated accumulated weight gradients.
+            biasGradients (list of ndarray): Updated accumulated bias gradients. 
+        """
         for i in range(len(weightGradients)):
             for j in range(len(weightGradients[i])):
                 weightGradients[i][j] += np.array(w[i][j]) / batchSize
@@ -82,6 +170,17 @@ class CNNoptimiser:
         return weightGradients, biasGradients
 
     def initialiseMoment(self, weights, biases):
+        """
+        Initialise the first and second moment estimates for Adam optimiser as zero arrays matching weights and biases.
+
+        Args:
+            weights (list of ndarray): The weights of the CNN layers.
+            biases (list of ndarray): The biases of the CNN layers.
+
+        Returns:
+            momentWeight (list of ndarray): Initialised moments for weights.
+            momentBias (list of ndarray): Initialised moments for biases.
+        """
         momentWeight = []
         momentBias = []
         for i in weights:

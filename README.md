@@ -1,6 +1,6 @@
 # QuackNet
 
-The **QuackNet** is a python based library designed for building and training neural networks and convolutional networks from scratch. It offers foundational implementations of key components such as forward propagation, backpropagation and optimisation algorithms, without relying on machine learning frameworks like TensorFlow or Pytorch
+**QuackNet** is a python based building and training neural networks and convolutional networks entirely from scratch. It offers foundational implementations of key components such as forward propagation, backpropagation and optimisation algorithms, without relying on machine learning frameworks like TensorFlow or Pytorch
 
 ## Why this Library?
 
@@ -10,10 +10,19 @@ This project was developed to:
 -   **Provide a lightweight alternative** to large scale frameworks for educational purposes
 -   **Offer flexibility** for experimentation with custom architectures
 
-## Features
+## Installation
+
+QuackNet is simple to install via PyPI.
+
+**Install via PyPI**
+```
+pip install QuackNet
+```
+
+## Key Features
 
 **1. Custom Implementation:**
--   Fully handwritten implementations for neural network layers, activation functions and loss functions.
+-   Fully handwritten layers, activation functions and loss functions.
 -   No reliance on external libraries for machine learning (except for numpy)
 
 **2. Core neural network functionality:**
@@ -22,7 +31,21 @@ This project was developed to:
 
 **3. Training:**
 -   includes backpropagation for gradient calculation and parameter updates
--   ability to experiment with different optimisation techniques.
+-   Optimisers: Gradient Descent, Stochastic Gradient Descent (SGD), and Adam.
+-   Supports batching for efficient training.
+
+**4. Layer Support:**
+-   Fully Connected Layer (Dense)
+-   Convolutional
+-   Pooling (Max and Average)
+-   Global Average Pooling
+-   Activation Layers
+
+**5. Additional Features:**
+-   Save and load model weights and biases.
+-   Evaluation metrics including accuracy and loss.
+-   Visualisation tools for training progress.
+-   Demo projects like MNIST and HAM10000 classification.
 
 ## Highlights
 
@@ -123,7 +146,7 @@ The library was benchmarked on the MNIST dataset using the following setup:
 
 -   **Model Architecture:** 784 (input) → 128 → 64 → 10 (output)
 -   **Activation Function:** Leaky Relu for input and hidden layer, and softmax for hidden layer
--   **Optimiser:** Batches
+-   **Optimiser:** Gradient Descent with Batches
 -   **Batch Size:** 64
 -   **Learning rate:** 0.01
 -   **Epochs** 10

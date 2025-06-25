@@ -11,3 +11,4 @@ benchmarkFolder/MNISTBenchmark/WeightsAndBiases
 unitTests/CNN/__pycache__
 unitTests/NN/__pycache__
 .coverage
+quacknet/__pycache__/

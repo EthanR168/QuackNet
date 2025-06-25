@@ -43,6 +43,20 @@ r = learning rate
 '''
 
 def outputLayerWeightChange(lossDerivative, activationDerivative, currentLayerNodes, pastLayerNodes, trueValues): 
+    """
+    Calculate the weight gradients and error terms for the output layer during backpropagation.
+
+    Args:
+        lossDerivative (function): Derivative function of the loss function.
+        activationDerivative (function): Derivative function of the activation function.
+        currentLayerNodes (ndarray): Output values of the current (output) layer.
+        pastLayerNodes (ndarray): Output values of the previous layer.
+        trueValues (ndarray): True target values for the output.
+    
+    Returns:
+        weightGradients (ndarray): Gradient of the loss with respect to the weight.
+        errorTerms (ndarray): Error terms for the output layer nodes.
+    """
     if(activationDerivative == SoftMaxDerivative and lossDerivative == CrossEntropyLossDerivative):
         errorTerms = currentLayerNodes - trueValues
     else:
@@ -52,11 +66,38 @@ def outputLayerWeightChange(lossDerivative, activationDerivative, currentLayerNo
     return weightGradients, errorTerms
 
 def hiddenLayerWeightChange(pastLayerErrorTerms, pastLayerWeights, activationDerivative, currentLayerNodes, pastLayerNodes):
+    """
+    Calculate the weight gradients and error terms for the hidden layer during backpropagation.
+
+    Args:
+        pastLayerErrorTerms (ndarray): Error terms for the next layer.
+        pastLayerWeights (ndarray): Weights connecting current layer to the next layer.
+        activationDerivative (function): Derivative function of the activation function for the current layer.
+        currentLayerNodes (ndarray): Output values of the current layer.
+        pastLayerNodes (ndarray): Output values of the previous layer.
+        
+    Returns:
+        weightGradients (ndarray): Gradient of the loss with respect to the weight.
+        errorTerms (ndarray): Error terms for the current layer nodes.
+    """   
     errorTerms = (pastLayerErrorTerms @ pastLayerWeights.T) * activationDerivative(currentLayerNodes)
     weightGradients = np.outer(pastLayerNodes, errorTerms)
     return weightGradients, errorTerms
 
 def outputLayerBiasChange(lossDerivative, activationDerivative, currentLayerNodes, trueValues):
+    """
+    Calculate the bias gradients and error terms for the output layer during backpropagation.
+
+    Args:
+        lossDerivative (function): Derivative function of the loss function.
+        activationDerivative (function): Derivative function of the activation function.
+        currentLayerNodes (ndarray): Output values of the current (output) layer.
+        trueValues (ndarray): True target values for the output.
+    
+    Returns:
+        biasGradients (ndarray): Gradient of the loss with respect to the biases.
+        errorTerms (ndarray): Error terms for the output layer nodes.
+    """
     if(activationDerivative == SoftMaxDerivative and lossDerivative == CrossEntropyLossDerivative):
         errorTerms = currentLayerNodes - trueValues
     else:
@@ -67,11 +108,42 @@ def outputLayerBiasChange(lossDerivative, activationDerivative, currentLayerNode
 
 
 def hiddenLayerBiasChange(pastLayerErrorTerms, pastLayerWeights, activationDerivative, currentLayerNodes):
+    """
+    Calculate the bias gradients and error terms for the hidden layer during backpropagation.
+
+    Args:
+        pastLayerErrorTerms (ndarray): Error terms for the next layer.
+        pastLayerWeights (ndarray): Weights connecting current layer to the next layer.
+        activationDerivative (function): Derivative function of the activation function for the current layer.
+        currentLayerNodes (ndarray): Output values of the current layer.
+        
+    Returns:
+        biasGradients (ndarray): Gradient of the loss with respect to the biases.
+        errorTerms (ndarray): Error terms for the current layer nodes.
+    """  
     errorTerms = (pastLayerErrorTerms @ pastLayerWeights.T) * activationDerivative(currentLayerNodes)
     biasGradients = errorTerms
     return biasGradients, errorTerms
 
 def backPropgation(layerNodes, weights, biases, trueValues, layers, lossFunction, returnErrorTermForCNN = False):
+    """
+    Perform backpropagation over the network layers to compute gradients for weights and biases.
+
+    Args:
+        layerNodes (list of ndarray): List of output values for each layer.
+        weights (list of ndarray): List of weights for each layer.
+        biases (list of ndarray): List of biases for each layer.
+        trueValues (list of ndarray): True target values for the output layer.
+        layers (list of tuples): Network layers with format (number of nodes, activation function).
+        lossFunction (function): Loss function used.
+        returnErrorTermForCNN (bool, optional): Whether to return error terms for CNN backpropagation. Defaults to False.
+
+    Returns:
+        weightGradients (list of ndarray): Gradients of weights for each layer.
+        biasGradients (list of ndarray): Gradients of biases for each layer.
+        If returnErrorTermForCNN is True:
+            hiddenWeightErrorTermsForCNNBackpropgation (ndarray): Error terms from the output layer weights.   
+    """  
     lossDerivatives = {
         MSELossFunction: MSEDerivative,
         MAELossFunction: MAEDerivative,

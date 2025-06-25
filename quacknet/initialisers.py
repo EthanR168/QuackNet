@@ -2,7 +2,7 @@ import math
 import numpy as np
 from quacknet.activationFunctions import relu, sigmoid
 
-class Initialisers:
+class Initialisers: 
     def createWeightsAndBiases(self):
         #weights are in [number of layers][size of current layer][size of next layer]
         for i in range(1, len(self.layers)):

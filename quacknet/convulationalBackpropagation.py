@@ -2,20 +2,34 @@ import numpy as np
 
 class CNNbackpropagation:
     def ConvolutionDerivative(self, errorPatch, kernals, inputTensor, stride):
-        '''
-        gets the error gradient from the layer infront and it is a error patch
-        this error patch is the same size as what the convolutional layer outputed during forward propgation
-        get the kernal (as in a patch of the image) again, but this time you are multipling each value in the kernal by 1 value that is inside the error patch
-        this makes the gradient of the loss of one kernal's weight
-        
-        the gradient of the loss of one kernal's bias is the summ of all the error terms
-        because bias is applied to every input in forward propgation
-        
-        the gradient of the loss of the input, which is the error terms for the layer behind it
-        firstly the kernal has to be flipped, meaning flip the kernal left to right and then top to bottom, but not flipping the layers,
-        the gradient of one pixel, is the summ of each error term multiplied by the flipped kernal 
-        '''
+        """
+        Compute gradients for conolutional layer weights, biases and input errors during backpropagation.
 
+        Args:
+            errorPatch (ndarray): Error gradient from the next layer.
+            kernals (ndarray): Kernals used during forward propagatation, shape (input channels, num kernels, kernel height, kernel width).
+            inputTensor (ndarray): Input to the convolutional layer during forward propagation.
+            stride (int): Stride length used during convolution.
+        
+        Returns:
+            weightGradients (ndarray): Gradients of the loss with respect to kernels.
+            biasGradients (ndarray): Gradients of the loss with respect to biases for each kernel.
+            inputErrorTerms (ndarray): Error terms propagated to the previous layer.
+        """
+        ###################################        
+        # gets the error gradient from the layer infront and it is a error patch
+        # this error patch is the same size as what the convolutional layer outputed during forward propgation
+        # get the kernal (as in a patch of the image) again, but this time you are multipling each value in the kernal by 1 value that is inside the error patch
+        # this makes the gradient of the loss of one kernal's weight
+        
+        # the gradient of the loss of one kernal's bias is the summ of all the error terms
+        # because bias is applied to every input in forward propgation
+        
+        # the gradient of the loss of the input, which is the error terms for the layer behind it
+        # firstly the kernal has to be flipped, meaning flip the kernal left to right and then top to bottom, but not flipping the layers,
+        # the gradient of one pixel, is the summ of each error term multiplied by the flipped kernal 
+        ###################################     
+        
         kernalSize = self.kernalSize # all kernals are the same shape and squares
         weightGradients = np.zeros((len(inputTensor), len(kernals), kernalSize, kernalSize)) #kernals are the same size
         outputHeight, outputWidth = errorPatch.shape[1], errorPatch.shape[2]
@@ -44,6 +58,18 @@ class CNNbackpropagation:
             
             
     def MaxPoolingDerivative(self, errorPatch, inputTensor, sizeOfGrid, strideLength):
+        """
+        Compute the gradient of the loss with respect to the input of the max pooling layer during backpropagation.
+
+        Args:
+            errorPatch (ndarray): Error gradient from the next layer.
+            inputTensor (ndarray): Input to the max pooling layer during forward propagation.
+            sizeOfGrid (int): Size of the pooling window.
+            strideLength (int): Stride length used during pooling.
+        
+        Returns:
+            inputGradient (ndarray): Gradient of the loss with respect to the inputTensor
+        """
         inputGradient = np.zeros_like(inputTensor, dtype=np.float64)
         outputHeight = (inputTensor.shape[1] - sizeOfGrid) // strideLength + 1
         outputWidth = (inputTensor.shape[2] - sizeOfGrid) // strideLength + 1
@@ -65,6 +91,18 @@ class CNNbackpropagation:
         return inputGradient
 
     def AveragePoolingDerivative(self, errorPatch, inputTensor, sizeOfGrid, strideLength):
+        """
+        Compute the gradient of the loss with respect to the input of the average pooling layer during backpropagation.
+
+        Args:
+            errorPatch (ndarray): Error gradient from the next layer.
+            inputTensor (ndarray): Input to the average pooling layer during forward propagation.
+            sizeOfGrid (int): Size of the pooling window.
+            strideLength (int): Stride length used during pooling.
+        
+        Returns:
+            inputGradient (ndarray): Gradient of the loss with respect to the inputTensor
+        """       
         inputGradient = np.zeros_like(inputTensor, dtype=np.float32)
         outputHeight = (inputTensor.shape[1] - sizeOfGrid) // strideLength + 1
         outputWidth = (inputTensor.shape[2] - sizeOfGrid) // strideLength + 1
@@ -80,7 +118,27 @@ class CNNbackpropagation:
         return inputGradient
     
     def GlobalAveragePoolingDerivative(self, inputTensor):
+        """
+        Compute the gradient of the loss with respect to the input of the global average pooling layer during backpropagation.
+
+        Args:
+            inputTensor (ndarray): Input to the global average pooling layer during forward propagation.
+        
+        Returns:
+            inputGradient (ndarray): Gradient of the loss with respect to the inputTensor
+        """     
         return np.ones_like(inputTensor) * (1 / (inputTensor.shape[1] * inputTensor.shape[2]))
     
     def ActivationLayerDerivative(self, errorPatch, activationDerivative, inputTensor):
+        """
+        Compute the gradient of the loss with respect to the input of the activation layer during backpropagation.
+
+        Args:
+            errorPatch (ndarray): Error gradient from the next layer.
+            activationDerivative (function): Derivative function of the activation function.
+            inputTensor (ndarray): Input to the activation layer during forward propagation.
+        
+        Returns:
+            inputGradient (ndarray): Gradient of the loss with respect to the inputTensor
+        """  
         return errorPatch * activationDerivative(inputTensor)

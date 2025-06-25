@@ -1,6 +1,6 @@
 import numpy as np
 
-class writeAndRead:
+class writeAndRead: 
     def write(self, pathToWeight="ExampleCode/MNISTExample/WeightsAndBiases/weights.txt", pathToBias="ExampleCode/MNISTExample/WeightsAndBiases/biases.txt"):
         weightFile = open(pathToWeight, "w")
         for a in range(len(self.weights)):

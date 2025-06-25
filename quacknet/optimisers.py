@@ -2,6 +2,29 @@ import numpy as np
 
 class Optimisers:
     def trainGradientDescent(self, inputData, labels, epochs, weights, biases, momentumCoefficient, momentumDecay, useMomentum, velocityWeight, velocityBias, learningRate, _):
+        """
+        Trains a model using gradient descent.
+
+        Args:
+            inputData (ndarray): All the training data.
+            labels (ndarray): All the true labels for the training data.
+            epochs (int): Number of training iterations over the dataset.
+            weights (list of ndarray): Current weights of the model.
+            biases (list of ndarray): Current biases of the model.
+            momentumCoefficient (float): Coefficient for momentum.
+            momentumDecay (float): Decay factor for the momentum coefficient.
+            useMomentum (bool): Whether to use momentum.
+            velocityWeight (list of ndarray): Velocity terms for weights, if using momentum.
+            velocityBias (list of ndarray): Velocity terms for biases, if using momentum.
+            learningRate (float): The learning rate for optimisation.
+            
+        Returns: 
+            l (list): Output of the network for each epoch.
+            weights (list of ndarray): Updated weights after training.
+            biases (list of ndarray): Updated biases after training.
+            velocityWeight (list of ndarray): Updated velocity for weights.
+            velocityBias (list of ndarray): Updated velocity for biases.
+        """
         l = []
         if(useMomentum == True):
             self.initialiseVelocity()
@@ -17,6 +40,29 @@ class Optimisers:
         return l, weights, biases, velocityWeight, velocityBias
 
     def trainStochasticGradientDescent(self, inputData, labels, epochs, weights, biases, momentumCoefficient, momentumDecay, useMomentum, velocityWeight, velocityBias, learningRate, _):
+        """
+        Trains a model using stochastic gradient descent (SGD).
+
+        Args:
+            inputData (ndarray): All the training data.
+            labels (ndarray): All the true labels for the training data.
+            epochs (int): Number of training iterations over the dataset.
+            weights (list of ndarray): Current weights of the model.
+            biases (list of ndarray): Current biases of the model.
+            momentumCoefficient (float): Coefficient for momentum.
+            momentumDecay (float): Decay factor for the momentum coefficient.
+            useMomentum (bool): Whether to use momentum.
+            velocityWeight (list of ndarray): Velocity terms for weights, if using momentum.
+            velocityBias (list of ndarray): Velocity terms for biases, if using momentum.
+            learningRate (float): The learning rate for optimisation.
+            
+        Returns: 
+            l (list): Output of the network for each epoch.
+            weights (list of ndarray): Updated weights after training.
+            biases (list of ndarray): Updated biases after training.
+            velocityWeight (list of ndarray): Updated velocity for weights.
+            velocityBias (list of ndarray): Updated velocity for biases.
+        """
         l = []
         if(useMomentum == True):
             self.initialiseVelocity()        
@@ -38,6 +84,30 @@ class Optimisers:
         return l, weights, biases, self.velocityWeight, self.velocityBias
 
     def trainGradientDescentUsingBatching(self, inputData, labels, epochs, weights, biases, momentumCoefficient, momentumDecay, useMomentum, velocityWeight, velocityBias, learningRate, batchSize):
+        """
+        Trains a model using gradient descent.
+
+        Args:
+            inputData (ndarray): All the training data.
+            labels (ndarray): All the true labels for the training data.
+            epochs (int): Number of training iterations over the dataset.
+            weights (list of ndarray): Current weights of the model.
+            biases (list of ndarray): Current biases of the model.
+            momentumCoefficient (float): Coefficient for momentum.
+            momentumDecay (float): Decay factor for the momentum coefficient.
+            useMomentum (bool): Whether to use momentum.
+            velocityWeight (list of ndarray): Velocity terms for weights, if using momentum.
+            velocityBias (list of ndarray): Velocity terms for biases, if using momentum.
+            learningRate (float): The learning rate for optimisation.
+            batchSize (int): The size of each mini batch 
+            
+        Returns: 
+            l (list): Output of the network for each epoch.
+            weights (list of ndarray): Updated weights after training.
+            biases (list of ndarray): Updated biases after training.
+            velocityWeight (list of ndarray): Updated velocity for weights.
+            velocityBias (list of ndarray): Updated velocity for biases.
+        """
         l = []
         if(useMomentum == True):
             velocityWeight, velocityBias = self.initialiseVelocity(velocityWeight, velocityBias, weights, biases)
@@ -56,6 +126,19 @@ class Optimisers:
         return l, weights, biases, velocityWeight, velocityBias
 
     def initialiseVelocity(self, velocityWeight, velocityBias, weights, biases):
+        """
+        Initialise velocity terms for momentum optimisation.
+
+        Args:
+            velocityWeight (list of ndarray): Velocity terms for weights.
+            velocityBias (list of ndarray): Velocity terms for biases.
+            weights (list of ndarray): The weights of the model.
+            biases (list of ndarray): The biases of the model.
+
+        Returns:
+            velocityWeight (list of ndarray): Initialised velocity for weights.
+            velocityBias (list of ndarray): Initialised velocity for biases.
+        """
         if(velocityWeight == None):
             velocityWeight = []
             for i in weights:
@@ -67,6 +150,17 @@ class Optimisers:
         return velocityWeight, velocityBias
     
     def initialiseGradients(self, weights, biases):
+        """
+        Initialise gradients for weights and biases.
+
+        Args:
+            weights (list of ndarray): The weights of the model.
+            biases (list of ndarray): The biases of the model.
+
+        Returns:
+            weightGradients (list of ndarray): Initialised gradients for weights.
+            biasGradients (list of ndarray): Initialised gradients for biases.
+        """
         weightGradients, biasGradients = [], []
         for i in weights:
             weightGradients.append(np.zeros_like(i))
@@ -75,6 +169,19 @@ class Optimisers:
         return weightGradients, biasGradients
 
     def addGradients(self, weightGradients, biasGradients, w, b):
+        """
+        Accumulates gradients for weights and biases.
+
+        Args:
+            weightGradients (list of ndarray): Accumulated weight gradients.
+            biasGradients (list of ndarray): Accumulated bias gradients. 
+            w (list of ndarray): Gradients of the weights from the current batch.
+            b (list of ndarray): Gradients of the biases from the current batch.
+        
+        Returns:
+            weightGradients (list of ndarray): Updated accumulated weight gradients.
+            biasGradients (list of ndarray): Updated accumulated bias gradients. 
+        """
         for i in range(len(weightGradients)):
             weightGradients[i] += w[i]
             weightGradients[i] = np.clip(weightGradients[i], -1, 1)
@@ -84,6 +191,27 @@ class Optimisers:
         return weightGradients, biasGradients
     
     def updateWeightsBiases(self, size, weights, biases, weightGradients, biasGradients, velocityWeight, velocityBias, useMomentum, momentumCoefficient, learningRate):
+        """
+        Updates the weights and biases of the model.
+
+        Args:
+            size (int): Number of samples in the batch.
+            weights (list of ndarray): Current weights of the model.
+            biases (list of ndarray): Current biases of the model.
+            weightGradients (list of ndarray): Weight gradients.
+            biasGradients (list of ndarray): Bias gradients. 
+            velocityWeight (list of ndarray): Velocity terms for weights, if using momentum.
+            velocityBias (list of ndarray): Velocity terms for biases, if using momentum.
+            useMomentum (bool): Whether to use momentum.
+            momentumCoefficient (float): Coefficient for momentum.
+            learningRate (float): The learning rate for optimisation.
+            
+        Returns: 
+            weights (list of ndarray): Updated weights after training.
+            biases (list of ndarray): Updated biases after training.
+            velocityWeight (list of ndarray): Updated velocity for weights.
+            velocityBias (list of ndarray): Updated velocity for biases.
+        """
         if(useMomentum == True):
             for i in range(len(weights)):
                 velocityWeight[i] -= momentumCoefficient * velocityWeight[i] - learningRate * (weightGradients[i] / size)

@@ -28,6 +28,9 @@ Feutures:
 -Extra:
     -momentum
     -create a example code using MNIST
+    -compare MNIST with tensorflow/pytorch on MNIST
+    -data augmentation with flipping
+    -hot encoding of labels and preprocessing of images
 
 -Unit tests:
     -Done:
@@ -43,5 +46,5 @@ Feutures:
         -optimisers
 
 -To do:
-    -compare MNIST with tensorflow/pytorch on MNIST
+    -add docstings
     

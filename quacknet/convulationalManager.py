@@ -12,9 +12,24 @@ class CNNModel(CNNoptimiser):
         self.NeuralNetworkClass = NeuralNetworkClass
     
     def addLayer(self, layer):
+        """
+        Adds a layer to the CNN model.
+
+        Args:
+            layer (class): ConvLayer, PoolingLayer, ActivationLayer, and DenseLayer
+        """
         self.layers.append(layer)
     
     def forward(self, inputTensor):
+        """
+        Performs a forward pass through all layers.
+
+        Args:
+            inputTensor (ndarray): Input data tensor to the CNN.
+        
+        Returns:
+            list: List of tensors output by each layer including the input.
+        """
         allTensors = [inputTensor]
         for layer in self.layers:
             inputTensor = layer.forward(inputTensor)
@@ -22,6 +37,16 @@ class CNNModel(CNNoptimiser):
         return allTensors
 
     def backpropagation(self, allTensors, trueValues):
+        """
+        Performs backpropagation through all layers to compute gradients.
+
+        Args:
+            allTensors (list): List of all layer outputs from forward propagation.
+        
+        Returns:
+            allWeightGradients (list): List of all the weight gradients calculated during backpropgation.
+            allBiasGradients (list): List of all the bias gradients calculated during backpropgation.
+        """
         weightGradients, biasGradients, errorTerms = self.layers[-1].backpropagation(trueValues) # <-- this is a neural network 
         allWeightGradients = [weightGradients]
         allBiasGradients = [biasGradients]
@@ -36,12 +61,49 @@ class CNNModel(CNNoptimiser):
         return allWeightGradients, allBiasGradients
     
     def optimser(self, inputData, labels, useBatches, weights, biases, batchSize, alpha, beta1, beta2, epsilon):
+        """
+        Runs the Adam optimiser either with or without batches.
+
+        Args:
+            inputData (ndarray): All the training data.
+            labels (ndarray): All the true labels for the training data.
+            useBatches (bool): Whether to use batching.
+            weights (list): Current weights.
+            biases (list): Current biases.
+            batchSize (int): Size of batches.
+            alpha (float): Learning rate.
+            beta1 (float): Adam's beta1 parameter.
+            beta2 (float): Adam's beta2 parameter.
+            epsilon (float): Adam's epsilon parameter.
+        
+        Returns:
+            list: The nodes (returned to calculate accuracy and loss).
+            list: Updated weights after optimisation
+            list: Updated biases after optimisation
+        """
         if(useBatches == True):
             return CNNoptimiser.AdamsOptimiserWithBatches(self, inputData, labels, weights, biases, batchSize, alpha, beta1, beta2, epsilon)
         else:
             return CNNoptimiser.AdamsOptimiserWithoutBatches(self, inputData, labels, weights, biases, alpha, beta1, beta2, epsilon)
     
     def train(self, inputData, labels, useBatches, batchSize, alpha = 0.001, beta1 = 0.9, beta2 = 0.999, epsilon = 1e-8):
+        """
+        Trains the CNN for one epoch and calculates accuracy and average loss.
+
+        Args:
+            inputData (ndarray): All the training data.
+            labels (ndarray): All the true labels for the training data.
+            useBatches (bool): Whether to use batching.
+            batchSize (int): Size of batches.
+            alpha (float, optional): Learning rate. Default is 0.001.
+            beta1 (float, optional): Adam's beta1 parameter. Default is 0.9.
+            beta2 (float, optional): Adam's beta2 parameter. Default is 0.999.
+            epsilon (float, optional): Adam's epsilon parameter. Default is 1e-8.
+
+        Returns:
+            float: accuracy percentage.
+            float: average loss.
+        """
         correct, totalLoss = 0, 0
         
         nodes, self.weights, self.biases = self.optimser(inputData, labels, useBatches, self.weights, self.biases, batchSize, alpha, beta1, beta2, epsilon)        
@@ -56,6 +118,9 @@ class CNNModel(CNNoptimiser):
         return 100 * (correct / len(labels)), totalLoss / len(labels)
     
     def createWeightsBiases(self):
+        """
+        Initialises weights and biases for convolutional and dense layers.
+        """
         for i in range(len(self.layers)):
             if(type(self.layers[i]) == ConvLayer):
                 kernalSize = self.layers[i].kernalSize
@@ -74,6 +139,16 @@ class CNNModel(CNNoptimiser):
                 self.biases.append(self.layers[i].NeuralNetworkClass.biases)
 
     def saveModel(self, NNweights, NNbiases, CNNweights, CNNbiases, filename = "modelWeights.npz"):
+        """
+        Saves model weights and biases to a compressed npz file.
+
+        Args:
+            NNweights (list): Weights of the dense neural network layers.
+            NNbiases (list): Biases of the dense neural network layers.
+            CNNweights (list): Weights of the convolutional layers.
+            CNNbiases (list): Biases of the convolutional layers.
+            filename (str, optional): Filename to save the weights. Default is "modelWeights.npz".
+        """
         CNNweights = np.array(CNNweights, dtype=object)
         CNNbiases = np.array(CNNbiases, dtype=object)
         NNweights = np.array(NNweights, dtype=object)
@@ -81,6 +156,13 @@ class CNNModel(CNNoptimiser):
         np.savez_compressed(filename, CNNweights = CNNweights, CNNbiases = CNNbiases, NNweights = NNweights, NNbiases = NNbiases, allow_pickle = True)
 
     def loadModel(self, neuralNetwork, filename = "modelWeights.npz"):
+        """
+        Loads model weights and biases from a compressed npz file and assigns them to layers.
+        
+        Args:
+            neuralNetwork (class): The dense neural network to load weights into.
+            filename (str, optional): Filename to save the weights. Default is "modelWeights.npz".
+        """
         data = np.load(filename, allow_pickle = True)
         CNNweights = data["CNNweights"]
         CNNbiases = data["CNNbiases"]
@@ -103,6 +185,16 @@ class CNNModel(CNNoptimiser):
 
 class ConvLayer(ConvulationalNetwork, CNNbackpropagation):
     def __init__(self, kernalSize, depth, numKernals, stride, padding = "no"):
+        """
+        Initialises a convolutional layer.
+
+        Args:
+            kernalSize (int): The size of the covolution kernel (assumed it is a square).
+            depth (int): Depth of the input tensor.
+            numKernals (int): Number of kernels in this layer.
+            stride (int): The stride length for convolution.
+            padding (str or int, optional): Padding size or "no" for no padding. Default is "no".
+        """
         self.kernalSize = kernalSize
         self.numKernals = numKernals
         self.kernalWeights = []
@@ -117,23 +209,71 @@ class ConvLayer(ConvulationalNetwork, CNNbackpropagation):
             self.usePadding = True
     
     def forward(self, inputTensor):
+        """
+        Performs a forward convolution pass.
+
+        Args:
+            inputTensor (ndarray): Input tensor to convolve.
+        
+        Returns:
+            ndarray: Output tensor after convolution.
+        """
         return ConvulationalNetwork.kernalisation(self, inputTensor, self.kernalWeights, self.kernalBiases, self.kernalSize, self.usePadding, self.padding, self.stride)
 
     def backpropagation(self, errorPatch, inputTensor):
+        """
+        Performs backpropagation to compute gradients for convolutional layer.
+
+        Args:
+            errorPatch (ndarray): Error gradient from the next layer.
+            inputTensor (ndarray): Input tensor to convolve.
+        
+        Returns:
+            ndarray: Gradients of the loss with respect to kernels.
+            ndarray: Gradients of the loss with respect to biases for each kernel.
+            ndarray: Error terms propagated to the previous layer.
+        """
         return CNNbackpropagation.ConvolutionDerivative(self, errorPatch, self.kernalWeights, inputTensor, self.stride)
 
 class PoolingLayer(CNNbackpropagation):
     def __init__(self, gridSize, stride, mode = "max"):
+        """
+        Initialises a pooling layer.
+
+        Args:
+            gridSize (int): The size of the pooling window.
+            stride (int): The stride length for pooling.
+            mode (str, optional): Pooling mode of "max", "ave" (average), or "gap" (global average pooling). Default is "max".        
+        """
         self.gridSize = gridSize
         self.stride = stride
         self.mode = mode.lower()
     
     def forward(self, inputTensor):
+        """
+        Performs forward pooling operation.
+
+        Args:
+           inputTensor (ndarray): Input tensor to pool.
+
+        Returns:
+            ndarray: Output tensor after pooling. 
+        """
         if(self.mode == "gap" or self.mode == "global"):
             return ConvulationalNetwork.poolingGlobalAverage(self, inputTensor)
         return ConvulationalNetwork.pooling(self, inputTensor, self.gridSize, self.stride, self.mode)
 
     def backpropagation(self, errorPatch, inputTensor):
+        """
+        Performs backpropagation through the pooling layer.
+
+        Args:
+            errorPatch (ndarray): Error gradient from the next layer.
+            inputTensor (ndarray): Input tensor during forward propagation.
+        
+        Returns:
+            inputGradient (ndarray): Gradient of the loss.
+        """
         if(self.mode == "max"):
             return CNNbackpropagation.MaxPoolingDerivative(self, errorPatch, inputTensor, self.gridSize, self.stride)
         elif(self.mode == "ave"):
@@ -143,16 +283,42 @@ class PoolingLayer(CNNbackpropagation):
 
 class DenseLayer: # basically a fancy neural network
     def __init__(self, NeuralNetworkClass):
+        """
+        Initialises a dense layer using a NeuralNetworkClass.
+
+        Args:
+            NeuralNetworkClass (class): the fully connected neural network class.
+        """
         self.NeuralNetworkClass = NeuralNetworkClass
-        self.orignalShape = 0
+        self.orignalShape = 0   # orignalShape is the original shape of the input tensor
         
     def forward(self, inputTensor):
+        """
+        Flattens the input tensor and performs a forward pass.
+
+        Args:
+            inputTensor (ndarray): Input tensor to flatten and process.
+        
+        Returns:
+            ndarray: Output of the dense layer.
+        """
         self.orignalShape = np.array(inputTensor).shape
         inputArray = ConvulationalNetwork.flatternTensor(self, inputTensor)
         self.layerNodes = self.NeuralNetworkClass.forwardPropagation(inputArray)
         return self.layerNodes[-1]
     
     def backpropagation(self, trueValues): #return weigtGradients, biasGradients, errorTerms
+        """
+        Performs backpropagation through the dense layer.
+
+        Args:
+            trueValues (ndarray): True labels for the input data.
+        
+        Returns:
+            weightGradients (list of ndarray): Gradients of weights for each layer.
+            biasGradients (list of ndarray): Gradients of biases for each layer.
+            errorTerms (ndarray): Error terms from the output layer weights, reshaped to the input tensor.   
+        """  
         weightGradients, biasGradients, errorTerms = self.NeuralNetworkClass.backPropgation(
             self.layerNodes, 
             self.NeuralNetworkClass.weights,
@@ -171,8 +337,27 @@ class DenseLayer: # basically a fancy neural network
 
 class ActivationLayer: # basically aplies an activation function over the whole Tensor (eg. leaky relu)
     def forward(self, inputTensor):
+        """
+        Applies the Leaky ReLU activation function to the input tensor.
+
+        Args:
+            inputTensor (ndarray): A 3D array representing the input.
+        
+        Returns:
+            ndarray: A tensor with the same shape as the input with Leaky ReLU applied to it.
+        """
         return ConvulationalNetwork.activation(self, inputTensor)
 
     def backpropagation(self, errorPatch, inputTensor):
+        """
+        Compute the gradient of the loss with respect to the input of the activation layer during backpropagation.
+
+        Args:
+            errorPatch (ndarray): Error gradient from the next layer.
+            inputTensor (ndarray): Input to the activation layer during forward propagation.
+        
+        Returns:
+            inputGradient (ndarray): Gradient of the loss with respect to the inputTensor
+        """  
         return CNNbackpropagation.ActivationLayerDerivative(self, errorPatch, ReLUDerivative, inputTensor)
     

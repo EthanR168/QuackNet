@@ -5,10 +5,10 @@ unitTests/__pycache__/
 ExampleCode/MNISTExample/data/
 unitTests/.pytest_cache
 ExampleCode/MNISTExample/WeightsAndBiases/
-unitTests/test_convulutionalUnitTests/__pycache__
 benchmarkFolder/MNISTBenchmark/data
 benchmarkFolder/MNISTBenchmark/WeightsAndBiases
-unitTests/CNN/__pycache__
-unitTests/NN/__pycache__
+unitTests/CNN/__pycache__/
+unitTests/NN/__pycache__/
 .coverage
 quacknet/__pycache__/
+unitTests/__pycache__/

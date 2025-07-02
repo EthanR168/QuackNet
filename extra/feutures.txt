@@ -31,6 +31,7 @@ Feutures:
     -compare MNIST with tensorflow/pytorch on MNIST
     -data augmentation with flipping
     -hot encoding of labels and preprocessing of images
+    -add docstings
 
 -Unit tests:
     -Done:
@@ -45,6 +46,4 @@ Feutures:
         -initialisers 
         -optimisers
 
--To do:
-    -add docstings
     

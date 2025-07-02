@@ -8,7 +8,7 @@ def test_ConvulutionalDerivative():
 
     inputTensor = np.array([[[1, 2, 3], [4, 5, 6], [7, 8, 9]]])
     kernals = np.array([[[[1, 0], [0, -1]]]])
-    errorPatch = np.array([[[[1, 2], [3, 4]]]])
+    errorPatch = np.array([[[1, 2], [3, 4]]])
 
     weightGradients, biasGradients, errorTerms = CNNbackpropagation.ConvolutionDerivative(Conv, errorPatch, kernals, inputTensor, stride)
 

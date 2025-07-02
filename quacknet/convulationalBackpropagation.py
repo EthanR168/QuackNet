@@ -51,7 +51,7 @@ class CNNbackpropagation:
                     for j in range(outputWidth):
                         errorKernal = errorPatch[output, i, j]
                         inputJ = j * stride
-                        inputErrorTerms[layer, inputI: inputI + kernalSize, inputJ: inputJ + kernalSize] += errorKernal * flipped
+                        inputErrorTerms[layer, inputI: inputI + kernalSize, inputJ: inputJ + kernalSize] += errorKernal * flipped[output, layer]
         
         weightGradients = np.transpose(weightGradients, (1, 0, 2, 3))
         return weightGradients, biasGradients, inputErrorTerms

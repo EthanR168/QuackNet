@@ -1,5 +1,8 @@
 from quacknet.convulationalOptimiser import CNNoptimiser
+from quacknet.main import Network
 import numpy as np
+
+from quacknet.convulationalManager import CNNModel
 
 def test_adamsWeightBiasUpdateWithoutBatches():
     weights = [[np.array([1.0])]]
@@ -35,10 +38,10 @@ def test_adamsWeightBiasUpdateWithoutBatches():
 
     cnn = CNNoptimiser()
 
-    cnn.backpropagation = lambda nodes, label: ([[gradWeight]], [[gradBias]])
+    cnn._backpropagation = lambda nodes, label: ([[gradWeight]], [[gradBias]])
     cnn.forward = lambda input: ("Doesnt matter since backprogation is harcoded")
 
-    _, weights, biases = cnn.AdamsOptimiserWithoutBatches(inputData, labels, weights, biases, alpha, beta1, beta2, epsilon)
+    _, weights, biases = cnn._AdamsOptimiserWithoutBatches(inputData, labels, weights, biases, alpha, beta1, beta2, epsilon)
 
     assert np.allclose(weights[0][0], expectedWeight)
     assert np.allclose(biases[0][0], expectedBias)
@@ -82,10 +85,10 @@ def test_adamsWeightBiasUpdateWithBatches():
 
     cnn = CNNoptimiser()
 
-    cnn.backpropagation = lambda nodes, label: ([[gradWeightBatch.pop(0)]], [[gradBiasBatch.pop(0)]])
+    cnn._backpropagation = lambda nodes, label: ([[gradWeightBatch.pop(0)]], [[gradBiasBatch.pop(0)]])
     cnn.forward = lambda input: ("Doesnt matter since backprogation is harcoded")
 
-    _, weights, biases = cnn.AdamsOptimiserWithBatches(inputData, labels, weights, biases, batchSize, alpha, beta1, beta2, epsilon)
+    _, weights, biases = cnn._AdamsOptimiserWithBatches(inputData, labels, weights, biases, batchSize, alpha, beta1, beta2, epsilon)
 
     assert np.allclose(weights[0][0], expectedWeight)
     assert np.allclose(biases[0][0], expectedBias)

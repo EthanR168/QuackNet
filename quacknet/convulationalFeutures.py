@@ -24,7 +24,7 @@ Neural Network:
 '''
 
 class ConvulationalNetwork:
-    def padImage(self, inputTensor, kernalSize, strideLength, typeOfPadding): #pads image
+    def _padImage(self, inputTensor, kernalSize, strideLength, typeOfPadding): #pads image
         """
         Pads each image in the input tensor.
 
@@ -45,7 +45,7 @@ class ConvulationalNetwork:
             paddingTensor.append(padding)
         return np.array(paddingTensor)
 
-    def kernalisation(self, inputTensor, kernalsWeights, kernalsBiases, sizeOfGrid = 2, usePadding = True, typeOfPadding= 0, strideLength = 2):
+    def _kernalisation(self, inputTensor, kernalsWeights, kernalsBiases, sizeOfGrid = 2, usePadding = True, typeOfPadding= 0, strideLength = 2):
         """
         Performs the convolution operation on the input tensor.
 
@@ -63,7 +63,7 @@ class ConvulationalNetwork:
         """
         tensorKernals = []
         if(usePadding == True):
-            imageTensor = self.padImage(inputTensor, sizeOfGrid, strideLength, typeOfPadding)
+            imageTensor = self._padImage(inputTensor, sizeOfGrid, strideLength, typeOfPadding)
         else:
             imageTensor = inputTensor
         outputHeight = (imageTensor.shape[1] - sizeOfGrid) // strideLength + 1
@@ -83,7 +83,7 @@ class ConvulationalNetwork:
             tensorKernals.append(output)
         return np.stack(tensorKernals, axis = 0) #tensorKernals = (outputHeight, outputWidth, numberOfKernals)
                     
-    def activation(self, inputTensor):
+    def _activation(self, inputTensor):
         """
         Applies the Leaky ReLU activation function to the input tensor.
 
@@ -96,7 +96,7 @@ class ConvulationalNetwork:
         alpha = 0.01
         return np.maximum(inputTensor, inputTensor * alpha)
 
-    def pooling(self, inputTensor, sizeOfGrid = 2, strideLength = 2, typeOfPooling = "max"):
+    def _pooling(self, inputTensor, sizeOfGrid = 2, strideLength = 2, typeOfPooling = "max"):
         """
         Applies pooling (max or average) to reduce the size of the batch of inputs.
 
@@ -110,7 +110,7 @@ class ConvulationalNetwork:
             ndarray: A 3D array of feuture maps with reduced shape.
         """
         if(typeOfPooling.lower()== "global" or typeOfPooling.lower() == "gap"):
-            return self.poolingGlobalAverage(inputTensor)
+            return self._poolingGlobalAverage(inputTensor)
         tensorPools = []
 
         if(typeOfPooling.lower() == "max"):
@@ -131,7 +131,7 @@ class ConvulationalNetwork:
             tensorPools.append(output)
         return np.array(tensorPools)
     
-    def poolingGlobalAverage(self, inputTensor):
+    def _poolingGlobalAverage(self, inputTensor):
         """
         Performs global average pooling, reducing each feuture map to a single value.
 
@@ -144,7 +144,7 @@ class ConvulationalNetwork:
         output = np.mean(inputTensor, axis = (1, 2))
         return output
 
-    def flatternTensor(self, inputTensor):
+    def _flatternTensor(self, inputTensor):
         """
         Flattens a tensor into a 1D array.
 

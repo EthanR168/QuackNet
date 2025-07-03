@@ -10,7 +10,7 @@ def test_ConvulutionalDerivative():
     kernals = np.array([[[[1, 0], [0, -1]]]])
     errorPatch = np.array([[[1, 2], [3, 4]]])
 
-    weightGradients, biasGradients, errorTerms = CNNbackpropagation.ConvolutionDerivative(Conv, errorPatch, kernals, inputTensor, stride)
+    weightGradients, biasGradients, errorTerms = CNNbackpropagation._ConvolutionDerivative(Conv, errorPatch, kernals, inputTensor, stride)
 
     expectedWeightGradients = np.array([[[[37, 47], [67, 77]]]])
     expectedBiasGradients = np.array([10])
@@ -34,7 +34,7 @@ def test_MaxPooling():
     gridSize = 2
     strideLength = 2
 
-    errorTerm = CNNbackpropagation.MaxPoolingDerivative(None, errorPatch, inputTensor, gridSize, strideLength)
+    errorTerm = CNNbackpropagation._MaxPoolingDerivative(None, errorPatch, inputTensor, gridSize, strideLength)
 
     expectedInputErrorTerms = np.array([[
         [0, 0, 0, 20],
@@ -57,7 +57,7 @@ def test_AveragePooling():
     gridSize = 2
     strideLength = 2
 
-    errorTerm = CNNbackpropagation.AveragePoolingDerivative(None, errorPatch, inputTensor, gridSize, strideLength)
+    errorTerm = CNNbackpropagation._AveragePoolingDerivative(None, errorPatch, inputTensor, gridSize, strideLength)
 
     expectedInputErrorTerms = np.array([[
         [2.5, 2.5, 5, 5],
@@ -77,7 +77,7 @@ def test_GlobalAveragePooling():
         [3, 2, 4, 1],
     ]])
 
-    errorTerm = CNNbackpropagation.GlobalAveragePoolingDerivative(None, inputTensor)
+    errorTerm = CNNbackpropagation._GlobalAveragePoolingDerivative(None, inputTensor)
 
     '''
     1 * 1 / (4 * 4) = 1 / 16 = 0.0625
@@ -104,7 +104,7 @@ def test_ActivationLayer():
         [3, 2, 4, 1],
     ]]) 
 
-    errorTerm = CNNbackpropagation.ActivationLayerDerivative(None, errorPatch, ReLUDerivative, inputTensor)
+    errorTerm = CNNbackpropagation._ActivationLayerDerivative(None, errorPatch, ReLUDerivative, inputTensor)
 
     leakyReluDerive = np.where(inputTensor > 0, 1, 0.01)
     expectedInputErrorTerms = errorPatch * leakyReluDerive

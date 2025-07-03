@@ -22,7 +22,7 @@ CNN.addLayer(DenseLayer(net))
 # Creates weights and biases 
 CNN.createWeightsBiases()
 
-accuaracy, loss = CNN.train(inputTensor, trueValues, False, 1)
+accuaracy, loss = CNN.train(inputTensor, trueValues, useBatches = False, batchSize = 1)
 
 print(f"average accauracy: {accuaracy}%")
 print(f"average loss: {loss}")

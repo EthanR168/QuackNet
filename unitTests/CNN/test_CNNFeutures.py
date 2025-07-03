@@ -7,7 +7,7 @@ class Test_Padding:
         kernalSize, strideLength = 2, 2
         typeOfPadding = 0
 
-        paddingTensor = ConvulationalNetwork.padImage(self, inputTensor, kernalSize, strideLength, typeOfPadding)
+        paddingTensor = ConvulationalNetwork._padImage(self, inputTensor, kernalSize, strideLength, typeOfPadding)
 
         paddingSize = int(np.ceil(((strideLength - 1) * inputTensor.shape[1] - strideLength + kernalSize) / 2))
         expectedPaddedTensor = []
@@ -22,7 +22,7 @@ class Test_Padding:
         kernalSize, strideLength = 2, 2
         typeOfPadding = 0
 
-        paddingTensor = ConvulationalNetwork.padImage(self, inputTensor, kernalSize, strideLength, typeOfPadding)
+        paddingTensor = ConvulationalNetwork._padImage(self, inputTensor, kernalSize, strideLength, typeOfPadding)
 
         paddingSize = int(np.ceil(((strideLength - 1) * inputTensor.shape[1] - strideLength + kernalSize) / 2))
         expectedPaddedTensor = []
@@ -58,7 +58,7 @@ class Test_kernalisation:
         kernalSize = strideLength = 2
         usePadding = False
 
-        output = ConvulationalNetwork.kernalisation(self, inputTensor, kernalWeights, kernalBias, kernalSize, strideLength=strideLength, usePadding=usePadding)
+        output = ConvulationalNetwork._kernalisation(self, inputTensor, kernalWeights, kernalBias, kernalSize, strideLength=strideLength, usePadding=usePadding)
 
         '''
         [1, 2]      X       [4, 3]    =   [4, 6]     =  20
@@ -119,7 +119,7 @@ class Test_kernalisation:
         kernalSize = strideLength = 2
         usePadding = False
 
-        output = ConvulationalNetwork.kernalisation(self, inputTensor, kernalWeights, kernalBias, kernalSize, strideLength=strideLength, usePadding=usePadding)
+        output = ConvulationalNetwork._kernalisation(self, inputTensor, kernalWeights, kernalBias, kernalSize, strideLength=strideLength, usePadding=usePadding)
 
         '''
         Kernal 1:
@@ -203,7 +203,7 @@ class Test_Pooling:
         ]) 
         sizeOfGrid = strideLength = 2
 
-        output = ConvulationalNetwork.pooling(self, inputTensor, sizeOfGrid, strideLength, "max")
+        output = ConvulationalNetwork._pooling(self, inputTensor, sizeOfGrid, strideLength, "max")
 
         expected = np.array([
         [
@@ -246,7 +246,7 @@ class Test_Pooling:
         ]) 
         sizeOfGrid = strideLength = 2
 
-        output = ConvulationalNetwork.pooling(self, inputTensor, sizeOfGrid, strideLength, "ave")
+        output = ConvulationalNetwork._pooling(self, inputTensor, sizeOfGrid, strideLength, "ave")
 
         expected = np.array([
         [
@@ -288,7 +288,7 @@ class Test_PoolingGlobalAverage:
             ],
         ]) 
 
-        output = ConvulationalNetwork.poolingGlobalAverage(self, inputTensor)
+        output = ConvulationalNetwork._poolingGlobalAverage(self, inputTensor)
 
         expected = np.array([2.5, 1, 8.5])
 
@@ -318,7 +318,7 @@ class Test_Flattening:
             ],
         ]) 
 
-        output = ConvulationalNetwork.flatternTensor(self, inputTensor)
+        output = ConvulationalNetwork._flatternTensor(self, inputTensor)
 
         expected = np.array([1, 2, 1, 2, 3, 4, 3, 4, 1, 2, 1, 2, 3, 4, 3, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16])
         
@@ -333,7 +333,7 @@ class Test_ActivationLayer:
             ]
         ]) 
 
-        output = ConvulationalNetwork.activation(self, inputTensor)
+        output = ConvulationalNetwork._activation(self, inputTensor)
 
         expected = np.array([
             [

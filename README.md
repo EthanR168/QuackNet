@@ -1,6 +1,21 @@
 # QuackNet
 
+[![PyPI version](https://img.shields.io/pypi/v/QuackNet)](https://pypi.org/project/QuackNet/)
+
 **QuackNet** is a python based building and training neural networks and convolutional networks entirely from scratch. It offers foundational implementations of key components such as forward propagation, backpropagation and optimisation algorithms, without relying on machine learning frameworks like TensorFlow or Pytorch
+
+## Table of Contents
+
+-   [Why This Library](#why-this-library)
+-   [Installation](#installation)
+-   [Key Features](#key-features)
+-   [Usage](#usage)
+-   [Examples](#examples)
+-   [Code Structure](#code-structure)
+-   [Benchmark](#benchmark)
+-   [Benchmark Against PyTorch and TensorFlow](#benchmark-against-pytorch-and-tensorflow)
+-   [Related Projects](#related-projects)
+-   [Roadmap](#roadmap)
 
 ## Why this Library?
 
@@ -47,6 +62,40 @@ pip install QuackNet
 -   Visualisation tools for training progress.
 -   Demo projects like MNIST and HAM10000 classification.
 
+## Usage
+Here is an example of how to create and train a simple neural network using the library:
+```python
+from quacknet.main import Network
+
+# Define a neural network architecture
+n = Network(
+    lossFunc = "cross entropy",
+    learningRate = 0.01,
+    optimisationFunc = "sgd", #stochastic gradient descent
+)
+n.addLayer(3, "relu") # Input layer
+n.addLayer(2, "relu") # Hidden layer
+n.addLayer(1, "softmax") # Output layer
+n.createWeightsAndBiases()
+
+# Example data
+inputData = [[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]]
+labels = [[1], [0]]
+
+# Train the network
+accuracy, averageLoss = n.train(inputData, labels, epochs = 10)
+
+# Evaluate
+print(f"Accuracy: {accuracy}%")
+print(f"Average loss: {averageLoss}")
+```
+
+## Examples
+
+-   [Simple Neural Network Example](/ExampleCode/NNExample.py): A basic neural network implementation demonstrating forward and backpropagation
+-   [Convolutional Neural Network Example](/ExampleCode/CNNExample.py): Shows how to use the convolutional layers in the library
+-   [MNIST Neural Network Example](/ExampleCode/MNISTExample/mnistExample.py): Shows how to use neural network to train on MNIST
+
 ## Highlights
 
 -   **Custom Architectures:** Define and train neural networks with fully customisable architectures
@@ -90,40 +139,6 @@ pip install QuackNet
 - [ ] **Additional activation functions**  
     implement advanced activation functions (eg. GELU and Swish)
 
-## Usage
-Here is an example of how to create and train a simple neural network using the library:
-```python
-from quacknet.main import Network
-
-# Define a neural network architecture
-n = Network(
-    lossFunc = "cross entropy",
-    learningRate = 0.01,
-    optimisationFunc = "sgd", #stochastic gradient descent
-)
-n.addLayer(3, "relu") # Input layer
-n.addLayer(2, "relu") # Hidden layer
-n.addLayer(1, "softmax") # Output layer
-n.createWeightsAndBiases()
-
-# Example data
-inputData = [[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]]
-labels = [[1], [0]]
-
-# Train the network
-accuracy, averageLoss = n.train(inputData, labels, epochs = 10)
-
-# Evaluate
-print(f"Accuracy: {accuracy}%")
-print(f"Average loss: {averageLoss}")
-```
-
-## Examples
-
--   [Simple Neural Network Example](/ExampleCode/NNExample.py): A basic neural network implementation demonstrating forward and backpropagation
--   [Convolutional Neural Network Example](/ExampleCode/CNNExample.py): Shows how to use the convolutional layers in the library
--   [MNIST Neural Network Example](/ExampleCode/MNISTExample/mnistExample.py): Shows how to use neural network to train on MNIST
-
 ## Code structure
 
 ### Neural Network Class
@@ -138,7 +153,7 @@ print(f"Average loss: {averageLoss}")
 -   **Key Components:**
     -   Layers: Convolutional, pooling, dense and activation layers
     -   Functions: Forward propagation, backpropagation, flattening, global average pooling
-    -   Optimsers: Adams optimiser, SGD, GD, GD using batching
+    -   Optimisers: Adams optimiser, SGD, GD, GD using batching
 
 ## Benchmark
 
@@ -164,7 +179,7 @@ The code for this benchmark can be found [here](benchmarkFolder/MNISTBenchmark/m
 
 Below is the graph showing the training accuracy and loss over 10 epochs, across 5 runs:
 
-![Training Accuaracy](benchmarkFolder/MNISTBenchmark/benchmark.png)
+![Training Accuracy](benchmarkFolder/MNISTBenchmark/benchmark.png)
 
 ## Benchmark Against Pytorch and Tensorflow
 
@@ -199,13 +214,17 @@ The library was benchmarked on the MNIST dataset using the following setup:
 
 Below is the graph showing the training accuracy and loss over 10 epochs, across 5 runs:
 
-![Training Accuaracy](benchmarkFolder/MNISTBenchmark/frameworkBenchmark.png)
+![Training Accuracy](benchmarkFolder/MNISTBenchmark/frameworkBenchmark.png)
 
 ## Related Projects
 
 ### Skin Lesion Detector
 
-A convolutional neural network (CNN) based skin lesion classification model, trained using the HAM10000 dataset. This model acheived 60.2% accuracy on a balanced validation set.
+A convolutional neural network (CNN) based skin lesion classification model, trained using the HAM10000 dataset. This model achieved 60.2% accuracy on a balanced validation set.
 
-You can exlpore the full project here:
+You can explore the full project here:
 [Skin Lesion Detector Repository](https://github.com/SirQuackPng/skinLesionDetector)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

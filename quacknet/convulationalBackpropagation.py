@@ -1,7 +1,7 @@
 import numpy as np
 
 class CNNbackpropagation:
-    def ConvolutionDerivative(self, errorPatch, kernals, inputTensor, stride):
+    def _ConvolutionDerivative(self, errorPatch, kernals, inputTensor, stride):
         """
         Compute gradients for conolutional layer weights, biases and input errors during backpropagation.
 
@@ -57,7 +57,7 @@ class CNNbackpropagation:
         return weightGradients, biasGradients, inputErrorTerms
             
             
-    def MaxPoolingDerivative(self, errorPatch, inputTensor, sizeOfGrid, strideLength):
+    def _MaxPoolingDerivative(self, errorPatch, inputTensor, sizeOfGrid, strideLength):
         """
         Compute the gradient of the loss with respect to the input of the max pooling layer during backpropagation.
 
@@ -90,7 +90,7 @@ class CNNbackpropagation:
                     inputGradient[image, indexX + maxX, indexY + maxY] += errorPatch[image, x, y]
         return inputGradient
 
-    def AveragePoolingDerivative(self, errorPatch, inputTensor, sizeOfGrid, strideLength):
+    def _AveragePoolingDerivative(self, errorPatch, inputTensor, sizeOfGrid, strideLength):
         """
         Compute the gradient of the loss with respect to the input of the average pooling layer during backpropagation.
 
@@ -117,7 +117,7 @@ class CNNbackpropagation:
                     inputGradient[image, indexX: indexX + sizeOfGrid, indexY: indexY + sizeOfGrid] += newValues 
         return inputGradient
     
-    def GlobalAveragePoolingDerivative(self, inputTensor):
+    def _GlobalAveragePoolingDerivative(self, inputTensor):
         """
         Compute the gradient of the loss with respect to the input of the global average pooling layer during backpropagation.
 
@@ -129,7 +129,7 @@ class CNNbackpropagation:
         """     
         return np.ones_like(inputTensor) * (1 / (inputTensor.shape[1] * inputTensor.shape[2]))
     
-    def ActivationLayerDerivative(self, errorPatch, activationDerivative, inputTensor):
+    def _ActivationLayerDerivative(self, errorPatch, activationDerivative, inputTensor):
         """
         Compute the gradient of the loss with respect to the input of the activation layer during backpropagation.
 

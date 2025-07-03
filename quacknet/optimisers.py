@@ -1,7 +1,7 @@
 import numpy as np
 
 class Optimisers:
-    def trainGradientDescent(self, inputData, labels, epochs, weights, biases, momentumCoefficient, momentumDecay, useMomentum, velocityWeight, velocityBias, learningRate, _):
+    def _trainGradientDescent(self, inputData, labels, epochs, weights, biases, momentumCoefficient, momentumDecay, useMomentum, velocityWeight, velocityBias, learningRate, _):
         """
         Trains a model using gradient descent.
 
@@ -29,17 +29,17 @@ class Optimisers:
         if(useMomentum == True):
             self.initialiseVelocity()
         for _ in range(epochs):
-            weightGradients, biasGradients = self.initialiseGradients(weights, biases)
+            weightGradients, biasGradients = self._initialiseGradients(weights, biases)
             for data in range(len(inputData)):
                 layerNodes = self.forwardPropagation(inputData[data])
                 l.append(layerNodes[len(layerNodes) - 1])
-                w, b = self.backPropgation(layerNodes, weights, biases, labels[data])
-                velocityWeight, velocityBias = self.addGradients(weightGradients, biasGradients, w, b)
-            weights, biases, velocityWeight, velocityBias = self.updateWeightsBiases(len(inputData), weights, biases, weightGradients, biasGradients, velocityWeight, velocityBias, useMomentum, momentumCoefficient, learningRate)
+                w, b = self._backPropgation(layerNodes, weights, biases, labels[data])
+                velocityWeight, velocityBias = self._addGradients(weightGradients, biasGradients, w, b)
+            weights, biases, velocityWeight, velocityBias = self._updateWeightsBiases(len(inputData), weights, biases, weightGradients, biasGradients, velocityWeight, velocityBias, useMomentum, momentumCoefficient, learningRate)
             momentumCoefficient *= momentumDecay
         return l, weights, biases, velocityWeight, velocityBias
 
-    def trainStochasticGradientDescent(self, inputData, labels, epochs, weights, biases, momentumCoefficient, momentumDecay, useMomentum, velocityWeight, velocityBias, learningRate, _):
+    def _trainStochasticGradientDescent(self, inputData, labels, epochs, weights, biases, momentumCoefficient, momentumDecay, useMomentum, velocityWeight, velocityBias, learningRate, _):
         """
         Trains a model using stochastic gradient descent (SGD).
 
@@ -70,20 +70,22 @@ class Optimisers:
             for data in range(len(inputData)):
                 layerNodes = self.forwardPropagation(inputData[data])
                 l.append(layerNodes)
-                w, b = self.backPropgation(layerNodes, weights, biases, labels[data])
+                w, b = self._backPropgation(layerNodes, weights, biases, labels[data])
                 if(useMomentum == True):
                     velocityWeight = momentumCoefficient * velocityWeight - learningRate * w
                     weights += velocityWeight
                     velocityBias = momentumCoefficient * velocityBias - learningRate * b
                     biases += velocityBias
                 else:
-                    weights -= learningRate * w
-                    biases -= learningRate * b
+                    for i in range(len(weights)):
+                        weights[i] -= learningRate * w[i]
+                    for i in range(len(biases)):
+                        biases[i] -= learningRate * b[i]
 
             momentumCoefficient *= momentumDecay
         return l, weights, biases, self.velocityWeight, self.velocityBias
 
-    def trainGradientDescentUsingBatching(self, inputData, labels, epochs, weights, biases, momentumCoefficient, momentumDecay, useMomentum, velocityWeight, velocityBias, learningRate, batchSize):
+    def _trainGradientDescentUsingBatching(self, inputData, labels, epochs, weights, biases, momentumCoefficient, momentumDecay, useMomentum, velocityWeight, velocityBias, learningRate, batchSize):
         """
         Trains a model using gradient descent.
 
@@ -115,17 +117,17 @@ class Optimisers:
             for i in range(0, len(inputData), batchSize):
                 batchData = inputData[i:i+batchSize]
                 batchLabels = labels[i:i+batchSize]
-                weightGradients, biasGradients = self.initialiseGradients(weights, biases)
+                weightGradients, biasGradients = self._initialiseGradients(weights, biases)
                 for j in range(len(batchData)):
                     layerNodes = self.forwardPropagation(batchData[j])
                     l.append(layerNodes)
-                    w, b = self.backPropgation(layerNodes, weights, biases, batchLabels[j])
-                    weightGradients, biasGradients = self.addGradients(weightGradients, biasGradients, w, b)
-                weights, biases, velocityWeight, velocityBias = self.updateWeightsBiases(batchSize, weights, biases, weightGradients, biasGradients, velocityWeight, velocityBias, useMomentum, momentumCoefficient, learningRate)
+                    w, b = self._backPropgation(layerNodes, weights, biases, batchLabels[j])
+                    weightGradients, biasGradients = self._addGradients(weightGradients, biasGradients, w, b)
+                weights, biases, velocityWeight, velocityBias = self._updateWeightsBiases(batchSize, weights, biases, weightGradients, biasGradients, velocityWeight, velocityBias, useMomentum, momentumCoefficient, learningRate)
             momentumCoefficient *= momentumDecay
         return l, weights, biases, velocityWeight, velocityBias
 
-    def initialiseVelocity(self, velocityWeight, velocityBias, weights, biases):
+    def _initialiseVelocity(self, velocityWeight, velocityBias, weights, biases):
         """
         Initialise velocity terms for momentum optimisation.
 
@@ -149,7 +151,7 @@ class Optimisers:
                 velocityBias.append(np.zeros_like(i))
         return velocityWeight, velocityBias
     
-    def initialiseGradients(self, weights, biases):
+    def _initialiseGradients(self, weights, biases):
         """
         Initialise gradients for weights and biases.
 
@@ -168,7 +170,7 @@ class Optimisers:
             biasGradients.append(np.zeros_like(i))
         return weightGradients, biasGradients
 
-    def addGradients(self, weightGradients, biasGradients, w, b):
+    def _addGradients(self, weightGradients, biasGradients, w, b):
         """
         Accumulates gradients for weights and biases.
 
@@ -190,7 +192,7 @@ class Optimisers:
             biasGradients[i] = np.clip(biasGradients[i], -1, 1)
         return weightGradients, biasGradients
     
-    def updateWeightsBiases(self, size, weights, biases, weightGradients, biasGradients, velocityWeight, velocityBias, useMomentum, momentumCoefficient, learningRate):
+    def _updateWeightsBiases(self, size, weights, biases, weightGradients, biasGradients, velocityWeight, velocityBias, useMomentum, momentumCoefficient, learningRate):
         """
         Updates the weights and biases of the model.
 

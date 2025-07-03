@@ -14,7 +14,7 @@ def test_ConvulutionalBackpropagation():
     conv.kernalWeights = np.array([[[[1, 0], [0, -1]]]])
     errorPatch = np.array([[[1, 2], [3, 4]]])
 
-    weightGradients, biasGradients, errorTerms = conv.backpropagation(errorPatch, inputTensor)
+    weightGradients, biasGradients, errorTerms = conv._backpropagation(errorPatch, inputTensor)
 
     expectedWeightGradients = np.array([[[[37, 47], [67, 77]]]])
     expectedBiasGradients = np.array([10])
@@ -39,7 +39,7 @@ def test_MaxPoolingBackpropagation():
     strideLength = 2
     pool = PoolingLayer(gridSize, strideLength, "max")
 
-    errorTerm = pool.backpropagation(errorPatch, inputTensor)
+    errorTerm = pool._backpropagation(errorPatch, inputTensor)
 
     expectedInputErrorTerms = np.array([[
         [0, 0, 0, 20],
@@ -63,7 +63,7 @@ def test_AveragePoolingBackpropagation():
     strideLength = 2
     pool = PoolingLayer(gridSize, strideLength, "ave")
 
-    errorTerm = pool.backpropagation(errorPatch, inputTensor)
+    errorTerm = pool._backpropagation(errorPatch, inputTensor)
 
     expectedInputErrorTerms = np.array([[
         [2.5, 2.5, 5, 5],
@@ -84,7 +84,7 @@ def test_GlobalAveragePoolingBackpropagation():
     ]])
     pool = PoolingLayer(None, None, "gap")
 
-    errorTerm = pool.backpropagation(None, inputTensor)
+    errorTerm = pool._backpropagation(None, inputTensor)
 
     '''
     1 * 1 / (4 * 4) = 1 / 16 = 0.0625
@@ -111,7 +111,7 @@ def test_ActivationLayerBackpropagation():
         [3, 2, 4, 1],
     ]]) 
 
-    errorTerm = ActivationLayer.backpropagation(ReLUDerivative, errorPatch, inputTensor)
+    errorTerm = ActivationLayer._backpropagation(ReLUDerivative, errorPatch, inputTensor)
 
     leakyReluDerive = np.where(inputTensor > 0, 1, 0.01)
     expectedInputErrorTerms = errorPatch * leakyReluDerive
@@ -171,11 +171,11 @@ class Test_DenseLayer:
         dense.layerNodes = layerNodes
         dense.orignalShape = layerNodes[0].shape
 
-        weightGradients, biasGradients, errorTerms = dense.backpropagation(trueValues)
+        weightGradients, biasGradients, errorTerms = dense._backpropagation(trueValues)
 
         expectedWeightGradients, expectedBiasGradients = self.calculateGradients(layerNodes, weights, trueValues, activationDerivatives, lossDerivative)
 
-        _, _, expectedErrorTerms = net.backPropgation(layerNodes, weights, biases, trueValues, True)
+        _, _, expectedErrorTerms = net._backPropgation(layerNodes, weights, biases, trueValues, True)
 
         for i in reversed(range(len(net.weights))):
             expectedErrorTerms = net.weights[i] @ expectedErrorTerms

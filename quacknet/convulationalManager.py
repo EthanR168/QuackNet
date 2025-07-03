@@ -36,7 +36,7 @@ class CNNModel(CNNoptimiser):
             allTensors.append(inputTensor)
         return allTensors
 
-    def backpropagation(self, allTensors, trueValues):
+    def _backpropagation(self, allTensors, trueValues):
         """
         Performs backpropagation through all layers to compute gradients.
 
@@ -47,20 +47,20 @@ class CNNModel(CNNoptimiser):
             allWeightGradients (list): List of all the weight gradients calculated during backpropgation.
             allBiasGradients (list): List of all the bias gradients calculated during backpropgation.
         """
-        weightGradients, biasGradients, errorTerms = self.layers[-1].backpropagation(trueValues) # <-- this is a neural network 
+        weightGradients, biasGradients, errorTerms = self.layers[-1]._backpropagation(trueValues) # <-- this is a neural network 
         allWeightGradients = [weightGradients]
         allBiasGradients = [biasGradients]
         for i in range(len(self.layers) - 2, -1, -1):
             if(type(self.layers[i]) == PoolingLayer or type(self.layers[i]) == ActivationLayer):
-                errorTerms = self.layers[i].backpropagation(errorTerms, allTensors[i])
+                errorTerms = self.layers[i]._backpropagation(errorTerms, allTensors[i])
             elif(type(self.layers[i]) == ConvLayer):
-                weightGradients, biasGradients, errorTerms = self.layers[i].backpropagation(errorTerms, allTensors[i])
+                weightGradients, biasGradients, errorTerms = self.layers[i]._backpropagation(errorTerms, allTensors[i])
                 allWeightGradients.insert(0, weightGradients)
                 allBiasGradients.insert(0, biasGradients)
         
         return allWeightGradients, allBiasGradients
     
-    def optimser(self, inputData, labels, useBatches, weights, biases, batchSize, alpha, beta1, beta2, epsilon):
+    def _optimser(self, inputData, labels, useBatches, weights, biases, batchSize, alpha, beta1, beta2, epsilon):
         """
         Runs the Adam optimiser either with or without batches.
 
@@ -82,9 +82,9 @@ class CNNModel(CNNoptimiser):
             list: Updated biases after optimisation
         """
         if(useBatches == True):
-            return CNNoptimiser.AdamsOptimiserWithBatches(self, inputData, labels, weights, biases, batchSize, alpha, beta1, beta2, epsilon)
+            return CNNoptimiser._AdamsOptimiserWithBatches(self, inputData, labels, weights, biases, batchSize, alpha, beta1, beta2, epsilon)
         else:
-            return CNNoptimiser.AdamsOptimiserWithoutBatches(self, inputData, labels, weights, biases, alpha, beta1, beta2, epsilon)
+            return CNNoptimiser._AdamsOptimiserWithoutBatches(self, inputData, labels, weights, biases, alpha, beta1, beta2, epsilon)
     
     def train(self, inputData, labels, useBatches, batchSize, alpha = 0.001, beta1 = 0.9, beta2 = 0.999, epsilon = 1e-8):
         """
@@ -106,7 +106,7 @@ class CNNModel(CNNoptimiser):
         """
         correct, totalLoss = 0, 0
         
-        nodes, self.weights, self.biases = self.optimser(inputData, labels, useBatches, self.weights, self.biases, batchSize, alpha, beta1, beta2, epsilon)        
+        nodes, self.weights, self.biases = self._optimser(inputData, labels, useBatches, self.weights, self.biases, batchSize, alpha, beta1, beta2, epsilon)        
         
         lastLayer = len(nodes[0]) - 1
         for i in range(len(nodes)): 
@@ -218,9 +218,9 @@ class ConvLayer(ConvulationalNetwork, CNNbackpropagation):
         Returns:
             ndarray: Output tensor after convolution.
         """
-        return ConvulationalNetwork.kernalisation(self, inputTensor, self.kernalWeights, self.kernalBiases, self.kernalSize, self.usePadding, self.padding, self.stride)
+        return ConvulationalNetwork._kernalisation(self, inputTensor, self.kernalWeights, self.kernalBiases, self.kernalSize, self.usePadding, self.padding, self.stride)
 
-    def backpropagation(self, errorPatch, inputTensor):
+    def _backpropagation(self, errorPatch, inputTensor):
         """
         Performs backpropagation to compute gradients for convolutional layer.
 
@@ -233,7 +233,7 @@ class ConvLayer(ConvulationalNetwork, CNNbackpropagation):
             ndarray: Gradients of the loss with respect to biases for each kernel.
             ndarray: Error terms propagated to the previous layer.
         """
-        return CNNbackpropagation.ConvolutionDerivative(self, errorPatch, self.kernalWeights, inputTensor, self.stride)
+        return CNNbackpropagation._ConvolutionDerivative(self, errorPatch, self.kernalWeights, inputTensor, self.stride)
 
 class PoolingLayer(CNNbackpropagation):
     def __init__(self, gridSize, stride, mode = "max"):
@@ -260,10 +260,10 @@ class PoolingLayer(CNNbackpropagation):
             ndarray: Output tensor after pooling. 
         """
         if(self.mode == "gap" or self.mode == "global"):
-            return ConvulationalNetwork.poolingGlobalAverage(self, inputTensor)
-        return ConvulationalNetwork.pooling(self, inputTensor, self.gridSize, self.stride, self.mode)
+            return ConvulationalNetwork._poolingGlobalAverage(self, inputTensor)
+        return ConvulationalNetwork._pooling(self, inputTensor, self.gridSize, self.stride, self.mode)
 
-    def backpropagation(self, errorPatch, inputTensor):
+    def _backpropagation(self, errorPatch, inputTensor):
         """
         Performs backpropagation through the pooling layer.
 
@@ -275,11 +275,11 @@ class PoolingLayer(CNNbackpropagation):
             inputGradient (ndarray): Gradient of the loss.
         """
         if(self.mode == "max"):
-            return CNNbackpropagation.MaxPoolingDerivative(self, errorPatch, inputTensor, self.gridSize, self.stride)
+            return CNNbackpropagation._MaxPoolingDerivative(self, errorPatch, inputTensor, self.gridSize, self.stride)
         elif(self.mode == "ave"):
-            return CNNbackpropagation.AveragePoolingDerivative(self, errorPatch, inputTensor, self.gridSize, self.stride)
+            return CNNbackpropagation._AveragePoolingDerivative(self, errorPatch, inputTensor, self.gridSize, self.stride)
         else:
-            return CNNbackpropagation.GlobalAveragePoolingDerivative(self, inputTensor)
+            return CNNbackpropagation._GlobalAveragePoolingDerivative(self, inputTensor)
 
 class DenseLayer: # basically a fancy neural network
     def __init__(self, NeuralNetworkClass):
@@ -303,11 +303,11 @@ class DenseLayer: # basically a fancy neural network
             ndarray: Output of the dense layer.
         """
         self.orignalShape = np.array(inputTensor).shape
-        inputArray = ConvulationalNetwork.flatternTensor(self, inputTensor)
+        inputArray = ConvulationalNetwork._flatternTensor(self, inputTensor)
         self.layerNodes = self.NeuralNetworkClass.forwardPropagation(inputArray)
         return self.layerNodes[-1]
     
-    def backpropagation(self, trueValues): #return weigtGradients, biasGradients, errorTerms
+    def _backpropagation(self, trueValues): #return weigtGradients, biasGradients, errorTerms
         """
         Performs backpropagation through the dense layer.
 
@@ -319,7 +319,7 @@ class DenseLayer: # basically a fancy neural network
             biasGradients (list of ndarray): Gradients of biases for each layer.
             errorTerms (ndarray): Error terms from the output layer weights, reshaped to the input tensor.   
         """  
-        weightGradients, biasGradients, errorTerms = self.NeuralNetworkClass.backPropgation(
+        weightGradients, biasGradients, errorTerms = self.NeuralNetworkClass._backPropgation(
             self.layerNodes, 
             self.NeuralNetworkClass.weights,
             self.NeuralNetworkClass.biases,
@@ -346,9 +346,9 @@ class ActivationLayer: # basically aplies an activation function over the whole 
         Returns:
             ndarray: A tensor with the same shape as the input with Leaky ReLU applied to it.
         """
-        return ConvulationalNetwork.activation(self, inputTensor)
+        return ConvulationalNetwork._activation(self, inputTensor)
 
-    def backpropagation(self, errorPatch, inputTensor):
+    def _backpropagation(self, errorPatch, inputTensor):
         """
         Compute the gradient of the loss with respect to the input of the activation layer during backpropagation.
 
@@ -359,5 +359,5 @@ class ActivationLayer: # basically aplies an activation function over the whole 
         Returns:
             inputGradient (ndarray): Gradient of the loss with respect to the inputTensor
         """  
-        return CNNbackpropagation.ActivationLayerDerivative(self, errorPatch, ReLUDerivative, inputTensor)
+        return CNNbackpropagation._ActivationLayerDerivative(self, errorPatch, ReLUDerivative, inputTensor)
     

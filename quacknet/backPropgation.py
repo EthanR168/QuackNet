@@ -42,7 +42,7 @@ r = learning rate
 (dL/dW) = derivative of loss function with respect to weight
 '''
 
-def outputLayerWeightChange(lossDerivative, activationDerivative, currentLayerNodes, pastLayerNodes, trueValues): 
+def _outputLayerWeightChange(lossDerivative, activationDerivative, currentLayerNodes, pastLayerNodes, trueValues): 
     """
     Calculate the weight gradients and error terms for the output layer during backpropagation.
 
@@ -65,7 +65,7 @@ def outputLayerWeightChange(lossDerivative, activationDerivative, currentLayerNo
     weightGradients = np.outer(pastLayerNodes, errorTerms)
     return weightGradients, errorTerms
 
-def hiddenLayerWeightChange(pastLayerErrorTerms, pastLayerWeights, activationDerivative, currentLayerNodes, pastLayerNodes):
+def _hiddenLayerWeightChange(pastLayerErrorTerms, pastLayerWeights, activationDerivative, currentLayerNodes, pastLayerNodes):
     """
     Calculate the weight gradients and error terms for the hidden layer during backpropagation.
 
@@ -84,7 +84,7 @@ def hiddenLayerWeightChange(pastLayerErrorTerms, pastLayerWeights, activationDer
     weightGradients = np.outer(pastLayerNodes, errorTerms)
     return weightGradients, errorTerms
 
-def outputLayerBiasChange(lossDerivative, activationDerivative, currentLayerNodes, trueValues):
+def _outputLayerBiasChange(lossDerivative, activationDerivative, currentLayerNodes, trueValues):
     """
     Calculate the bias gradients and error terms for the output layer during backpropagation.
 
@@ -107,7 +107,7 @@ def outputLayerBiasChange(lossDerivative, activationDerivative, currentLayerNode
     return biasGradients, errorTerms
 
 
-def hiddenLayerBiasChange(pastLayerErrorTerms, pastLayerWeights, activationDerivative, currentLayerNodes):
+def _hiddenLayerBiasChange(pastLayerErrorTerms, pastLayerWeights, activationDerivative, currentLayerNodes):
     """
     Calculate the bias gradients and error terms for the hidden layer during backpropagation.
 
@@ -125,7 +125,7 @@ def hiddenLayerBiasChange(pastLayerErrorTerms, pastLayerWeights, activationDeriv
     biasGradients = errorTerms
     return biasGradients, errorTerms
 
-def backPropgation(layerNodes, weights, biases, trueValues, layers, lossFunction, returnErrorTermForCNN = False):
+def _backPropgation(layerNodes, weights, biases, trueValues, layers, lossFunction, returnErrorTermForCNN = False):
     """
     Perform backpropagation over the network layers to compute gradients for weights and biases.
 
@@ -156,20 +156,20 @@ def backPropgation(layerNodes, weights, biases, trueValues, layers, lossFunction
         tanH: TanHDerivative,
         softMax: SoftMaxDerivative,
     }
-    w, weightErrorTerms = outputLayerWeightChange(lossDerivatives[lossFunction], activationDerivatives[layers[len(layers) - 1][1]], layerNodes[len(layerNodes) - 1], layerNodes[len(layerNodes) - 2], trueValues)
-    b, biasErrorTerms = outputLayerBiasChange(lossDerivatives[lossFunction], activationDerivatives[layers[len(layers) - 1][1]], layerNodes[len(layerNodes) - 1], trueValues)
+    w, weightErrorTerms = _outputLayerWeightChange(lossDerivatives[lossFunction], activationDerivatives[layers[len(layers) - 1][1]], layerNodes[len(layerNodes) - 1], layerNodes[len(layerNodes) - 2], trueValues)
+    b, biasErrorTerms = _outputLayerBiasChange(lossDerivatives[lossFunction], activationDerivatives[layers[len(layers) - 1][1]], layerNodes[len(layerNodes) - 1], trueValues)
     hiddenWeightErrorTermsForCNNBackpropgation = weightErrorTerms
     weightGradients = [w]
     biasGradients = [b]
     for i in range(len(layers) - 2, 0, -1):
-        w, weightErrorTerms = hiddenLayerWeightChange(
+        w, weightErrorTerms = _hiddenLayerWeightChange(
             weightErrorTerms, 
             weights[i], 
             activationDerivatives[layers[i][1]], 
             layerNodes[i], 
             layerNodes[i - 1]
         )
-        b, biasErrorTerms = hiddenLayerBiasChange(
+        b, biasErrorTerms = _hiddenLayerBiasChange(
             biasErrorTerms, 
             weights[i], 
             activationDerivatives[layers[i][1]], 

@@ -1,7 +1,7 @@
 import numpy as np
 
 class CNNoptimiser:
-    def AdamsOptimiserWithBatches(self, inputData, labels, weights, biases, batchSize, alpha, beta1, beta2, epsilon):
+    def _AdamsOptimiserWithBatches(self, inputData, labels, weights, biases, batchSize, alpha, beta1, beta2, epsilon):
         """
         Performs Adam optimisation on the CNN weights and biases using mini batches.
 
@@ -21,9 +21,9 @@ class CNNoptimiser:
             weights (list of ndarray): Updated weights after optimisation.
             biases (list of ndarray): Updated biases after optimisation.
         """
-        firstMomentWeight, firstMomentBias = self.initialiseMoment(weights, biases)
-        secondMomentWeight, secondMomentBias = self.initialiseMoment(weights, biases)
-        weightGradients, biasGradients = self.initialiseGradients(weights, biases)
+        firstMomentWeight, firstMomentBias = self._initialiseMoment(weights, biases)
+        secondMomentWeight, secondMomentBias = self._initialiseMoment(weights, biases)
+        weightGradients, biasGradients = self._initialiseGradients(weights, biases)
         allNodes = []
         for i in range(0, len(inputData), batchSize):
             batchData = inputData[i:i+batchSize]
@@ -31,14 +31,14 @@ class CNNoptimiser:
             for j in range(len(batchData)):
                 layerNodes = self.forward(batchData[j])
                 allNodes.append(layerNodes)
-                w, b = self.backpropagation(layerNodes, batchLabels[j])
-                weightGradients, biasGradients = self.addGradients(batchSize, weightGradients, biasGradients, w, b)
+                w, b = self._backpropagation(layerNodes, batchLabels[j])
+                weightGradients, biasGradients = self._addGradients(batchSize, weightGradients, biasGradients, w, b)
             weights, biases, firstMomentWeight, firstMomentBias, secondMomentWeight, secondMomentBias = self._Adams(weightGradients, biasGradients, weights, biases, i + 1, firstMomentWeight, firstMomentBias, secondMomentWeight, secondMomentBias, alpha, beta1, beta2, epsilon)
-            weightGradients, biasGradients = self.initialiseGradients(weights, biases)
+            weightGradients, biasGradients = self._initialiseGradients(weights, biases)
             print(f"finished batch: {(i // batchSize) + 1}/{len(inputData) // batchSize}")
         return allNodes, weights, biases
 
-    def AdamsOptimiserWithoutBatches(self, inputData, labels, weights, biases, alpha, beta1, beta2, epsilon):
+    def _AdamsOptimiserWithoutBatches(self, inputData, labels, weights, biases, alpha, beta1, beta2, epsilon):
         """
         Performs Adam optimisation on the CNN weights and biases without using batches.
 
@@ -57,17 +57,17 @@ class CNNoptimiser:
             weights (list of ndarray): Updated weights after optimisation.
             biases (list of ndarray): Updated biases after optimisation.
         """
-        firstMomentWeight, firstMomentBias = self.initialiseMoment(weights, biases)
-        secondMomentWeight, secondMomentBias = self.initialiseMoment(weights, biases)
-        weightGradients, biasGradients = self.initialiseGradients(weights, biases)
+        firstMomentWeight, firstMomentBias = self._initialiseMoment(weights, biases)
+        secondMomentWeight, secondMomentBias = self._initialiseMoment(weights, biases)
+        weightGradients, biasGradients = self._initialiseGradients(weights, biases)
         allNodes = []
         for i in range(len(inputData)):
             layerNodes = self.forward(inputData[i])
             allNodes.append(layerNodes)
-            w, b = self.backpropagation(layerNodes, labels[i])
-            weightGradients, biasGradients = self.addGradients(1, weightGradients, biasGradients, w, b)
+            w, b = self._backpropagation(layerNodes, labels[i])
+            weightGradients, biasGradients = self._addGradients(1, weightGradients, biasGradients, w, b)
             weights, biases, firstMomentWeight, firstMomentBias, secondMomentWeight, secondMomentBias = self._Adams(weightGradients, biasGradients, weights, biases, i + 1, firstMomentWeight, firstMomentBias, secondMomentWeight, secondMomentBias, alpha, beta1, beta2, epsilon)
-            weightGradients, biasGradients = self.initialiseGradients(weights, biases)
+            weightGradients, biasGradients = self._initialiseGradients(weights, biases)
         return allNodes, weights, biases
 
     def _Adams(self, weightGradients, biasGradients, weights, biases, timeStamp, firstMomentWeight, firstMomentBias, secondMomentWeight, secondMomentBias, alpha, beta1, beta2, epsilon):
@@ -118,7 +118,7 @@ class CNNoptimiser:
                 biases[i][j] -= alpha * firstMomentBiasHat / (np.sqrt(secondMomentBiasHat) + epsilon)
         return weights, biases, firstMomentWeight, firstMomentBias, secondMomentWeight, secondMomentBias
 
-    def initialiseGradients(self, weights, biases):
+    def _initialiseGradients(self, weights, biases):
         """
         Initialise the weight and bias gradients as zero arrays with the same shape as weights and biases.
 
@@ -143,7 +143,7 @@ class CNNoptimiser:
             biasGradients.append(b)
         return weightGradients, biasGradients
 
-    def addGradients(self, batchSize, weightGradients, biasGradients, w, b):
+    def _addGradients(self, batchSize, weightGradients, biasGradients, w, b):
         """
         Adds gardients from a batch to the accumulated gradients.
 
@@ -169,7 +169,7 @@ class CNNoptimiser:
             #biasGradients[i] = np.clip(biasGradients[i], -1, 1)
         return weightGradients, biasGradients
 
-    def initialiseMoment(self, weights, biases):
+    def _initialiseMoment(self, weights, biases):
         """
         Initialise the first and second moment estimates for Adam optimiser as zero arrays matching weights and biases.
 

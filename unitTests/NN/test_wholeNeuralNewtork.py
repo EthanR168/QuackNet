@@ -1,6 +1,6 @@
 import numpy as np
 from quacknet.activationFunctions import relu, linear
-from quacknet.backPropgation import backPropgation
+from quacknet.backPropgation import _backPropgation
 from quacknet.activationDerivativeFunctions import ReLUDerivative, LinearDerivative
 from quacknet.lossDerivativeFunctions import MSEDerivative
 from quacknet.lossFunctions import MSELossFunction
@@ -57,7 +57,7 @@ def backpropagation(layerNodes, weights, biases, trueValues, layers):
     activationDerivatives = [ReLUDerivative, ReLUDerivative, LinearDerivative]
     lossDerivative = MSEDerivative
 
-    weightGradients, biasGradients = backPropgation(layerNodes, weights, biases, trueValues, layers, MSELossFunction)
+    weightGradients, biasGradients = _backPropgation(layerNodes, weights, biases, trueValues, layers, MSELossFunction)
 
     expectedWeightGradients, expectedBiasGradients = calculateGradients(layerNodes, weights, trueValues, activationDerivatives, lossDerivative)
 

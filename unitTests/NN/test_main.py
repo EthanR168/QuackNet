@@ -9,14 +9,14 @@ class TestNetwork_CalculateLayerNodes:
         lastLayerWeights = np.array([[0.75], [0.5]])
         biases = np.array([0.2])
         #0.2 + 0.25 * 0.75 + 0.5 * 0.5
-        assert Network.calculateLayerNodes(self, lastLayerNodes, lastLayerWeights, biases, currLayer) == np.array([0.6375])
+        assert Network._calculateLayerNodes(self, lastLayerNodes, lastLayerWeights, biases, currLayer) == np.array([0.6375])
 
         currLayer = np.array([3, relu])
         lastLayerNodes = np.array([0.25, 0.5, 0.1])
         lastLayerWeights = np.array([[0.75], [0.5], [0.25]])
         biases = np.array([0.2])
         #0.25 * 0.75 + 0.5 * 0.5 + 0.1 * 0.25 + 0.2
-        assert np.allclose(Network.calculateLayerNodes(self, lastLayerNodes, lastLayerWeights, biases, currLayer), np.array([0.6625]))
+        assert np.allclose(Network._calculateLayerNodes(self, lastLayerNodes, lastLayerWeights, biases, currLayer), np.array([0.6625]))
 
     def test_calculateLayerNodes_sigmoid(self):
         currLayer = np.array([2, sigmoid])
@@ -25,7 +25,7 @@ class TestNetwork_CalculateLayerNodes:
         biases = np.array([0.2])
         #0.25 * 0.75 + 0.5 * 0.5 + 0.2 = 0.6375
         #sigmoid(0.6375) == 0.654188113761
-        assert np.allclose(Network.calculateLayerNodes(self, lastLayerNodes, lastLayerWeights, biases, currLayer), np.array([0.654188113761]))
+        assert np.allclose(Network._calculateLayerNodes(self, lastLayerNodes, lastLayerWeights, biases, currLayer), np.array([0.654188113761]))
 
         currLayer = np.array([3, sigmoid])
         lastLayerNodes = np.array([0.25, 0.5, 0.1])
@@ -33,7 +33,7 @@ class TestNetwork_CalculateLayerNodes:
         biases = np.array([0.2])
         #0.25 * 0.75 + 0.5 * 0.5 + 0.1 * 0.25 + 0.2 = 0.6625
         #sigmoid(0.6625) == 0.659821754972
-        assert np.allclose(Network.calculateLayerNodes(self, lastLayerNodes, lastLayerWeights, biases, currLayer), np.array([0.659821754972]))
+        assert np.allclose(Network._calculateLayerNodes(self, lastLayerNodes, lastLayerWeights, biases, currLayer), np.array([0.659821754972]))
 
     def test_calculateLayerNodes_tanH(self):
         currLayer = np.array([2, tanH])
@@ -42,7 +42,7 @@ class TestNetwork_CalculateLayerNodes:
         biases = np.array([0.2])
         #0.25 * 0.75 + 0.5 * 0.5 + 0.2 = 0.6375
         #tanH(0.6375) == 0.563194927805
-        assert np.allclose(Network.calculateLayerNodes(self, lastLayerNodes, lastLayerWeights, biases, currLayer), np.array([0.563194927805]))
+        assert np.allclose(Network._calculateLayerNodes(self, lastLayerNodes, lastLayerWeights, biases, currLayer), np.array([0.563194927805]))
 
         currLayer = np.array([3, tanH])
         lastLayerNodes = np.array([0.25, 0.5, 0.1])
@@ -50,7 +50,7 @@ class TestNetwork_CalculateLayerNodes:
         biases = np.array([0.2])
         #0.25 * 0.75 + 0.5 * 0.5 + 0.1 * 0.25 + 0.2 = 0.6625
         #tanH(0.6625) == 0.659821754972
-        assert np.allclose(Network.calculateLayerNodes(self, lastLayerNodes, lastLayerWeights, biases, currLayer), np.array([0.580024746853]))
+        assert np.allclose(Network._calculateLayerNodes(self, lastLayerNodes, lastLayerWeights, biases, currLayer), np.array([0.580024746853]))
 
     def test_calculateLayerNodes_linear(self):
         currLayer = np.array([2, linear])
@@ -58,14 +58,14 @@ class TestNetwork_CalculateLayerNodes:
         lastLayerWeights = np.array([[0.75], [0.5]])
         biases = np.array([0.2])
         #0.25 * 0.75 + 0.5 * 0.5 + 0.2 = 0.6375
-        assert np.allclose(Network.calculateLayerNodes(self, lastLayerNodes, lastLayerWeights, biases, currLayer), np.array([0.6375]))
+        assert np.allclose(Network._calculateLayerNodes(self, lastLayerNodes, lastLayerWeights, biases, currLayer), np.array([0.6375]))
 
         currLayer = np.array([3, linear])
         lastLayerNodes = np.array([0.25, 0.5, 0.1])
         lastLayerWeights = np.array([[0.75], [0.5], [0.25]])
         biases = np.array([0.2])
         #0.25 * 0.75 + 0.5 * 0.5 + 0.1 * 0.25 + 0.2 = 0.6625
-        assert np.allclose(Network.calculateLayerNodes(self, lastLayerNodes, lastLayerWeights, biases, currLayer), np.array([0.6625]))
+        assert np.allclose(Network._calculateLayerNodes(self, lastLayerNodes, lastLayerWeights, biases, currLayer), np.array([0.6625]))
 
     def test_calculateLayerNodes_softmax(self):
         currLayer = np.array([2, softMax])
@@ -73,7 +73,7 @@ class TestNetwork_CalculateLayerNodes:
         lastLayerWeights = np.array([[0.75], [0.5]])
         biases = np.array([0.2])
         #0.25 * 0.75 + 0.5 * 0.5 + 0.2 = 0.6375
-        assert np.allclose(Network.calculateLayerNodes(self, lastLayerNodes, lastLayerWeights, biases, currLayer), np.array([1]))
+        assert np.allclose(Network._calculateLayerNodes(self, lastLayerNodes, lastLayerWeights, biases, currLayer), np.array([1]))
 
         currLayer = np.array([2, softMax])
         lastLayerNodes = np.array([0.25, 0.5])
@@ -86,7 +86,7 @@ class TestNetwork_CalculateLayerNodes:
         summ = np.exp(out1) + np.exp(out2)
         s1 = np.exp(out1) / summ
         s2 = np.exp(out2) / summ
-        result = Network.calculateLayerNodes(self, lastLayerNodes, lastLayerWeights, biases, currLayer)
+        result = Network._calculateLayerNodes(self, lastLayerNodes, lastLayerWeights, biases, currLayer)
         assert np.allclose(s1, result[0])
         assert np.allclose(s2, result[1])
 

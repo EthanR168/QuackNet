@@ -3,7 +3,7 @@
 [![PyPI version](https://img.shields.io/pypi/v/QuackNet)](https://pypi.org/project/QuackNet/)
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://sirquackpng.github.io/QuackNet/quacknet.html)
 
-**QuackNet** is a python based building and training neural networks and convolutional networks entirely from scratch. It offers foundational implementations of key components such as forward propagation, backpropagation and optimisation algorithms, without relying on machine learning frameworks like TensorFlow or Pytorch
+**QuackNet** is a Python-based library for building and training neural networks and convolutional networks entirely from scratch. It offers foundational implementations of key components such as forward propagation, backpropagation and optimisation algorithms, without relying on machine learning frameworks like TensorFlow or PyTorch.
 
 ## Table of Contents
 
@@ -15,6 +15,7 @@
 -   [Highlights](#highlights)
 -   [Roadmap](#roadmap)
 -   [Code Structure](#code-structure)
+-   [Unit Tests](#unit-tests)
 -   [Benchmark](#benchmark)
 -   [Benchmark Against PyTorch and TensorFlow](#benchmark-against-pytorch-and-tensorflow)
 -   [Related Projects](#related-projects)
@@ -24,9 +25,9 @@
 
 This project was developed to:
 
--   **Deepen understanding** of neural network by implementing them from scratch
--   **Provide a lightweight alternative** to large scale frameworks for educational purposes
--   **Offer flexibility** for experimentation with custom architectures
+-   **Deepen understanding** of neural networks by implementing them from scratch.
+-   **Provide a lightweight alternative** to large scale frameworks for educational purposes.
+-   **Offer flexibility** to experiment with custom architectures.
 
 ## Installation
 
@@ -43,25 +44,22 @@ pip install QuackNet
 -   Fully handwritten layers, activation functions and loss functions.
 -   No reliance on external libraries for machine learning (except for numpy)
 
-**2. Core neural network functionality:**
--   Support for common activation functions (eg.Leaky ReLU, Sigmoid, Softmax)
--   Multiple loss functions with derivatives (eg. MSE, MAE, Cross entropy)
-
-**3. Training:**
--   includes backpropagation for gradient calculation and parameter updates
+**2. Core Functionality:**
+-   Support for common activation functions (e.g. Leaky ReLU, Sigmoid, Softmax)
+-   Multiple loss functions with derivatives (e.g. MSE, MAE, Cross Entropy)
 -   Optimisers: Gradient Descent, Stochastic Gradient Descent (SGD), and Adam.
--   Supports batching for efficient training.
+-   Supports batching for efficient training.   
 
-**4. Layer Support:**
+**3. Layer Support:**
 -   Fully Connected Layer (Dense)
 -   Convolutional
 -   Pooling (Max and Average)
 -   Global Average Pooling
 -   Activation Layers
 
-**5. Additional Features:**
+**4. Additional Features:**
 -   Save and load model weights and biases.
--   Evaluation metrics including accuracy and loss.
+-   Evaluation metrics such as accuracy and loss.
 -   Visualisation tools for training progress.
 -   Demo projects like MNIST and HAM10000 classification.
 
@@ -76,7 +74,7 @@ n = Network(
     learningRate = 0.01,
     optimisationFunc = "sgd", #stochastic gradient descent
 )
-n.addLayer(3, "relu") # Input layer
+n.addLayer(3) # Input layer
 n.addLayer(2, "relu") # Hidden layer
 n.addLayer(1, "softmax") # Output layer
 n.createWeightsAndBiases()
@@ -120,7 +118,7 @@ print(f"Average loss: {averageLoss}")
 - [X] **Activation functions**
     Added support for Leaky ReLU, Sigmoid, Softmax and others
 - [X] **Loss functions**
-    Implemented MSE, MAE and cross entropy loss with their derivatives
+    Implemented MSE, MAE and Cross Entropy loss with their derivatives
 - [X] **Backpropagation**
     Completed backpropagation for gradient calculation and parameter updates
 - [X] **Optimisers**
@@ -134,13 +132,13 @@ print(f"Average loss: {averageLoss}")
 - [X] **Add Adam optimiser**  
     Implement the Adam optimiser to improve training performance and convergence
 - [X] **Data augmentation**
-    add data augmentation such as flipping, rotation and cropping
+    Add data augmentation such as flipping, rotation and cropping
 - [X] **Input Data augmentation:**
-    add normalisation of pixels and one hot labels
+    Add normalisation of pixels and one hot labels
 - [X] **Skin Lesion detector**    
-    use the neural network library to create a model for detecting skin lesions using HAM10000 for skin lesion images
+    Use the neural network library to create a model for detecting skin lesions using HAM10000 for skin lesion images
 - [ ] **Additional activation functions**  
-    implement advanced activation functions (eg. GELU and Swish)
+    Implement advanced activation functions (eg. GELU and Swish)
 
 ## Code structure
 
@@ -158,12 +156,39 @@ print(f"Average loss: {averageLoss}")
     -   Functions: Forward propagation, backpropagation, flattening, global average pooling
     -   Optimisers: Adams optimiser, SGD, GD, GD using batching
 
+## Unit Tests
+
+QuackNet includes unit tests that ensures the correctness of its neural network and convolutional network components. The tests are oganised into two directories:
+-   unitTests/NN/ - for standard neural network tests 
+-   unitTests/CNN/ - for convolutional network specific tests 
+
+
+These tests cover:
+
+-   Forward and backward propagation for both neural networks and convolutional neural networks.
+-   CNN specific layers: Dense, Convolutional, Pooling
+-   Activation functions and loss functions, including their derivatives
+-   Optimisation algorithms: SGD, GD, Adam
+
+To run the tests:
+
+```bash
+pytest
+```
+
+To check test coverage:
+
+```bash
+coverage run -m pytest
+coverage report -m
+```
+
 ## Benchmark
 
 The library was benchmarked on the MNIST dataset using the following setup:
 
 -   **Model Architecture:** 784 (input) → 128 → 64 → 10 (output)
--   **Activation Function:** Leaky Relu for input and hidden layer, and softmax for output layer
+-   **Activation Function:** Leaky ReLU for input and hidden layer, and softmax for output layer
 -   **Optimiser:** Gradient Descent with Batches
 -   **Batch Size:** 64
 -   **Learning rate:** 0.01
@@ -184,13 +209,13 @@ Below is the graph showing the training accuracy and loss over 10 epochs, across
 
 ![Training Accuracy](benchmarkFolder/MNISTBenchmark/benchmark.png)
 
-## Benchmark Against Pytorch and Tensorflow
+## Benchmark Against PyTorch and Tensorflow
 
-The library was benchmarked on the MNIST dataset using the following setup:
+The library was benchmarked on the MNIST dataset against PyTorch and Tensorflow using identical architectures and hyperparameters to ensure fair comparison.
 
 -   **Neural Network Model Architecture:** 784 (input) → 128 → 64 → 10 (output)
--   **Activation Function:** Leaky Relu for input and hidden layer, and softmax for hidden layer
--   **Optimiser:** Batches
+-   **Activation Function:** Leaky ReLU for input and hidden layers, and softmax for hidden layers
+-   **Optimiser:** Gradient Descent with Batches
 -   **Batch Size:** 64
 -   **Learning rate:** 0.01
 -   **Epochs** 10
@@ -199,7 +224,7 @@ The library was benchmarked on the MNIST dataset using the following setup:
 -   **Training Accuracy:** 97.1%
 -   **Average Loss:** 0.10
 
-### Results For Pytorch:
+### Results For PyTorch:
 -   **Training Accuracy:** 93.4%
 -   **Average Loss:** 0.23
 
@@ -210,7 +235,7 @@ The library was benchmarked on the MNIST dataset using the following setup:
 ### Code:
 
 -   The code for the QuackNet benchmark can be found [here](benchmarkFolder/MNISTBenchmark/mnistExample.py)
--   The code for the Pytorch benchmark can be found [here](benchmarkFolder/MNISTBenchmark/pytorchBenchmark.py)
+-   The code for the PyTorch benchmark can be found [here](benchmarkFolder/MNISTBenchmark/pytorchBenchmark.py)
 -   The code for the Tensorflow benchmark can be found [here](benchmarkFolder/MNISTBenchmark/tensorflowBenchmark.py)
 
 ### Training Performance
@@ -223,7 +248,7 @@ Below is the graph showing the training accuracy and loss over 10 epochs, across
 
 ### Skin Lesion Detector
 
-A convolutional neural network (CNN) skin lesion classification model built with QuackNet, trained using the HAM10000 dataset. This model achieved 60.2% accuracy on a balanced validation set.
+A convolutional neural network (CNN) skin lesion classification model built with QuackNet, trained using the HAM10000 dataset. This model achieved 60.2% accuracy on a balanced validation set of skin lesion images.
 
 You can explore the full project here:
 [Skin Lesion Detector Repository](https://github.com/SirQuackPng/skinLesionDetector)

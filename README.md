@@ -1,33 +1,29 @@
 # QuackNet
+<!-- Hook -->
+A pure Python deep learning library built entirely from scratch, designed for educational insight and hands-on experimentation with neural networks and CNNs without using TensorFlow or PyTorch.
 
-[![PyPI version](https://img.shields.io/pypi/v/QuackNet)](https://pypi.org/project/QuackNet/)
+<!-- Badges -->
+Latest release: [![PyPI version](https://img.shields.io/pypi/v/QuackNet)](https://pypi.org/project/QuackNet/) 
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://sirquackpng.github.io/QuackNet/quacknet.html)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
 **QuackNet** is a Python-based library for building and training neural networks and convolutional networks entirely from scratch. It offers foundational implementations of key components such as forward propagation, backpropagation and optimisation algorithms, without relying on machine learning frameworks like TensorFlow or PyTorch.
 
 ## Table of Contents
 
--   [Why This Library](#why-this-library)
 -   [Installation](#installation)
--   [Key Features](#key-features)
--   [Usage](#usage)
--   [Examples](#examples)
--   [Highlights](#highlights)
--   [Roadmap](#roadmap)
--   [Code Structure](#code-structure)
--   [Unit Tests](#unit-tests)
+-   [Quick Start](#quick-start)
 -   [Benchmark](#benchmark)
--   [Benchmark Against PyTorch and TensorFlow](#benchmark-against-pytorch-and-tensorflow)
+-   [Why This Library](#why-this-library)
+-   [Key Features](#key-features)
+-   [Highlights](#highlights)
+-   [Advanced Usage](#advanced-usage)
+-   [Examples](#examples)
+-   [Roadmap](#roadmap)
+-   [Unit Tests](#unit-tests)
 -   [Related Projects](#related-projects)
+-   [Project Architecture](#project-architecture)
 -   [License](#license)
-
-## Why this Library?
-
-This project was developed to:
-
--   **Deepen understanding** of neural networks by implementing them from scratch.
--   **Provide a lightweight alternative** to large scale frameworks for educational purposes.
--   **Offer flexibility** to experiment with custom architectures.
 
 ## Installation
 
@@ -38,14 +34,68 @@ QuackNet is simple to install via PyPI.
 pip install QuackNet
 ```
 
+## Quick Start
+
+```python
+
+from quacknet.main import Network
+
+n = Network(lossFunc="Cross Entropy", learningRate=0.01, optimisationFunc="sgd")
+n.addLayer(5, "ReLU")
+n.addLayer(3, "SoftMax")
+n.createWeightsAndBiases()
+accuracy, averageLoss = n.train(mnist_images, mnist_labels, epochs=5)
+```
+
+## Benchmark
+
+### Performance Comparison: QuackNet vs PyTorch & TensorFlow
+
+The library was benchmarked on the MNIST dataset against PyTorch and Tensorflow using identical architectures and hyperparameters to ensure fair comparison.
+
+-   **Neural Network Model Architecture:** 784 (input) → 128 → 64 → 10 (output)
+-   **Activation Function:** Leaky ReLU for input and hidden layers, and SoftMax for output layer
+-   **Optimiser:** Gradient Descent with Batches
+-   **Batch Size:** 64
+-   **Learning rate:** 0.01
+-   **Epochs** 10
+
+Below is the graph showing the training accuracy and loss over 10 epochs, for the three ML frameworks.
+
+![Training Accuracy & Loss over 10 Epochs](benchmarkFolder/MNISTBenchmark/frameworkBenchmark.png)
+
+| Framework   | Accuracy | Loss |
+|-------------|----------|------|
+| QuackNet    | 97.1%    | 0.10 |     
+| PyTorch     | 93.4%    | 0.23 |
+| Tensorflow  | 95.1%    | 0.17 |
+
+**code:**
+
+-   The code for the QuackNet benchmark can be found [here](benchmarkFolder/MNISTBenchmark/mnistExample.py)
+-   The code for the PyTorch benchmark can be found [here](benchmarkFolder/MNISTBenchmark/pytorchBenchmark.py)
+-   The code for the Tensorflow benchmark can be found [here](benchmarkFolder/MNISTBenchmark/tensorflowBenchmark.py)
+
+### QuackNet benchmark on MNIST
+
+The code for this benchmark can be found [here](benchmarkFolder/MNISTBenchmark/mnistExample.py)
+
+Below is the graph showing the training accuracy and loss over 10 epochs, across 5 runs:
+
+![Training Accuracy & Loss over 10 Epochs](benchmarkFolder/MNISTBenchmark/benchmark.png)
+
+## Why this Library?
+
+QuackNet was created to deepen my understanding of how neural networks work internally. Unlike high-level frameworks, it shows the mechanisms of forward and backward propagation, gradient computation, and weight gradients. Offering a highly educational and customisable platform for learning and experimentation.
+
 ## Key Features
 
 **1. Custom Implementation:**
--   Fully handwritten layers, activation functions and loss functions.
+-   Implemented from scratch layers, activation functions and loss functions.
 -   No reliance on external libraries for machine learning (except for numpy)
 
 **2. Core Functionality:**
--   Support for common activation functions (e.g. Leaky ReLU, Sigmoid, Softmax)
+-   Support for common activation functions (e.g. Leaky ReLU, Sigmoid, SoftMax)
 -   Multiple loss functions with derivatives (e.g. MSE, MAE, Cross Entropy)
 -   Optimisers: Gradient Descent, Stochastic Gradient Descent (SGD), and Adam.
 -   Supports batching for efficient training.   
@@ -63,20 +113,35 @@ pip install QuackNet
 -   Visualisation tools for training progress.
 -   Demo projects like MNIST and HAM10000 classification.
 
-## Usage
+## Highlights
+
+-   **Custom Architectures:** Define and train neural networks with fully customisable architectures
+-   **Optimisation Algorithms:** Includes Gradient Descent, Stochastic Gradient Descent and Adam optimiser for efficient training
+-   **Loss and Activation Functions:** Prebuilt support for common loss and activation functions with the option to make your own
+-   **Layer Support:**
+    -   Fully Connected (Dense)
+    -   Convolutional
+    -   Pooling (Max and Average)
+    -   Global Average Pooling
+    -   Activation layer
+-   **Evaluation Tools:** Includes metrics for model evaluation such as accuracy and loss
+-   **Save and Load:** Save weights and biases for reuse for further training
+-   **Demo Projects:** Includes example implementations such as MNIST digit classification
+
+## Advanced Usage
 Here is an example of how to create and train a simple neural network using the library:
 ```python
 from quacknet.main import Network
 
 # Define a neural network architecture
 n = Network(
-    lossFunc = "cross entropy",
+    lossFunc = "Cross Entropy",
     learningRate = 0.01,
-    optimisationFunc = "sgd", #stochastic gradient descent
+    optimisationFunc = "SGD", # Stochastic Gradient Descent
 )
 n.addLayer(3) # Input layer
-n.addLayer(2, "relu") # Hidden layer
-n.addLayer(1, "softmax") # Output layer
+n.addLayer(2, "ReLU") # Hidden layer
+n.addLayer(1, "SoftMax") # Output layer
 n.createWeightsAndBiases()
 
 # Example data
@@ -97,28 +162,14 @@ print(f"Average loss: {averageLoss}")
 -   [Convolutional Neural Network Example](/ExampleCode/CNNExample.py): Shows how to use the convolutional layers in the library
 -   [MNIST Neural Network Example](/ExampleCode/MNISTExample/mnistExample.py): Shows how to use neural network to train on MNIST
 
-## Highlights
-
--   **Custom Architectures:** Define and train neural networks with fully customisable architectures
--   **Optimisation Algorithms:** Includes Gradient Descent, Stochastic Gradient Descent and Adam optimiser for efficient training
--   **Loss and Activation Functions:** Prebuilt support for common loss and activation functions with the option to make your own
--   **Layer Support:**
-    -   Fully Connected (Dense)
-    -   Convolutional
-    -   Pooling (max and Average)
-    -   Global Average Pooling
-    -   Activation layer
--   **Evaluation Tools:** Includes metrics for model evaluation such as accuracy and loss
--   **Save and Load:** Save weights and biases for reuse for further training
--   **Demo Projects:** Includes example implementations such as MNIST digit classification
-
 ## Roadmap
+
 - [X] **Forward propagation**
     Implemented the feed forward pass for neural network layers
 - [X] **Activation functions**
-    Added support for Leaky ReLU, Sigmoid, Softmax and others
+    Added support for Leaky ReLU, Sigmoid, SoftMax, and others
 - [X] **Loss functions**
-    Implemented MSE, MAE and Cross Entropy loss with their derivatives
+    Implemented MSE, MAE, and Cross Entropy loss with their derivatives
 - [X] **Backpropagation**
     Completed backpropagation for gradient calculation and parameter updates
 - [X] **Optimisers**
@@ -134,34 +185,17 @@ print(f"Average loss: {averageLoss}")
 - [X] **Data augmentation**
     Add data augmentation such as flipping, rotation and cropping
 - [X] **Input Data augmentation:**
-    Add normalisation of pixels and one hot labels
+    Add pixel normalisation of pixels and one-hot label encoding
 - [X] **Skin Lesion detector**    
     Use the neural network library to create a model for detecting skin lesions using HAM10000 for skin lesion images
 - [ ] **Additional activation functions**  
     Implement advanced activation functions (eg. GELU and Swish)
 
-## Code structure
-
-### Neural Network Class
--   **Purpose** Handles fully connected layers for standard neural network
--   **Key Components:**
-    -   Layers: Dense Layer
-    -   Functions: Forward propagation, backpropagation
-    -   Optimisers: SGD, GD, GD using batching
-
-### Convolutional Neural Network Class
--   **Purpose** Specialised for image data processing using convolutional layers
--   **Key Components:**
-    -   Layers: Convolutional, pooling, dense and activation layers
-    -   Functions: Forward propagation, backpropagation, flattening, global average pooling
-    -   Optimisers: Adams optimiser, SGD, GD, GD using batching
-
 ## Unit Tests
 
-QuackNet includes unit tests that ensures the correctness of its neural network and convolutional network components. The tests are oganised into two directories:
+QuackNet includes unit tests that ensures the reliability of QuackNet's neural and convolutional components. They help to confirm that all layers and training processes behave as expected after every major update to ensure structural stability of all components. The tests are organised into two directories:
 -   unitTests/NN/ - for standard neural network tests 
 -   unitTests/CNN/ - for convolutional network specific tests 
-
 
 These tests cover:
 
@@ -183,67 +217,6 @@ coverage run -m pytest
 coverage report -m
 ```
 
-## Benchmark
-
-The library was benchmarked on the MNIST dataset using the following setup:
-
--   **Model Architecture:** 784 (input) → 128 → 64 → 10 (output)
--   **Activation Function:** Leaky ReLU for input and hidden layer, and softmax for output layer
--   **Optimiser:** Gradient Descent with Batches
--   **Batch Size:** 64
--   **Learning rate:** 0.01
--   **Epochs** 10
-
-### Results:
--   **Training accuracy:** 97.1%
--   **Average Loss:** 0.10
--   **Training Time:** 30 seconds per epoch
-
-### Code:
-
-The code for this benchmark can be found [here](benchmarkFolder/MNISTBenchmark/mnistExample.py)
-
-### Training Performance
-
-Below is the graph showing the training accuracy and loss over 10 epochs, across 5 runs:
-
-![Training Accuracy](benchmarkFolder/MNISTBenchmark/benchmark.png)
-
-## Benchmark Against PyTorch and Tensorflow
-
-The library was benchmarked on the MNIST dataset against PyTorch and Tensorflow using identical architectures and hyperparameters to ensure fair comparison.
-
--   **Neural Network Model Architecture:** 784 (input) → 128 → 64 → 10 (output)
--   **Activation Function:** Leaky ReLU for input and hidden layers, and softmax for hidden layers
--   **Optimiser:** Gradient Descent with Batches
--   **Batch Size:** 64
--   **Learning rate:** 0.01
--   **Epochs** 10
-
-### Results For QuackNet:
--   **Training Accuracy:** 97.1%
--   **Average Loss:** 0.10
-
-### Results For PyTorch:
--   **Training Accuracy:** 93.4%
--   **Average Loss:** 0.23
-
-### Results For Tensorflow:
--   **Training Accuracy:** 95.1%
--   **Average Loss:** 0.17
-
-### Code:
-
--   The code for the QuackNet benchmark can be found [here](benchmarkFolder/MNISTBenchmark/mnistExample.py)
--   The code for the PyTorch benchmark can be found [here](benchmarkFolder/MNISTBenchmark/pytorchBenchmark.py)
--   The code for the Tensorflow benchmark can be found [here](benchmarkFolder/MNISTBenchmark/tensorflowBenchmark.py)
-
-### Training Performance
-
-Below is the graph showing the training accuracy and loss over 10 epochs, across 5 runs:
-
-![Training Accuracy](benchmarkFolder/MNISTBenchmark/frameworkBenchmark.png)
-
 ## Related Projects
 
 ### Skin Lesion Detector
@@ -253,7 +226,24 @@ A convolutional neural network (CNN) skin lesion classification model built with
 You can explore the full project here:
 [Skin Lesion Detector Repository](https://github.com/SirQuackPng/skinLesionDetector)
 
+This project demonstrates how QuackNet can be applied to real-world image classification tasks.
+
+## Project Architecture
+
+### Neural Network Class
+-   **Purpose** Handles fully connected layers for standard neural network
+-   **Key Components:**
+    -   Layers: Dense Layer
+    -   Functions: Forward propagation, backpropagation
+    -   Optimisers: SGD, GD, GD using batching
+
+### Convolutional Neural Network Class
+-   **Purpose** Specialised for image data processing using convolutional layers
+-   **Key Components:**
+    -   Layers: Convolutional, pooling, dense and activation layers
+    -   Functions: Forward propagation, backpropagation, flattening, global average pooling
+    -   Optimisers: Adam optimiser, SGD, GD, GD using batching
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-

@@ -21,6 +21,21 @@
             <input type="search" placeholder="Search..." role="searchbox" aria-label="search"
                    pattern=".+" required>
 
+            <h2>Contents</h2>
+            <ul>
+  <li><a href="#quacknet">QuackNet</a>
+  <ul>
+    <li><a href="#key-features">Key Features</a></li>
+    <li><a href="#installation">Installation</a></li>
+    <li><a href="#usage-example">Usage Example</a></li>
+    <li><a href="#examples">Examples</a></li>
+    <li><a href="#highlights">Highlights</a></li>
+    <li><a href="#code-structure">Code structure</a></li>
+    <li><a href="#related-projects">Related Projects</a></li>
+    <li><a href="#license">License</a></li>
+  </ul></li>
+</ul>
+
 
             <h2>Submodules</h2>
             <ul>
@@ -54,12 +69,283 @@
                     <h1 class="modulename">
 quacknet    </h1>
 
-                
+                        <div class="docstring"><h1 id="quacknet">QuackNet</h1>
+
+<p><strong>QuackNet</strong> is a Python based building and training neural networks and convolutional networks entirely from scratch. It offers foundational implementations of key components such as forward propagation, backpropagation and optimisation algorithms, without relying on machine learning frameworks like TensorFlow or PyTorch</p>
+
+<h2 id="key-features">Key Features</h2>
+
+<p><strong>1. Custom Implementation:</strong></p>
+
+<ul>
+<li>Fully handwritten layers, activation functions and loss functions.</li>
+<li>No reliance on external libraries for machine learning (except for numpy)</li>
+</ul>
+
+<p><strong>2. Core neural network functionality:</strong></p>
+
+<ul>
+<li>Support for common activation functions (eg.Leaky ReLU, Sigmoid, Softmax)</li>
+<li>Multiple loss functions with derivatives (eg. MSE, MAE, Cross entropy)</li>
+</ul>
+
+<p><strong>3. Training:</strong></p>
+
+<ul>
+<li>includes backpropagation for gradient calculation and parameter updates</li>
+<li>Optimisers: Gradient Descent, Stochastic Gradient Descent (SGD), and Adam optimiser.</li>
+<li>Supports batching for efficient training.</li>
+</ul>
+
+<p><strong>4. Layer Support:</strong></p>
+
+<ul>
+<li>Fully Connected Layer (Dense)</li>
+<li>Convolutional</li>
+<li>Pooling (Max and Average)</li>
+<li>Global Average Pooling</li>
+<li>Activation Layers</li>
+</ul>
+
+<p><strong>5. Additional Features:</strong></p>
+
+<ul>
+<li>Save and load model weights and biases.</li>
+<li>Evaluation metrics including accuracy and loss.</li>
+<li>Visualisation tools for training progress.</li>
+<li>Demo projects like MNIST and HAM10000 classification.</li>
+</ul>
+
+<h2 id="installation">Installation</h2>
+
+<p>QuackNet is simple to install via PyPI.</p>
+
+<p><strong>Install via PyPI</strong></p>
+
+<pre><code>pip install QuackNet
+</code></pre>
+
+<h2 id="usage-example">Usage Example</h2>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn"><a href="quacknet/main.html">quacknet.main</a></span><span class="w"> </span><span class="kn">import</span> <span class="n">Network</span>
+
+<span class="c1"># Define a neural network architecture</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">Network</span><span class="p">(</span>
+    <span class="n">lossFunc</span> <span class="o">=</span> <span class="s2">&quot;cross entropy&quot;</span><span class="p">,</span>
+    <span class="n">learningRate</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+    <span class="n">optimisationFunc</span> <span class="o">=</span> <span class="s2">&quot;sgd&quot;</span><span class="p">,</span> <span class="c1">#stochastic gradient descent</span>
+<span class="p">)</span>
+<span class="n">n</span><span class="o">.</span><span class="n">addLayer</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;relu&quot;</span><span class="p">)</span> <span class="c1"># Input layer</span>
+<span class="n">n</span><span class="o">.</span><span class="n">addLayer</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;relu&quot;</span><span class="p">)</span> <span class="c1"># Hidden layer</span>
+<span class="n">n</span><span class="o">.</span><span class="n">addLayer</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;softmax&quot;</span><span class="p">)</span> <span class="c1"># Output layer</span>
+<span class="n">n</span><span class="o">.</span><span class="n">createWeightsAndBiases</span><span class="p">()</span>
+
+<span class="c1"># Example data</span>
+<span class="n">inputData</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">]]</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+
+<span class="c1"># Train the network</span>
+<span class="n">accuracy</span><span class="p">,</span> <span class="n">averageLoss</span> <span class="o">=</span> <span class="n">n</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">inputData</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">epochs</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span>
+
+<span class="c1"># Evaluate</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Accuracy: </span><span class="si">{</span><span class="n">accuracy</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Average loss: </span><span class="si">{</span><span class="n">averageLoss</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<h2 id="examples">Examples</h2>
+
+<ul>
+<li><a href="/ExampleCode/NNExample.py">Simple Neural Network Example</a>: A basic neural network implementation demonstrating forward and backpropagation</li>
+<li><a href="/ExampleCode/CNNExample.py">Convolutional Neural Network Example</a>: Shows how to use the convolutional layers in the library</li>
+<li><a href="/ExampleCode/MNISTExample/mnistExample.py">MNIST Neural Network Example</a>: Shows how to use neural network to train on MNIST</li>
+</ul>
+
+<h2 id="highlights">Highlights</h2>
+
+<ul>
+<li><strong>Custom Architectures:</strong> Define and train neural networks with fully customisable architectures</li>
+<li><strong>Optimisation Algorithms:</strong> Includes Gradient Descent, Stochastic Gradient Descent and Adam optimiser for efficient training</li>
+<li><strong>Loss and Activation Functions:</strong> Prebuilt support for common loss and activation functions with the option to make your own</li>
+<li><strong>Layer Support:</strong>
+<ul>
+<li>Fully Connected (Dense)</li>
+<li>Convolutional</li>
+<li>Pooling (max and Average)</li>
+<li>Global Average Pooling</li>
+<li>Activation layer</li>
+</ul></li>
+<li><strong>Evaluation Tools:</strong> Includes metrics for model evaluation such as accuracy and loss</li>
+<li><strong>Save and Load:</strong> Save weights and biases for reuse for further training</li>
+<li><strong>Demo Projects:</strong> Includes example implementations such as MNIST digit classification</li>
+</ul>
+
+<h2 id="code-structure">Code structure</h2>
+
+<h3 id="neural-network-class">Neural Network Class</h3>
+
+<ul>
+<li><strong>Purpose</strong> Handles fully connected layers for standard neural network</li>
+<li><strong>Key Components:</strong>
+<ul>
+<li>Layers: Dense Layer</li>
+<li>Functions: Forward propagation, backpropagation</li>
+<li>Optimisers: SGD, GD, GD using batching</li>
+</ul></li>
+</ul>
+
+<h3 id="convolutional-neural-network-class">Convolutional Neural Network Class</h3>
+
+<ul>
+<li><strong>Purpose</strong> Specialised for image data processing using convolutional layers</li>
+<li><strong>Key Components:</strong>
+<ul>
+<li>Layers: Convolutional, pooling, dense and activation layers</li>
+<li>Functions: Forward propagation, backpropagation, flattening, global average pooling</li>
+<li>Optimisers: Adam optimiser, SGD, GD, GD using batching</li>
+</ul></li>
+</ul>
+
+<h2 id="related-projects">Related Projects</h2>
+
+<h3 id="skin-lesion-detector">Skin Lesion Detector</h3>
+
+<p>A convolutional neural network (CNN) skin lesion classification model built with QuackNet, trained using the HAM10000 dataset. This model achieved 60.2% accuracy on a balanced validation set.</p>
+
+<p>You can explore the full project here:
+<a href="https://github.com/SirQuackPng/skinLesionDetector">Skin Lesion Detector Repository</a></p>
+
+<h2 id="license">License</h2>
+
+<p>This project is licensed under the MIT License - see the <a href="LICENSE">LICENSE</a> file for details.</p>
+</div>
+
                         <input id="mod-quacknet-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 
                         <label class="view-source-button" for="mod-quacknet-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">1</span></a>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="sd"># QuackNet</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a>
+</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="sd">**QuackNet** is a Python based building and training neural networks and convolutional networks entirely from scratch. It offers foundational implementations of key components such as forward propagation, backpropagation and optimisation algorithms, without relying on machine learning frameworks like TensorFlow or PyTorch</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a>
+</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="sd">## Key Features</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a>
+</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="sd">**1. Custom Implementation:**</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="sd">-   Fully handwritten layers, activation functions and loss functions.</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="sd">-   No reliance on external libraries for machine learning (except for numpy)</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a>
+</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="sd">**2. Core neural network functionality:**</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="sd">-   Support for common activation functions (eg.Leaky ReLU, Sigmoid, Softmax)</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a><span class="sd">-   Multiple loss functions with derivatives (eg. MSE, MAE, Cross entropy)</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a>
+</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="sd">**3. Training:**</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a><span class="sd">-   includes backpropagation for gradient calculation and parameter updates</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="sd">-   Optimisers: Gradient Descent, Stochastic Gradient Descent (SGD), and Adam optimiser.</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="sd">-   Supports batching for efficient training.</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a>
+</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="sd">**4. Layer Support:**</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="sd">-   Fully Connected Layer (Dense)</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="sd">-   Convolutional</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a><span class="sd">-   Pooling (Max and Average)</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="sd">-   Global Average Pooling</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a><span class="sd">-   Activation Layers</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a>
+</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="sd">**5. Additional Features:**</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a><span class="sd">-   Save and load model weights and biases.</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a><span class="sd">-   Evaluation metrics including accuracy and loss.</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="sd">-   Visualisation tools for training progress.</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a><span class="sd">-   Demo projects like MNIST and HAM10000 classification.</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="sd">## Installation</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="sd">QuackNet is simple to install via PyPI.</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>
+</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="sd">**Install via PyPI**</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>
+</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a><span class="sd">```</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="sd">pip install QuackNet</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="sd">```</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>
+</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="sd">## Usage Example</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>
+</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a><span class="sd">```Python</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a><span class="sd">from quacknet.main import Network</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a><span class="sd"># Define a neural network architecture</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a><span class="sd">n = Network(</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="sd">    lossFunc = &quot;cross entropy&quot;,</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="sd">    learningRate = 0.01,</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a><span class="sd">    optimisationFunc = &quot;sgd&quot;, #stochastic gradient descent</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="sd">)</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="sd">n.addLayer(3, &quot;relu&quot;) # Input layer</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="sd">n.addLayer(2, &quot;relu&quot;) # Hidden layer</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="sd">n.addLayer(1, &quot;softmax&quot;) # Output layer</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="sd">n.createWeightsAndBiases()</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="sd"># Example data</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a><span class="sd">inputData = [[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]]</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a><span class="sd">labels = [[1], [0]]</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a><span class="sd"># Train the network</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a><span class="sd">accuracy, averageLoss = n.train(inputData, labels, epochs = 10)</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a><span class="sd"># Evaluate</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="sd">print(f&quot;Accuracy: {accuracy}%&quot;)</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="sd">print(f&quot;Average loss: {averageLoss}&quot;)</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a><span class="sd">```</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="sd">## Examples</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a><span class="sd">-   [Simple Neural Network Example](/ExampleCode/NNExample.py): A basic neural network implementation demonstrating forward and backpropagation</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a><span class="sd">-   [Convolutional Neural Network Example](/ExampleCode/CNNExample.py): Shows how to use the convolutional layers in the library</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="sd">-   [MNIST Neural Network Example](/ExampleCode/MNISTExample/mnistExample.py): Shows how to use neural network to train on MNIST</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">## Highlights</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a><span class="sd">-   **Custom Architectures:** Define and train neural networks with fully customisable architectures</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a><span class="sd">-   **Optimisation Algorithms:** Includes Gradient Descent, Stochastic Gradient Descent and Adam optimiser for efficient training</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a><span class="sd">-   **Loss and Activation Functions:** Prebuilt support for common loss and activation functions with the option to make your own</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="sd">-   **Layer Support:**</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a><span class="sd">    -   Fully Connected (Dense)</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a><span class="sd">    -   Convolutional</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a><span class="sd">    -   Pooling (max and Average)</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a><span class="sd">    -   Global Average Pooling</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a><span class="sd">    -   Activation layer</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a><span class="sd">-   **Evaluation Tools:** Includes metrics for model evaluation such as accuracy and loss</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a><span class="sd">-   **Save and Load:** Save weights and biases for reuse for further training</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a><span class="sd">-   **Demo Projects:** Includes example implementations such as MNIST digit classification</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="sd">## Code structure</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="sd">### Neural Network Class</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="sd">-   **Purpose** Handles fully connected layers for standard neural network</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="sd">-   **Key Components:**</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="sd">    -   Layers: Dense Layer</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="sd">    -   Functions: Forward propagation, backpropagation</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="sd">    -   Optimisers: SGD, GD, GD using batching</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="sd">### Convolutional Neural Network Class</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="sd">-   **Purpose** Specialised for image data processing using convolutional layers</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="sd">-   **Key Components:**</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="sd">    -   Layers: Convolutional, pooling, dense and activation layers</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="sd">    -   Functions: Forward propagation, backpropagation, flattening, global average pooling</span>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a><span class="sd">    -   Optimisers: Adam optimiser, SGD, GD, GD using batching</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="sd">## Related Projects</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">### Skin Lesion Detector</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a><span class="sd">A convolutional neural network (CNN) skin lesion classification model built with QuackNet, trained using the HAM10000 dataset. This model achieved 60.2% accuracy on a balanced validation set.</span>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="sd">You can explore the full project here:</span>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="sd">[Skin Lesion Detector Repository](https://github.com/SirQuackPng/skinLesionDetector)</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="sd">## License</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="sd">This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.</span>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span></pre></div>
 
 

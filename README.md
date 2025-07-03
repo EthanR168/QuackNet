@@ -1,6 +1,7 @@
 # QuackNet
 
 [![PyPI version](https://img.shields.io/pypi/v/QuackNet)](https://pypi.org/project/QuackNet/)
+[![Docs](https://img.shields.io/badge/docs-online-blue)](https://sirquackpng.github.io/QuackNet/quacknet.html)
 
 **QuackNet** is a python based building and training neural networks and convolutional networks entirely from scratch. It offers foundational implementations of key components such as forward propagation, backpropagation and optimisation algorithms, without relying on machine learning frameworks like TensorFlow or Pytorch
 
@@ -160,7 +161,7 @@ print(f"Average loss: {averageLoss}")
 The library was benchmarked on the MNIST dataset using the following setup:
 
 -   **Model Architecture:** 784 (input) → 128 → 64 → 10 (output)
--   **Activation Function:** Leaky Relu for input and hidden layer, and softmax for hidden layer
+-   **Activation Function:** Leaky Relu for input and hidden layer, and softmax for output layer
 -   **Optimiser:** Gradient Descent with Batches
 -   **Batch Size:** 64
 -   **Learning rate:** 0.01

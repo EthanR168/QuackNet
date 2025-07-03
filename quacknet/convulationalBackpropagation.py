@@ -37,7 +37,11 @@ class CNNbackpropagation:
             for layer in range(len(inputTensor)):
                 for i in range(outputHeight):
                     for j in range(outputWidth):
-                        kernal = inputTensor[layer, i * stride: i * stride + kernalSize, j * stride: j * stride + kernalSize]
+                        startI = i * stride
+                        startJ = j * stride
+                        if(startI + kernalSize > inputTensor.shape[1] or startJ + kernalSize > inputTensor.shape[2]):
+                            continue
+                        kernal = inputTensor[layer, startI: startI + kernalSize, startJ : startJ + kernalSize]
                         weightGradients[layer, output] += kernal * errorPatch[output, i, j]
     
         biasGradients = np.sum(errorPatch, axis=(1, 2))
@@ -49,8 +53,10 @@ class CNNbackpropagation:
                 for i in range(outputHeight):
                     inputI = i * stride
                     for j in range(outputWidth):
-                        errorKernal = errorPatch[output, i, j]
                         inputJ = j * stride
+                        if(inputI + kernalSize > inputTensor.shape[1] or inputJ + kernalSize > inputTensor.shape[2]):
+                            continue
+                        errorKernal = errorPatch[output, i, j]
                         inputErrorTerms[layer, inputI: inputI + kernalSize, inputJ: inputJ + kernalSize] += errorKernal * flipped[output, layer]
         
         weightGradients = np.transpose(weightGradients, (1, 0, 2, 3))

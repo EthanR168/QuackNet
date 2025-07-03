@@ -12,11 +12,13 @@
 -   [Key Features](#key-features)
 -   [Usage](#usage)
 -   [Examples](#examples)
+-   [Highlights](#highlights)
+-   [Roadmap](#roadmap)
 -   [Code Structure](#code-structure)
 -   [Benchmark](#benchmark)
 -   [Benchmark Against PyTorch and TensorFlow](#benchmark-against-pytorch-and-tensorflow)
 -   [Related Projects](#related-projects)
--   [Roadmap](#roadmap)
+-   [License](#license)
 
 ## Why this Library?
 
@@ -128,8 +130,8 @@ print(f"Average loss: {averageLoss}")
 - [X] **Visualisation tools**  
     Added support for visualising training, such as loss and accuracy graphs
 - [X] **Benchmark against PyTorch/TensorFlow**
-    Benchmark against popular machine learning frameworks on MNIST library
-- [X] **Add Adams optimiser**  
+    Benchmark against popular machine learning frameworks on MNIST dataset
+- [X] **Add Adam optimiser**  
     Implement the Adam optimiser to improve training performance and convergence
 - [X] **Data augmentation**
     add data augmentation such as flipping, rotation and cropping
@@ -221,7 +223,7 @@ Below is the graph showing the training accuracy and loss over 10 epochs, across
 
 ### Skin Lesion Detector
 
-A convolutional neural network (CNN) based skin lesion classification model, trained using the HAM10000 dataset. This model achieved 60.2% accuracy on a balanced validation set.
+A convolutional neural network (CNN) skin lesion classification model built with QuackNet, trained using the HAM10000 dataset. This model achieved 60.2% accuracy on a balanced validation set.
 
 You can explore the full project here:
 [Skin Lesion Detector Repository](https://github.com/SirQuackPng/skinLesionDetector)

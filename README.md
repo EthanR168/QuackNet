@@ -194,8 +194,8 @@ print(f"Average loss: {averageLoss}")
 ## Unit Tests
 
 QuackNet includes unit tests that ensures the reliability of QuackNet's neural and convolutional components. They help to confirm that all layers and training processes behave as expected after every major update to ensure structural stability of all components. The tests are organised into two directories:
--   unitTests/NN/ - for standard neural network tests 
--   unitTests/CNN/ - for convolutional network specific tests 
+-   [Unit Tests for NN](/unitTests/NN/) - for standard neural network tests 
+-   [Unit Tests for CNN](/unitTests/CNN/) - for convolutional network specific tests 
 
 These tests cover:
 

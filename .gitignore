@@ -12,3 +12,5 @@ unitTests/NN/__pycache__/
 .coverage
 quacknet/__pycache__/
 unitTests/__pycache__/
+QuackNet.egg-info/
+dist/

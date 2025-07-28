@@ -14,7 +14,7 @@ For stacked RNN with multiple hidden states BPTT goes through time and then hidd
 """
 
 class BPTTSingularHiddenState(): # only 1 hidden state
-    def _BPTTNoOutputLayer(self, inputs, hiddenStates, preActivationValues, targets): # no output layer
+    def _Singular_BPTTNoOutputLayer(self, inputs, hiddenStates, preActivationValues, targets): # no output layer
         inputWeightGradients = np.zeros_like(self.inputWeights)
         hiddenStateWeightGradients = np.zeros_like(self.hiddenWeights)
         biasGradients = np.zeros_like(self.biases)
@@ -22,7 +22,7 @@ class BPTTSingularHiddenState(): # only 1 hidden state
         delta = np.zeros_like(hiddenStates[0])
 
         for i in reversed(range(self.numberOfTimeStamps)):
-            loss = self.lossDerivative(hiddenStates[i], targets[i])
+            loss = self.lossDerivative(hiddenStates[i], targets[i], len(targets[i]))
             error = (loss + delta) * self.activationDerivative(preActivationValues[i])
 
             inputWeightGradients += np.outer(error, inputs[i])
@@ -34,7 +34,7 @@ class BPTTSingularHiddenState(): # only 1 hidden state
             delta = error @ self.hiddenWeights
         return inputWeightGradients, hiddenStateWeightGradients, biasGradients
     
-    def _BPTTWithOutputLayer(self, inputs, hiddenStates, preActivationValues, targets, outputs): # with output layer
+    def _Singular_BPTTWithOutputLayer(self, inputs, hiddenStates, preActivationValues, targets, outputs): # with output layer
         inputWeightGradients = np.zeros_like(self.inputWeights)
         hiddenStateWeightGradients = np.zeros_like(self.hiddenWeights)
         biasGradients = np.zeros_like(self.biases)
@@ -45,7 +45,7 @@ class BPTTSingularHiddenState(): # only 1 hidden state
         delta = np.zeros_like(hiddenStates[0])
 
         for i in reversed(range(self.numberOfTimeStamps)):
-            outputLoss = self.lossDerivative(outputs[i], targets[i])
+            outputLoss = self.lossDerivative(outputs[i], targets[i], len(targets[i]))
             outputWeightGradients += np.outer(outputLoss, hiddenStates[i])
             outputbiasGradients += outputLoss
 
@@ -60,7 +60,7 @@ class BPTTSingularHiddenState(): # only 1 hidden state
         return inputWeightGradients, hiddenStateWeightGradients, biasGradients, outputWeightGradients, outputbiasGradients
 
 class BPTTStackedRNN(): # stacked hidden states
-    def _BPTTNoOutputLayer(self, inputs, hiddenStates, preActivationValues, targets): # no output layer
+    def _Stacked_BPTTNoOutputLayer(self, inputs, hiddenStates, preActivationValues, targets): # no output layer
         inputWeightGradients = [np.zeros_like(W) for W in self.inputWeights]
         hiddenStateWeightGradients = [np.zeros_like(W) for W in self.hiddenWeights]
         biasGradients = [np.zeros_like(b) for b in self.biases]
@@ -70,7 +70,7 @@ class BPTTStackedRNN(): # stacked hidden states
         for i in reversed(range(self.numberOfTimeStamps)):
             for l in reversed(range(len(self.inputWeights))):
                 if(l == len(self.inputWeights) - 1):
-                    loss = self.lossDerivative(hiddenStates[l][i], targets[i])
+                    loss = self.lossDerivative(hiddenStates[l][i], targets[i], len(targets[i]))
                     deltas[l] = loss + deltas[l]
 
                 error = deltas[l] * self.activationDerivative(preActivationValues[l][i])
@@ -90,7 +90,7 @@ class BPTTStackedRNN(): # stacked hidden states
 
         return inputWeightGradients, hiddenStateWeightGradients, biasGradients
     
-    def _BPTTWithOutputLayer(self, inputs, hiddenStates, preActivationValues, targets, outputs): # with output layer
+    def _Stacked_BPTTWithOutputLayer(self, inputs, hiddenStates, preActivationValues, targets, outputs): # with output layer
         inputWeightGradients = [np.zeros_like(W) for W in self.inputWeights]
         hiddenStateWeightGradients = [np.zeros_like(W) for W in self.hiddenWeights]
         biasGradients = [np.zeros_like(b) for b in self.biases]
@@ -101,7 +101,7 @@ class BPTTStackedRNN(): # stacked hidden states
         deltas = [np.zeros_like(hiddenStates[l][0]) for l in range(len(self.inputWeights))]
 
         for i in reversed(range(self.numberOfTimeStamps)):
-            outputLoss = self.lossDerivative(outputs[i], targets[i])
+            outputLoss = self.lossDerivative(outputs[i], targets[i], len(targets[i]))
             outputWeightGradients += np.outer(outputLoss, hiddenStates[-1][i])
             outputbiasGradients += outputLoss
 

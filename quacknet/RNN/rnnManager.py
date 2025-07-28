@@ -39,7 +39,7 @@ class RNN(RNNForward, BPTTSingularHiddenState, BPTTStackedRNN):
             tanH: TanHDerivative,
             softMax: SoftMaxDerivative,
         }
-        self.activationDerivative = derivs[activationFunction]
+        self.activationDerivative = derivs[self.activationFunction]
 
         lossFunctionDict = {
             "mse": MSELossFunction,
@@ -72,12 +72,12 @@ class RNN(RNNForward, BPTTSingularHiddenState, BPTTStackedRNN):
         if(self.stackRNN == True):
             BPTT = BPTTStackedRNN()
             if(self.useOutputLayer == True):
-                BPTT._BPTTWithOutputLayer(inputs, self.allHiddenStates, self.preActivationValues, targets, self.output)
+                BPTT._Stacked_BPTTWithOutputLayer(inputs, self.allHiddenStates, self.preActivationValues, targets, self.output)
             else:
-                BPTT._BPTTNoOutputLayer(inputs, self.allHiddenStates, self.preActivationValues, targets)
+                BPTT._Stacked_BPTTNoOutputLayer(inputs, self.allHiddenStates, self.preActivationValues, targets)
         else:
             BPTT = BPTTSingularHiddenState()
             if(self.useOutputLayer == True):
-                BPTT._BPTTWithOutputLayer(inputs, self.allHiddenStates, self.preActivationValues, targets, self.output)
+                BPTT._Singular_BPTTWithOutputLayer(inputs, self.allHiddenStates, self.preActivationValues, targets, self.output)
             else:
-                BPTT._BPTTNoOutputLayer(inputs, self.allHiddenStates, self.preActivationValues, targets)
+                BPTT._Singular_BPTTNoOutputLayer(inputs, self.allHiddenStates, self.preActivationValues, targets)

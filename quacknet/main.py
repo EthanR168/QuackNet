@@ -3,7 +3,7 @@ from quacknet.core.activationFunctions import relu, sigmoid, tanH, linear, softM
 from quacknet.core.lossFunctions import MSELossFunction, MAELossFunction, CrossEntropyLossFunction
 from quacknet.NN.optimisers import Optimisers
 from quacknet.core.initialisers import Initialisers
-from quacknet.core.writeAndReadWeightBias import writeAndRead
+from quacknet.NN.writeAndReadWeightBias import writeAndRead
 from quacknet.CNN.convulationalManager import CNNModel
 from quacknet.core.dataAugmentation import Augementation
 import numpy as np

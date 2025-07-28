@@ -14,3 +14,4 @@ quacknet/__pycache__/
 unitTests/__pycache__/
 QuackNet.egg-info/
 dist/
+unitTests/RNN/__pycache__/

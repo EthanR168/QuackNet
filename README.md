@@ -101,26 +101,26 @@ QuackNet was created to deepen my understanding of how neural networks work inte
 Building QuackNet from scratch enabled mastery of:
 
 **Core Concepts:**
-    - **Backpropagation**
-        -   Derived and implemented gradient calculations for dense and convolutional layers
-    - **Optimiser Internals**
-        -   Coded Stochastic Gradient Descent and Adam
-    - **CNN Operations**
-        -   Implemented kernels, padding, strides, and pooling
-    - **Data Handling**
-        -   Used vectorisation (NumPy) to make code more performant
-        -   Designed preprocessing (normalisation -> augmentation -> batching)
+- **Backpropagation**
+    -   Derived and implemented gradient calculations for dense and convolutional layers
+- **Optimiser Internals**
+    -   Coded Stochastic Gradient Descent and Adam
+- **CNN Operations**
+    -   Implemented kernels, padding, strides, and pooling
+- **Data Handling**
+    -   Used vectorisation (NumPy) to make code more performant
+    -   Designed preprocessing (normalisation -> augmentation -> batching)
 
 **CS Skills:**
-    - **Testing Rigor**
-        -   Unit test coverage >80%
-        -   Unit test are used to ensure reliability of components
-    - **API Design**
-        -   Created easy interface (e.g., ```Network.addLayer()```) for educational use
-    - **Documentation**
-        -   Used pdoc to create automated documentation
-        -   Private functions are marked with a '_' at the start
-        -   All functions have docstrings showing their args/params
+- **Testing Rigor**
+    -   Unit test coverage >80%
+    -   Unit test are used to ensure reliability of components
+- **API Design**
+    -   Created easy interface (e.g., ```Network.addLayer()```) for educational use
+- **Documentation**
+    -   Used pdoc to create automated documentation
+    -   Private functions are marked with a '_' at the start
+    -   All functions have docstrings showing their args/params
 
 ## Key Features
 

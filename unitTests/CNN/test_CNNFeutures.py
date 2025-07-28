@@ -1,4 +1,4 @@
-from quacknet.convulationalFeutures import ConvulationalNetwork
+from quacknet.CNN.convulationalFeutures import ConvulationalNetwork
 import numpy as np
 
 class Test_Padding:

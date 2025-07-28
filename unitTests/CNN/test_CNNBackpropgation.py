@@ -1,8 +1,8 @@
-from quacknet.convulationalManager import ConvLayer, PoolingLayer, ActivationLayer, DenseLayer
-from quacknet.activationFunctions import relu, linear
-from quacknet.activationDerivativeFunctions import ReLUDerivative, LinearDerivative
-from quacknet.lossDerivativeFunctions import MSEDerivative
-from quacknet.lossFunctions import MSELossFunction
+from quacknet.CNN.convulationalManager import ConvLayer, PoolingLayer, ActivationLayer, DenseLayer
+from quacknet.core.activationFunctions import relu, linear
+from quacknet.core.activationDerivativeFunctions import ReLUDerivative, LinearDerivative
+from quacknet.core.lossDerivativeFunctions import MSEDerivative
+from quacknet.core.lossFunctions import MSELossFunction
 from quacknet.main import Network
 import numpy as np
 
@@ -96,7 +96,7 @@ def test_GlobalAveragePoolingBackpropagation():
     assert np.allclose(errorTerm, expectedInputErrorTerms)
 
 def test_ActivationLayerBackpropagation():
-    from quacknet.activationDerivativeFunctions import ReLUDerivative
+    from quacknet.core.activationDerivativeFunctions import ReLUDerivative
     inputTensor = np.array([[
         [1, -3, 2, -4],
         [2, -4, -1, 3],

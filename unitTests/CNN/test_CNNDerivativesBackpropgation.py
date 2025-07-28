@@ -1,5 +1,5 @@
-from quacknet.convulationalBackpropagation import CNNbackpropagation
-from quacknet.convulationalManager import ConvLayer
+from quacknet.CNN.convulationalBackpropagation import CNNbackpropagation
+from quacknet.CNN.convulationalManager import ConvLayer
 import numpy as np
 
 def test_ConvulutionalDerivative():
@@ -89,7 +89,7 @@ def test_GlobalAveragePooling():
     assert np.allclose(errorTerm, expectedInputErrorTerms)
 
 def test_ActivationLayer():
-    from quacknet.activationDerivativeFunctions import ReLUDerivative
+    from quacknet.core.activationDerivativeFunctions import ReLUDerivative
     inputTensor = np.array([[
         [1, -3, 2, -4],
         [2, -4, -1, 3],

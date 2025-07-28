@@ -1,8 +1,8 @@
-from quacknet.backPropgation import _outputLayerWeightChange, _hiddenLayerWeightChange, _outputLayerBiasChange, _hiddenLayerBiasChange, _backPropgation
-from quacknet.lossDerivativeFunctions import CrossEntropyLossDerivative, MSEDerivative
-from quacknet.activationDerivativeFunctions import SoftMaxDerivative, ReLUDerivative, SigmoidDerivative, TanHDerivative, LinearDerivative
-from quacknet.activationFunctions import relu, sigmoid, linear, softMax, tanH
-from quacknet.lossFunctions import MSELossFunction, CrossEntropyLossFunction
+from quacknet.NN.backPropgation import _outputLayerWeightChange, _hiddenLayerWeightChange, _outputLayerBiasChange, _hiddenLayerBiasChange, _backPropgation
+from quacknet.core.lossDerivativeFunctions import CrossEntropyLossDerivative, MSEDerivative
+from quacknet.core.activationDerivativeFunctions import SoftMaxDerivative, ReLUDerivative, SigmoidDerivative, TanHDerivative, LinearDerivative
+from quacknet.core.activationFunctions import relu, sigmoid, linear, softMax, tanH
+from quacknet.core.lossFunctions import MSELossFunction, CrossEntropyLossFunction
 import numpy as np
 
 class TestNetwork_BackPropgation_Weights_Output:

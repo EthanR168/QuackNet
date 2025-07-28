@@ -1,4 +1,4 @@
-from quacknet.initialisers import Initialisers
+from quacknet.core.initialisers import Initialisers
 from quacknet.main import Network
 import numpy as np
 

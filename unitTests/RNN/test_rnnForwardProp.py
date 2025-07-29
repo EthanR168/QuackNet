@@ -60,6 +60,7 @@ def test_forwardPropagation_SingularRNN():
     rnn.hiddenState = [np.array([0.1, 0.2])]
     rnn.useOutputLayer = True
     rnn.activationFunction = relu
+    rnn.outputActivationFunction = relu
     preActivationValues, output = rnn._forwardPropagation(inputData, inputWeights, hiddenStateWeights, biases, outputWeights, outputBiases)
 
     assert len(preActivationValues) == 2
@@ -103,6 +104,7 @@ def test_forwardPropagation_StackedRNN():
     ]
     rnn.useOutputLayer = True
     rnn.activationFunction = relu
+    rnn.outputActivationFunction = relu
     preActivationValues, output = rnn._forwardPropagation(inputData, inputWeights, hiddenStateWeights, biases, outputWeights, outputBiases)
 
     assert len(preActivationValues) == 3

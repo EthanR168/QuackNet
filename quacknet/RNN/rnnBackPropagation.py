@@ -32,7 +32,7 @@ class BPTTSingularHiddenState(): # only 1 hidden state
                 hiddenStateWeightGradients += np.outer(error, hiddenStates[i - 1])
             
             delta = error @ self.hiddenWeights
-        return inputWeightGradients, hiddenStateWeightGradients, biasGradients
+        return inputWeightGradients, hiddenStateWeightGradients, biasGradients, None, None
     
     def _Singular_BPTTWithOutputLayer(self, inputs, hiddenStates, preActivationValues, targets, outputs): # with output layer
         inputWeightGradients = np.zeros_like(self.inputWeights)
@@ -88,7 +88,7 @@ class BPTTStackedRNN(): # stacked hidden states
                 if(l > 0):
                     deltas[l - 1] += error @ self.inputWeights[l]
 
-        return inputWeightGradients, hiddenStateWeightGradients, biasGradients
+        return inputWeightGradients, hiddenStateWeightGradients, biasGradients, None, None
     
     def _Stacked_BPTTWithOutputLayer(self, inputs, hiddenStates, preActivationValues, targets, outputs): # with output layer
         inputWeightGradients = [np.zeros_like(W) for W in self.inputWeights]

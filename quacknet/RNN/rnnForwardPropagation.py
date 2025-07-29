@@ -25,7 +25,7 @@ class RNNForward():
             preActivationValues.append(summ)
 
         if(self.useOutputLayer == True):
-            output, outputPreActivation = self._outputLayer(input, outputWeights, outputBiases, self.activationFunction)
+            output, outputPreActivation = self._outputLayer(input, outputWeights, outputBiases, self.outputActivationFunction)
             preActivationValues.append(outputPreActivation)
         return preActivationValues, output
 

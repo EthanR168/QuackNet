@@ -31,7 +31,7 @@ def test_Singular_BPTT_No_OutputLayer():
     expectedBiasGrad = dz
     expectedHiddenGrad = np.zeros_like(hiddenWeights)
 
-    inputGrad, hiddenGrad, biasGrad = model._Singular_BPTTNoOutputLayer(inputs, hiddenStates, preActivationValues, targets)
+    inputGrad, hiddenGrad, biasGrad, _, _ = model._Singular_BPTTNoOutputLayer(inputs, hiddenStates, preActivationValues, targets)
 
     assert inputGrad.shape == inputWeights.shape
     assert hiddenGrad.shape == hiddenWeights.shape
@@ -142,7 +142,7 @@ def test_Stacked_BPTT_No_OutputLayer():
     expectedHiddenGrad0 = np.zeros_like(hiddenWeights[0])
     expectedHiddenGrad1 = np.zeros_like(hiddenWeights[1])
 
-    inputGrad, hiddenGrad, biasGrad = model._Stacked_BPTTNoOutputLayer(inputs, hiddenStates, preActivationValues, targets)
+    inputGrad, hiddenGrad, biasGrad, _, _ = model._Stacked_BPTTNoOutputLayer(inputs, hiddenStates, preActivationValues, targets)
 
     assert inputGrad[0].shape == inputWeights[0].shape
     assert inputGrad[1].shape == inputWeights[1].shape

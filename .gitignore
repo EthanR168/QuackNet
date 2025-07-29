@@ -15,3 +15,7 @@ unitTests/__pycache__/
 QuackNet.egg-info/
 dist/
 unitTests/RNN/__pycache__/
+.vscode/
+QuackNet.egg-info/
+dist/
+__pycache__/

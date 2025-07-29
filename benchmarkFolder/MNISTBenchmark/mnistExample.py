@@ -1,6 +1,6 @@
 import numpy as np
 import time
-from quacknet.lossFunctions import CrossEntropyLossFunction
+from quacknet.core.lossFunctions import CrossEntropyLossFunction
 
 # Load the preprocessed data
 train_images = np.load('benchmarkFolder/MNISTBenchmark/data/train_images.npy')  # Shape: (60000, 784)

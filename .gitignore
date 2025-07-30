@@ -19,3 +19,4 @@ unitTests/RNN/__pycache__/
 QuackNet.egg-info/
 dist/
 __pycache__/
+_oldCode/

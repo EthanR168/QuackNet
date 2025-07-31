@@ -207,4 +207,4 @@ class Network(Optimisers, Initialisers, writeAndRead, CNNModel, Augementation):
 # use this to get how many functions are tests or not: coverage run -m pytest unitTests/
 # then to see results do: coverage report -m
 
-#to generate documentation using pdoc do: pdoc quacknet --output-dir docs
+#to auto generate documentation using pdoc do: pdoc quacknet --output-dir docs

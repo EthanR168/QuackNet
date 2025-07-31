@@ -53,6 +53,10 @@ class MultiAttentionHeadLayer:
         self.outputWeight = outputWeight
         self.outputBias = outputBias
 
+        assert embedDimension % numberOfHeads == 0, "Embedding Dimension must be divisible by the number of heads"
+
+        self.createWeights()
+
     def QKVLinearProjection(self, inputEmbedding):
         Query = inputEmbedding @ self.QueryWeights
         Key = inputEmbedding @ self.KeyWeights
@@ -112,4 +116,14 @@ class MultiAttentionHeadLayer:
         combinedAttention = self.calculateAttention(QHead, KHead, VHead)
         output = self.outputProjectionLayer(combinedAttention)
         return output
+    
+    def createWeights(self):
+        self.QueryWeights = self._initiaseWeight(self.embedDimension, self.embedDimension)
+        self.KeyWeights = self._initiaseWeight(self.embedDimension, self.embedDimension)
+        self.ValueWeights = self._initiaseWeight(self.embedDimension, self.embedDimension)
+        self.outputWeight = self._initiaseWeight(self.embedDimension, self.embedDimension)
+        self.outputBias = np.zeros((1, self.embedDimension))
+
+    def _initiaseWeight(self, inputDimension, outputDimension):
+        return np.random.rand(inputDimension, outputDimension) * (1 / np.sqrt(inputDimension))
     

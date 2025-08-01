@@ -29,9 +29,24 @@ class FeedForwardNetwork:
     def _initiaseWeight(self, inputDimension, outputDimension):
         return np.random.rand(inputDimension, outputDimension) * (1 / np.sqrt(inputDimension))
     
-
     def forwardPropagation(self, inputTokens): 
-        firstLayer = np.matmul(inputTokens, self.W1) + self.b1
-        activated = np.maximum(0, firstLayer) # ReLU
-        output = np.matmul(activated, self.W2) + self.b2
+        self.input = inputTokens
+        self.firstLayer = np.matmul(inputTokens, self.W1) + self.b1
+        self.activated = np.maximum(0, self.firstLayer) # ReLU
+        output = np.matmul(self.activated, self.W2) + self.b2
         return output
+    
+    def backwardPropagation(self, outputGradient):
+        weightGradient2 = np.matmul(self.activated.transpose(0, 2, 1), outputGradient)
+        biasGradient2 = np.sum(outputGradient, axis=(0, 1), keepdims=True)
+
+        activatedGradient = np.matmul(outputGradient, self.W2.T)
+
+        firstLayerDerivative = activatedGradient * (self.firstLayer > 0)
+
+        weightGradient1 = np.matmul(self.input.transpose(0, 2, 1), firstLayerDerivative)
+        biasGradient1 = np.sum(firstLayerDerivative, axis=(0, 1), keepdims=True)
+
+        inputDerivative = np.matmul(firstLayerDerivative, self.W1.T)
+
+        return inputDerivative, weightGradient1, biasGradient1, weightGradient2, biasGradient2

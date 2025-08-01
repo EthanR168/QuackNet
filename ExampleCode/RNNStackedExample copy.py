@@ -1,4 +1,4 @@
-from quacknet.NewRNN.StackedRNN import StackedRNN
+from quacknet.RNN.StackedRNN import StackedRNN
 import numpy as np
 
 rnn = StackedRNN(hiddenStateActivationFunction="tanh", outputLayerActivationFunction="sigmoid", lossFunction="cross", numberOfHiddenStates=2, hiddenSizes=[4, 4])

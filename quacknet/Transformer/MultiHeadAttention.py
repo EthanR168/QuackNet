@@ -1,3 +1,4 @@
+from quacknet.Transformer.AttentionBackpropagation import MultiHeadAttentionBackpropagation
 import numpy as np
 
 """
@@ -44,7 +45,7 @@ Order of forward prop:
 """
 
 class MultiAttentionHeadLayer:
-    def __init__(self, embedDimension, numberOfHeads, QueryWeights, KeyWeights, ValueWeights, outputWeight, outputBias):
+    def __init__(self, batchSize, sequenceLength, embedDimension, numberOfHeads, QueryWeights, KeyWeights, ValueWeights, outputWeight, outputBias):
         self.embedDimension = embedDimension
         self.numberOfHeads = numberOfHeads
         self.QueryWeights = QueryWeights
@@ -52,27 +53,35 @@ class MultiAttentionHeadLayer:
         self.ValueWeights = ValueWeights
         self.outputWeight = outputWeight
         self.outputBias = outputBias
+        self.batchSize = batchSize 
+        self.sequenceLength = sequenceLength
 
         assert embedDimension % numberOfHeads == 0, "Embedding Dimension must be divisible by the number of heads"
 
         self.createWeights()
 
+        self.backProp = MultiHeadAttentionBackpropagation(
+            embededDimension=embedDimension,
+            outputWeights=self.outputWeight,
+            QueryWeights=self.QueryWeights,
+            KeyWeights=self.KeyWeights,
+            ValueWeights=self.ValueWeights
+        )
+
     def QKVLinearProjection(self, inputEmbedding):
-        Query = inputEmbedding @ self.QueryWeights
-        Key = inputEmbedding @ self.KeyWeights
-        Value = inputEmbedding @ self.ValueWeights
-        return Query, Key, Value
+        self.Query = inputEmbedding @ self.QueryWeights
+        self.Key = inputEmbedding @ self.KeyWeights
+        self.Value = inputEmbedding @ self.ValueWeights
+        return self.Query, self.Key, self.Value
     
     def SplitIntoHeads(self, Query, Key, Value):
         # QVK has a shape of (batchSize, sequenceLength, embedDimension)
         headDimension = self.embedDimension // self.numberOfHeads # // returns a whole number (floor division)
-        batchSize = Query.shape[0]
-        sequenceLength = Query.shape[1]
 
         # reshape to split heads
-        QReshaped = Query.reshape(batchSize, sequenceLength, self.numberOfHeads, headDimension)
-        KReshaped = Key.reshape(batchSize, sequenceLength, self.numberOfHeads, headDimension)
-        VReshaped = Value.reshape(batchSize, sequenceLength, self.numberOfHeads, headDimension)
+        QReshaped = Query.reshape(self.batchSize, self.sequenceLength, self.numberOfHeads, headDimension)
+        KReshaped = Key.reshape(self.batchSize, self.sequenceLength, self.numberOfHeads, headDimension)
+        VReshaped = Value.reshape(self.batchSize, self.sequenceLength, self.numberOfHeads, headDimension)
         
         # Transpose to (batchSize, numberHeads, sequenceLength, headDimension)
         QHead = QReshaped.transpose(0, 2, 1, 3)
@@ -92,15 +101,18 @@ class MultiAttentionHeadLayer:
     def _calculateAttentionForOneHead(self, QueryHead, KeyHead, ValueHead):
         # a(Q, K, V) = softmax( (Q @ K.T) / sqrt(d) ) @ V 
         attentionScore = (QueryHead @ KeyHead.transpose(0, 2, 1)) / np.sqrt(ValueHead.shape[1])
-        attentionOutput = self._TransformerSoftMax(attentionScore) @ ValueHead
-        return attentionOutput
+        attentionWeights = self._TransformerSoftMax(attentionScore)  # this is used in backprop
+        attentionOutput = attentionWeights @ ValueHead
+        return attentionOutput, attentionWeights
 
     def calculateAttention(self, QueryHead, KeyHead, ValueHead):
-        attentionHeads = []
+        self.attentionHeads = []
+        self.attentionWeights = []
         for i in range(self.numberOfHeads):
-            att = self._calculateAttentionForOneHead(QueryHead[:, i, :, :], KeyHead[:, i, :, :], ValueHead[:, i, :, :])
-            attentionHeads.append(att)
-        stackedHeads = np.stack(attentionHeads, axis=1)
+            att, att_W = self._calculateAttentionForOneHead(QueryHead[:, i, :, :], KeyHead[:, i, :, :], ValueHead[:, i, :, :])
+            self.attentionHeads.append(att)
+            self.attentionWeights.append(att_W)
+        stackedHeads = np.stack(self.attentionHeads, axis=1)
         stackedHeads = np.transpose(stackedHeads, (0, 2, 1, 3))
         batchSize, sequenceLength, numberHeads, headDimension = stackedHeads.shape
         combinedAttention = stackedHeads.reshape(batchSize, sequenceLength, numberHeads * headDimension)
@@ -111,6 +123,9 @@ class MultiAttentionHeadLayer:
         return output
     
     def forwardPropagation(self, inputEmbedding):
+        if(inputEmbedding.ndim == 2):
+            inputEmbedding = inputEmbedding[np.newaxis, :, :]
+        self.originalInput = inputEmbedding # for backprop
         Query, Key, Value = self.QKVLinearProjection(inputEmbedding)
         QHead, KHead, VHead = self.SplitIntoHeads(Query, Key, Value)
         combinedAttention = self.calculateAttention(QHead, KHead, VHead)
@@ -126,4 +141,19 @@ class MultiAttentionHeadLayer:
 
     def _initiaseWeight(self, inputDimension, outputDimension):
         return np.random.rand(inputDimension, outputDimension) * (1 / np.sqrt(inputDimension))
+    
+    def backwardPropagation(self, outputGradient):
+        outputWeightGradient, outputBiasGradient, inputDerivative, QueryWeightDerivative, KeyWeightDerivative, ValueWeightDerivative = self.backProp.backPropagation(
+            originalInput=self.originalInput,
+            batchSize=self.batchSize,
+            sequenceLength=self.sequenceLength,
+            outputGradient=outputGradient,
+            attentionHeads=self.attentionHeads,
+            attentionWeights=self.attentionWeights,
+            numberOfHeads=self.numberOfHeads,
+            Query=self.Query,
+            Key=self.Key,
+            Value=self.Value
+        )
+        return outputWeightGradient, outputBiasGradient, inputDerivative, QueryWeightDerivative, KeyWeightDerivative, ValueWeightDerivative
     

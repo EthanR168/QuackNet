@@ -220,6 +220,8 @@ print(f"Average loss: {averageLoss}")
     Add pixel normalisation of pixels and one-hot encoded label
 - [X] **Skin Lesion detector**    
     Use the neural network library to create a model for detecting skin lesions using HAM10000 for skin lesion images
+- [ ] **Recurrent Neural Network and Transformers**
+    Implement BPTT, multi head attention, residual connection 
 - [ ] **Additional activation functions**  
     Implement advanced activation functions (eg. GELU and Swish)
 

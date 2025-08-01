@@ -21,4 +21,4 @@ class PositionalEncoding:
         return positionalEmbedding
     
     def forwardPropagation(self, inputData):
-        return inputData + self.encoding[:inputData.shape[1]]
+        return inputData + self.encoding[:np.array(inputData).shape[1]]

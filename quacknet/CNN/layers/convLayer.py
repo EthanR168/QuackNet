@@ -60,20 +60,20 @@ class ConvLayer():
         """
         tensorKernals = []
         if(self.usePadding == True):
-            imageTensor = self._padImage(inputTensor, self.sizeOfGrid, self.strideLength, self.typeOfPadding)
+            imageTensor = self._padImage(inputTensor, self.kernalSize, self.stride, self.padding)
         else:
             imageTensor = inputTensor
-        outputHeight = (imageTensor.shape[1] - self.sizeOfGrid) // self.strideLength + 1
-        outputWidth = (imageTensor.shape[2] - self.sizeOfGrid) // self.strideLength + 1
-        for i in range(len(self.kernalsWeights)):
+        outputHeight = (imageTensor.shape[1] - self.kernalSize) // self.stride + 1
+        outputWidth = (imageTensor.shape[2] - self.kernalSize) // self.stride + 1
+        for i in range(len(self.kernalWeights)):
             output = np.zeros((outputHeight, outputWidth))
-            kernal = self.kernalsWeights[i]
-            biases = self.kernalsBiases[i]
+            kernal = self.kernalWeights[i]
+            biases = self.kernalBiases[i]
             for x in range(outputHeight):
-                indexX = x * self.strideLength
+                indexX = x * self.stride
                 for y in range(outputWidth):
-                    indexY = y * self.strideLength
-                    gridOfValues = imageTensor[:, indexX: indexX + self.sizeOfGrid, indexY: indexY + self.sizeOfGrid] # 2d grid
+                    indexY = y * self.stride
+                    gridOfValues = imageTensor[:, indexX: indexX + self.kernalSize, indexY: indexY + self.kernalSize] # 2d grid
                     dotProduct = np.sum(gridOfValues * kernal) 
                     output[x, y] = dotProduct + biases
                     
@@ -109,9 +109,9 @@ class ConvLayer():
         ###################################     
         
         kernalSize = self.kernalSize # all kernals are the same shape and squares
-        weightGradients = np.zeros((len(inputTensor), len(self.kernals), kernalSize, kernalSize)) #kernals are the same size
+        weightGradients = np.zeros((len(inputTensor), len(self.kernalWeights), kernalSize, kernalSize)) #kernals are the same size
         outputHeight, outputWidth = errorPatch.shape[1], errorPatch.shape[2]
-        for output in range(len(self.kernals)):
+        for output in range(len(self.kernalWeights)):
             for layer in range(len(inputTensor)):
                 for i in range(outputHeight):
                     for j in range(outputWidth):
@@ -125,7 +125,7 @@ class ConvLayer():
         biasGradients = np.sum(errorPatch, axis=(1, 2))
 
         inputErrorTerms = np.zeros_like(inputTensor)
-        flipped = self.kernals[:, :, ::-1, ::-1]
+        flipped = self.kernalWeights[:, :, ::-1, ::-1]
         for output in range(len(errorPatch)):
             for layer in range(len(inputTensor)):
                 for i in range(outputHeight):

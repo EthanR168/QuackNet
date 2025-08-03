@@ -1,5 +1,5 @@
 from quacknet.CNN.manager import CNNModel, ConvLayer, PoolingLayer, DenseLayer, ActivationLayer
-from quacknet.main import Network
+from _oldCode.main import Network
 import numpy as np
 
 class Test_ConvLayer:

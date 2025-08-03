@@ -1,8 +1,8 @@
-from quacknet.CNN.activationLayer import ActivationLayer
-from quacknet.CNN.convLayer import ConvLayer
+from quacknet.CNN.layers.activationLayer import ActivationLayer
+from quacknet.CNN.layers.convLayer import ConvLayer
 from quacknet.CNN.layers.poolingLayer import PoolingLayer
-from quacknet.CNN.globalAveragePooling import GlobalAveragePooling
-from quacknet.CNN.denseLayer import DenseLayer
+from quacknet.CNN.layers.globalAveragePoolingLayer import GlobalAveragePooling
+from quacknet.CNN.layers.denseLayer import DenseLayer
 from quacknet.CNN.optimiser import CNNoptimiser
 import numpy as np
 

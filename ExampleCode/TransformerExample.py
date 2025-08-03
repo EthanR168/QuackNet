@@ -1,4 +1,4 @@
-from quacknet.Transformer.TransformerManager import TransformerBlock
+from quacknet import TransformerBlock
 import numpy as np
 
 sequenceLength = 4

@@ -1,5 +1,5 @@
 from quacknet.CNN.cnnOptimiser import CNNoptimiser
-from quacknet.main import Network
+from _oldCode.main import Network
 import numpy as np
 
 from quacknet.CNN.manager import CNNModel

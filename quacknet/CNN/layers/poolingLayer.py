@@ -8,7 +8,7 @@ class PoolingLayer():
         Args:
             gridSize (int): The size of the pooling window.
             stride (int): The stride length for pooling.
-            mode (str, optional): Pooling mode of "max", "ave" (average), or "gap" (global average pooling). Default is "max".        
+            mode (str, optional): Pooling mode of "max", "ave" (average). Default is "max".        
         """
         self.gridSize = gridSize
         self.stride = stride
@@ -26,20 +26,22 @@ class PoolingLayer():
         """
         tensorPools = []
 
-        if(self.typeOfPooling.lower() == "max"):
+        if(self.mode.lower() == "max"):
             poolFunc = np.max
-        else:
+        elif(self.mode.lower() == "ave"):
             poolFunc = np.mean
+        else:
+            raise ValueError(f"pooling mode isnt correct: '{self.mode}', expected 'max' or 'ave'")
 
         for image in inputTensor: # tensor is a 3d structures, so it is turning it into a 2d array (eg. an layer or image)
-            outputHeight = (image.shape[0] - self.sizeOfGrid) // self.strideLength + 1
-            outputWidth = (image.shape[1] - self.sizeOfGrid) // self.strideLength + 1
+            outputHeight = (image.shape[0] - self.gridSize) // self.strideLength + 1
+            outputWidth = (image.shape[1] - self.gridSize) // self.strideLength + 1
             output = np.zeros((outputHeight, outputWidth))
             for x in range(outputHeight):
                 for y in range(outputWidth):
                     indexX = x * self.strideLength
                     indexY = y * self.strideLength
-                    gridOfValues = image[indexX: indexX + self.sizeOfGrid, indexY: indexY + self.sizeOfGrid]
+                    gridOfValues = image[indexX: indexX + self.gridSize, indexY: indexY + self.gridSize]
                     output[x, y] = poolFunc(gridOfValues)
             tensorPools.append(output)
         return np.array(tensorPools)

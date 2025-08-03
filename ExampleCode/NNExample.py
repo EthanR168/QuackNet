@@ -1,4 +1,4 @@
-from quacknet.main import Network
+from quacknet import Network
 
 # Define a basic neural network architecture
 n = Network(

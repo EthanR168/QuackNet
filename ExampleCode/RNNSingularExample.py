@@ -1,4 +1,4 @@
-from quacknet.NewRNN.SingularRNN import SingularRNN
+from quacknet import SingularRNN
 import numpy as np
 
 rnn = SingularRNN(hiddenStateActivationFunction="tanh", outputLayerActivationFunction="sigmoid", lossFunction="mse")

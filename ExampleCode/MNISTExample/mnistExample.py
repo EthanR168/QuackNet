@@ -8,7 +8,8 @@ train_labels = np.load('ExampleCode/MNISTExample/data/train_labels.npy')  # Shap
 #test_images = np.load('ExampleCode/MNISTExample/data/test_images.npy')   # Shape: (10000, 784)
 #test_labels = np.load('ExampleCode/MNISTExample/data/test_labels.npy')    # Shape: (10000, 10)
 
-from quacknet.main import Network
+from quacknet import Network
+from quacknet import drawGraphs
 
 def run(epochs, steps, skipInput):
     learningRate = 0.01
@@ -53,4 +54,4 @@ totalAccuracy, totalLoss = [], []
 for _ in range(5):
     run(epochs = 10, steps = 1, skipInput = False)
 
-Network.drawGraphs(None, totalAccuracy, totalLoss) # draws accuracy and loss graphs 
+drawGraphs(None, totalAccuracy, totalLoss) # draws accuracy and loss graphs 

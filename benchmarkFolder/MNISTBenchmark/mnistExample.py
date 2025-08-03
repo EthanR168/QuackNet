@@ -1,6 +1,6 @@
 import numpy as np
 import time
-from quacknet.core.lossFunctions import CrossEntropyLossFunction
+from quacknet import CrossEntropyLossFunction
 
 # Load the preprocessed data
 train_images = np.load('benchmarkFolder/MNISTBenchmark/data/train_images.npy')  # Shape: (60000, 784)
@@ -9,7 +9,7 @@ train_labels = np.load('benchmarkFolder/MNISTBenchmark/data/train_labels.npy')  
 test_images = np.load('benchmarkFolder/MNISTBenchmark/data/test_images.npy')   # Shape: (10000, 784)
 test_labels = np.load('benchmarkFolder/MNISTBenchmark/data/test_labels.npy')    # Shape: (10000, 10)
 
-from quacknet.main import Network
+from quacknet import Network
 
 learningRate = 0.01
 

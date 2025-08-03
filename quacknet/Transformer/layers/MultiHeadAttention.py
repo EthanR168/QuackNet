@@ -1,4 +1,4 @@
-from quacknet.Transformer.AttentionBackpropagation import MultiHeadAttentionBackpropagation
+from quacknet.Transformer.layers.AttentionBackpropagation import MultiHeadAttentionBackpropagation
 import numpy as np
 
 """

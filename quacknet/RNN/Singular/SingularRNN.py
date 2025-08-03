@@ -1,25 +1,26 @@
 from quacknet.core.activationFunctions import relu, sigmoid, linear, tanH, softMax
+from quacknet.RNN.Singular.SingularBackPropRNN import RNNBackProp
+from quacknet.RNN.Singular.SingularOptimiserRNN import RNNOptimiser
 from quacknet.core.lossFunctions import MAELossFunction, MSELossFunction, CrossEntropyLossFunction
 from quacknet.core.lossDerivativeFunctions import MAEDerivative, MSEDerivative, CrossEntropyLossDerivative
 from quacknet.core.activationDerivativeFunctions import ReLUDerivative, SigmoidDerivative, LinearDerivative, TanHDerivative, SoftMaxDerivative
-from quacknet.RNN.StackedBackPropRNN import RNNBackProp
-from quacknet.RNN.StackedOptimiserRNN import StackedRNNOptimiser
 import numpy as np
 import math
 
 """
-Stacked RNN only has lots of hidden states
-InputData --> [ Hidden State Layer 1 --> Hidden State Layer 2 --> ... --> Hidden State Layer N ] --> Dense Layer (output layer)
+Singular RNN only has 1 hidden state
+
+InputData --> Hidden State --> Dense Layer (output layer)
 """
 
-class StackedRNN(RNNBackProp, StackedRNNOptimiser): 
-    def __init__(self, hiddenStateActivationFunction, outputLayerActivationFunction, lossFunction, numberOfHiddenStates, hiddenSizes, useBatches = False, batchSize = 64):
-        self.inputWeights = None
-        self.hiddenWeights = None
-        self.biases = None
-        self.outputWeights = None
+class SingularRNN(RNNBackProp, RNNOptimiser): 
+    def __init__(self, hiddenStateActivationFunction, outputLayerActivationFunction, lossFunction, useBatches = False, batchSize = 64):
+        self.inputWeight = None
+        self.hiddenWeight = None
+        self.bias = None
+        self.outputWeight = None
         self.outputBias = None
-        self.hiddenStates = None
+        self.hiddenState = None
         
         funcs = {
             "relu": relu,
@@ -61,40 +62,22 @@ class StackedRNN(RNNBackProp, StackedRNNOptimiser):
         self.useBatches = useBatches
         self.batchSize = batchSize
 
-        self.numberOfHiddenStates = numberOfHiddenStates
-        self.hiddenSizes = hiddenSizes
-
-        assert type(self.hiddenSizes) == list, f"hiddenSizes has to be a list"
-        for num in self.hiddenSizes:
-            assert isinstance(num, int), f"hiddenSize has to be a list of integers"
-
     def forwardSequence(self, inputData): # goes through the whole sequence / time steps
         preActivations = []
         allHiddenStates = []
         for i in range(len(inputData)):
-            allPreAct, outputPreAct, output, allHidenStates = self._oneStep(inputData[i])
-            preActivations.append(allPreAct)
-            allHiddenStates.append(allHidenStates)
+            preAct, outputPreAct, output = self._oneStep(inputData[i])
+            preActivations.append(preAct)
+            allHiddenStates.append(self.hiddenState.copy())
         return preActivations, allHiddenStates, output, outputPreAct
 
     def _oneStep(self, inputData): # forward prop on 1 time step
-        allPreActivations = []
-        allHidenStates = []
+        preActivation, self.hiddenState = self._calculateHiddenLayer(inputData, self.hiddenState, self.inputWeight, self.hiddenWeight, self.bias, self.hiddenStateActivationFunction)
+        preAct, output = self._calculateOutputLayer(self.hiddenState, self.outputWeight, self.outputBias, self.outputLayerActivationFunction)
+        return preActivation, preAct, output.reshape(-1, 1)
 
-        currentInput = inputData
-
-        for i in range(self.numberOfHiddenStates):
-            preActivation, self.hiddenStates[i] = self._calculateHiddenLayer(currentInput, self.hiddenStates[i], self.inputWeights[i], self.hiddenWeights[i], self.biases[i], self.hiddenStateActivationFunction)
-            
-            allPreActivations.append(preActivation)
-            allHidenStates.append(self.hiddenStates[i])
-            currentInput = self.hiddenStates[i]
-
-        preAct, output = self._calculateOutputLayer(allHidenStates[-1], self.outputWeight, self.outputBias, self.outputLayerActivationFunction)
-        return allPreActivations, preAct, output.reshape(-1, 1), allHidenStates
-
-    def _calculateHiddenLayer(self, inputData, lastHiddenState, inputWeights, hiddenWeights, bias, activationFunction): # a( w_x * x + w_h * h + b )
-        preActivation = np.dot(inputWeights, inputData) + np.dot(hiddenWeights, lastHiddenState) + bias
+    def _calculateHiddenLayer(self, inputData, lastHiddenState, inputWeight, hiddenWeight, bias, activationFunction): # a( w_x * x + w_h * h + b )
+        preActivation = np.dot(inputWeight, inputData) + np.dot(hiddenWeight, lastHiddenState) + bias
         newHiddenState = activationFunction(preActivation)
         return preActivation, newHiddenState
 
@@ -113,42 +96,25 @@ class StackedRNN(RNNBackProp, StackedRNNOptimiser):
         w = np.random.normal(0, bounds, size=(outputSize, inputSize))
         return w
     
-    def initialiseWeights(self, inputSize, outputSize):
-        self.inputWeights = []
-        self.hiddenWeights = []
-        self.biases = []
-        self.hiddenStates = []
-
-        for i, hiddenSize in enumerate(self.hiddenSizes):
-            inSize = inputSize 
-            if(i != 0):
-                inSize = self.hiddenSizes[i - 1]
-
-            inputW = self._initialiseWeights(hiddenSize, inSize, self.hiddenStateActivationFunction)
-            hiddenW = self._initialiseWeights(hiddenSize, hiddenSize, self.hiddenStateActivationFunction)
-            bias = np.zeros((hiddenSize, 1))
-            hiddenState = np.zeros((hiddenSize, 1))
-        
-            self.inputWeights.append(inputW)
-            self.hiddenWeights.append(hiddenW)
-            self.biases.append(bias)
-            self.hiddenStates.append(hiddenState)
-
-        self.outputWeight = self._initialiseWeights(outputSize, self.hiddenSizes[-1], self.outputLayerActivationFunction)
+    def initialiseWeights(self, inputSize, hiddenSize, outputSize):
+        self.inputWeight = self._initialiseWeights(hiddenSize, inputSize, self.hiddenStateActivationFunction)
+        self.hiddenWeight = self._initialiseWeights(hiddenSize, hiddenSize, self.hiddenStateActivationFunction)
+        self.outputWeight = self._initialiseWeights(outputSize, hiddenSize, self.outputLayerActivationFunction)
+        self.bias = np.zeros((hiddenSize, 1))
         self.outputBias = np.zeros((outputSize, 1))
-    
-    
+        self.hiddenState = np.zeros((hiddenSize, 1))
         self.inputSize = inputSize
+        self.hiddenSize = hiddenSize
         self.outputSize = outputSize
 
     def backwardPropagation(self, inputs, AllHiddenStates, preActivationValues, outputPreAct, targets, outputs):
-        return self._Stacked_BPTT(inputs, AllHiddenStates, preActivationValues, outputPreAct, targets, outputs)
+        return self._Singular_BPTT(inputs, AllHiddenStates, preActivationValues, outputPreAct, targets, outputs)
 
     def optimiser(self, inputData, labels, alpha, beta1, beta2, epsilon):
         if(self.useBatches == True):
-            AllOutputs, self.inputWeights, self.hiddenWeights, self.biases, self.outputWeight, self.outputBiases = self._Stacked_AdamsOptimiserWithBatches(inputData, labels, self.inputWeights, self.hiddenWeights, self.biases, self.outputWeight, self.outputBias, self.batchSize, alpha, beta1, beta2, epsilon)
+            AllOutputs, self.inputWeight, self.hiddenWeight, self.biases, self.outputWeight, self.outputBiases = self._AdamsOptimiserWithBatches(inputData, labels, self.inputWeight, self.hiddenWeight, self.bias, self.outputWeight, self.outputBias, self.batchSize, alpha, beta1, beta2, epsilon)
         else:
-            AllOutputs, self.inputWeights, self.hiddenWeights, self.biases, self.outputWeight, self.outputBiases = self._Stacked_AdamsOptimiserWithoutBatches(inputData, labels, self.inputWeights, self.hiddenWeights, self.biases, self.outputWeight, self.outputBias, alpha, beta1, beta2, epsilon)
+            AllOutputs, self.inputWeight, self.hiddenWeight, self.biases, self.outputWeight, self.outputBiases = self._AdamsOptimiserWithoutBatches(inputData, labels, self.inputWeight, self.hiddenWeight, self.bias, self.outputWeight, self.outputBias, alpha, beta1, beta2, epsilon)
         return AllOutputs
 
     def train(self, inputData, labels, alpha = 0.001, beta1 = 0.9, beta2 = 0.999, epsilon = 1e-8):

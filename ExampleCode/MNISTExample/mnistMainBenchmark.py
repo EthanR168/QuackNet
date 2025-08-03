@@ -6,7 +6,7 @@ train_labels = np.load('ExampleCode/MNISTExample/data/train_labels.npy')  # Shap
 test_images = np.load('ExampleCode/MNISTExample/data/test_images.npy')    # Shape: (10000, 784)
 test_labels = np.load('ExampleCode/MNISTExample/data/test_labels.npy')    # Shape: (10000, 10)
 
-from quacknet.main import Network
+from quacknet import Network
 import time
 
 def benchmark(size):

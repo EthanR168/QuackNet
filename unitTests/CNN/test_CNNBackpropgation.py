@@ -3,7 +3,7 @@ from quacknet.core.activationFunctions import relu, linear
 from quacknet.core.activationDerivativeFunctions import ReLUDerivative, LinearDerivative
 from quacknet.core.lossDerivativeFunctions import MSEDerivative
 from quacknet.core.lossFunctions import MSELossFunction
-from quacknet.main import Network
+from _oldCode.main import Network
 import numpy as np
 
 def test_ConvulutionalBackpropagation():

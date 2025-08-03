@@ -30,7 +30,7 @@ class TransformerOptimiser:
                 acculumalatedGradients[key] /= batchSize
 
             Parameters = self._Adams(Parameters, acculumalatedGradients, alpha, beta1, beta2, epsilon)
-        return AllOutputs
+        return AllOutputs, Parameters
 
     def _AdamsOptimiserWithoutBatches(self, inputData, labels, alpha, beta1, beta2, epsilon):   
         AllOutputs = []
@@ -39,7 +39,7 @@ class TransformerOptimiser:
             AllOutputs.append(output)
             Parameters, Gradients  = self.backwardPropagation(output, labels[i])
             Parameters = self._Adams(Parameters, Gradients, alpha, beta1, beta2, epsilon)
-        return AllOutputs
+        return AllOutputs, Parameters
 
     def _Adams(self, Parameters, Gradients, alpha, beta1, beta2, epsilon):
         if not self.firstMoment:

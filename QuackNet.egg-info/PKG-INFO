@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: QuackNet
-Version: 1.0
+Version: 1.1
 Summary: A lightweight educational neural network library
 Home-page: https://github.com/SirQuackPng/QuackNet
 License: MIT
@@ -127,26 +127,26 @@ QuackNet was created to deepen my understanding of how neural networks work inte
 Building QuackNet from scratch enabled mastery of:
 
 **Core Concepts:**
-    1. **Backpropagation**
-        -   Derived and implemented gradient calculations for dense and convolutional layers
-    2. **Optimiser Internals**
-        -   Coded Stochastic Gradient Descent and Adam
-    3. **CNN Operations**
-        -   Implemented kernels, padding, strides, and pooling
-    4. **Data Handling**
-        -   Used vectorisation (NumPy) to make code more performant
-        -   Designed preprocessing (normalisation -> augmentation -> batching)
+- **Backpropagation**
+    -   Derived and implemented gradient calculations for dense and convolutional layers
+- **Optimiser Internals**
+    -   Coded Stochastic Gradient Descent and Adam
+- **CNN Operations**
+    -   Implemented kernels, padding, strides, and pooling
+- **Data Handling**
+    -   Used vectorisation (NumPy) to make code more performant
+    -   Designed preprocessing (normalisation -> augmentation -> batching)
 
 **CS Skills:**
-    1. **Testing Rigor**
-        -   Unit test coverage >80%
-        -   Unit test are used to ensure reliability of components
-    2. **API Design**
-        -   Created easy interface (e.g., ```Network.addLayer()```) for educational use
-    3. **Documentation**
-        -   Used pdoc to create automated documentation
-        -   Private functions are marked with a '_' at the start
-        -   All functions have docstrings showing their args/params
+- **Testing Rigor**
+    -   Unit test coverage >80%
+    -   Unit test are used to ensure reliability of components
+- **API Design**
+    -   Created easy interface (e.g., ```Network.addLayer()```) for educational use
+- **Documentation**
+    -   Used pdoc to create automated documentation
+    -   Private functions are marked with a '_' at the start
+    -   All functions have docstrings showing their args/params
 
 ## Key Features
 
@@ -246,6 +246,8 @@ print(f"Average loss: {averageLoss}")
     Add pixel normalisation of pixels and one-hot encoded label
 - [X] **Skin Lesion detector**    
     Use the neural network library to create a model for detecting skin lesions using HAM10000 for skin lesion images
+- [ ] **Recurrent Neural Network and Transformers**
+    Implement BPTT, multi head attention, residual connection 
 - [ ] **Additional activation functions**  
     Implement advanced activation functions (eg. GELU and Swish)
 

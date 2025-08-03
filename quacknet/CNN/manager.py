@@ -1,7 +1,9 @@
-from quacknet.CNN.convulationalFeutures import ConvulationalNetwork
-from quacknet.CNN.convulationalBackpropagation import CNNbackpropagation
-from quacknet.core.activationDerivativeFunctions import ReLUDerivative
-from quacknet.CNN.convulationalOptimiser import CNNoptimiser
+from quacknet.CNN.activationLayer import ActivationLayer
+from quacknet.CNN.convLayer import ConvLayer
+from quacknet.CNN.layers.poolingLayer import PoolingLayer
+from quacknet.CNN.globalAveragePooling import GlobalAveragePooling
+from quacknet.CNN.denseLayer import DenseLayer
+from quacknet.CNN.optimiser import CNNoptimiser
 import numpy as np
 
 class CNNModel(CNNoptimiser):
@@ -16,7 +18,7 @@ class CNNModel(CNNoptimiser):
         Adds a layer to the CNN model.
 
         Args:
-            layer (class): ConvLayer, PoolingLayer, ActivationLayer, and DenseLayer
+            layer (class): ConvLayer, PoolingLayer, GlobalAveragePoolingLayer, ActivationLayer, and DenseLayer
         """
         self.layers.append(layer)
     
@@ -51,6 +53,8 @@ class CNNModel(CNNoptimiser):
         allWeightGradients = [weightGradients]
         allBiasGradients = [biasGradients]
         for i in range(len(self.layers) - 2, -1, -1):
+            if(type(self.layers[i]) == GlobalAveragePooling):
+                errorTerms = self.layers[i]._backpropagation(allTensors[i])
             if(type(self.layers[i]) == PoolingLayer or type(self.layers[i]) == ActivationLayer):
                 errorTerms = self.layers[i]._backpropagation(errorTerms, allTensors[i])
             elif(type(self.layers[i]) == ConvLayer):
@@ -182,182 +186,3 @@ class CNNModel(CNNoptimiser):
                 self.layers[i].kernalWeights = CNNweights[currWeightIndex]
                 self.layers[i].kernalBiases = CNNbiases[currWeightIndex]
                 currWeightIndex += 1
-
-class ConvLayer(ConvulationalNetwork, CNNbackpropagation):
-    def __init__(self, kernalSize, depth, numKernals, stride, padding = "no"):
-        """
-        Initialises a convolutional layer.
-
-        Args:
-            kernalSize (int): The size of the covolution kernel (assumed it is a square).
-            depth (int): Depth of the input tensor.
-            numKernals (int): Number of kernels in this layer.
-            stride (int): The stride length for convolution.
-            padding (str or int, optional): Padding size or "no" for no padding. Default is "no".
-        """
-        self.kernalSize = kernalSize
-        self.numKernals = numKernals
-        self.kernalWeights = []
-        self.kernalBiases = []
-        self.depth = depth
-        self.stride = stride
-        self.padding = padding
-        if(padding.lower() == "no" or padding.lower() == "n"):
-            self.usePadding = False
-        else:
-            self.padding = int(self.padding)
-            self.usePadding = True
-    
-    def forward(self, inputTensor):
-        """
-        Performs a forward convolution pass.
-
-        Args:
-            inputTensor (ndarray): Input tensor to convolve.
-        
-        Returns:
-            ndarray: Output tensor after convolution.
-        """
-        return ConvulationalNetwork._kernalisation(self, inputTensor, self.kernalWeights, self.kernalBiases, self.kernalSize, self.usePadding, self.padding, self.stride)
-
-    def _backpropagation(self, errorPatch, inputTensor):
-        """
-        Performs backpropagation to compute gradients for convolutional layer.
-
-        Args:
-            errorPatch (ndarray): Error gradient from the next layer.
-            inputTensor (ndarray): Input tensor to convolve.
-        
-        Returns:
-            ndarray: Gradients of the loss with respect to kernels.
-            ndarray: Gradients of the loss with respect to biases for each kernel.
-            ndarray: Error terms propagated to the previous layer.
-        """
-        return CNNbackpropagation._ConvolutionDerivative(self, errorPatch, self.kernalWeights, inputTensor, self.stride)
-
-class PoolingLayer(CNNbackpropagation):
-    def __init__(self, gridSize, stride, mode = "max"):
-        """
-        Initialises a pooling layer.
-
-        Args:
-            gridSize (int): The size of the pooling window.
-            stride (int): The stride length for pooling.
-            mode (str, optional): Pooling mode of "max", "ave" (average), or "gap" (global average pooling). Default is "max".        
-        """
-        self.gridSize = gridSize
-        self.stride = stride
-        self.mode = mode.lower()
-    
-    def forward(self, inputTensor):
-        """
-        Performs forward pooling operation.
-
-        Args:
-           inputTensor (ndarray): Input tensor to pool.
-
-        Returns:
-            ndarray: Output tensor after pooling. 
-        """
-        if(self.mode == "gap" or self.mode == "global"):
-            return ConvulationalNetwork._poolingGlobalAverage(self, inputTensor)
-        return ConvulationalNetwork._pooling(self, inputTensor, self.gridSize, self.stride, self.mode)
-
-    def _backpropagation(self, errorPatch, inputTensor):
-        """
-        Performs backpropagation through the pooling layer.
-
-        Args:
-            errorPatch (ndarray): Error gradient from the next layer.
-            inputTensor (ndarray): Input tensor during forward propagation.
-        
-        Returns:
-            inputGradient (ndarray): Gradient of the loss.
-        """
-        if(self.mode == "max"):
-            return CNNbackpropagation._MaxPoolingDerivative(self, errorPatch, inputTensor, self.gridSize, self.stride)
-        elif(self.mode == "ave"):
-            return CNNbackpropagation._AveragePoolingDerivative(self, errorPatch, inputTensor, self.gridSize, self.stride)
-        else:
-            return CNNbackpropagation._GlobalAveragePoolingDerivative(self, inputTensor)
-
-class DenseLayer: # basically a fancy neural network
-    def __init__(self, NeuralNetworkClass):
-        """
-        Initialises a dense layer using a NeuralNetworkClass.
-
-        Args:
-            NeuralNetworkClass (class): the fully connected neural network class.
-        """
-        self.NeuralNetworkClass = NeuralNetworkClass
-        self.orignalShape = 0   # orignalShape is the original shape of the input tensor
-        
-    def forward(self, inputTensor):
-        """
-        Flattens the input tensor and performs a forward pass.
-
-        Args:
-            inputTensor (ndarray): Input tensor to flatten and process.
-        
-        Returns:
-            ndarray: Output of the dense layer.
-        """
-        self.orignalShape = np.array(inputTensor).shape
-        inputArray = ConvulationalNetwork._flatternTensor(self, inputTensor)
-        self.layerNodes = self.NeuralNetworkClass.forwardPropagation(inputArray)
-        return self.layerNodes[-1]
-    
-    def _backpropagation(self, trueValues): #return weigtGradients, biasGradients, errorTerms
-        """
-        Performs backpropagation through the dense layer.
-
-        Args:
-            trueValues (ndarray): True labels for the input data.
-        
-        Returns:
-            weightGradients (list of ndarray): Gradients of weights for each layer.
-            biasGradients (list of ndarray): Gradients of biases for each layer.
-            errorTerms (ndarray): Error terms from the output layer weights, reshaped to the input tensor.   
-        """  
-        weightGradients, biasGradients, errorTerms = self.NeuralNetworkClass._backPropgation(
-            self.layerNodes, 
-            self.NeuralNetworkClass.weights,
-            self.NeuralNetworkClass.biases,
-            trueValues,
-            True
-        )
-        #errorTerms = np.array(self.NeuralNetworkClass.weights).T @ errorTerms 
-        #errorTerms = errorTerms.reshape(self.orignalShape)
-
-        for i in reversed(range(len(self.NeuralNetworkClass.weights))):
-            errorTerms = self.NeuralNetworkClass.weights[i] @ errorTerms
-        errorTerms = errorTerms.reshape(self.orignalShape)
-
-        return weightGradients, biasGradients, errorTerms
-
-class ActivationLayer: # basically aplies an activation function over the whole Tensor (eg. leaky relu)
-    def forward(self, inputTensor):
-        """
-        Applies the Leaky ReLU activation function to the input tensor.
-
-        Args:
-            inputTensor (ndarray): A 3D array representing the input.
-        
-        Returns:
-            ndarray: A tensor with the same shape as the input with Leaky ReLU applied to it.
-        """
-        return ConvulationalNetwork._activation(self, inputTensor)
-
-    def _backpropagation(self, errorPatch, inputTensor):
-        """
-        Compute the gradient of the loss with respect to the input of the activation layer during backpropagation.
-
-        Args:
-            errorPatch (ndarray): Error gradient from the next layer.
-            inputTensor (ndarray): Input to the activation layer during forward propagation.
-        
-        Returns:
-            inputGradient (ndarray): Gradient of the loss with respect to the inputTensor
-        """  
-        return CNNbackpropagation._ActivationLayerDerivative(self, errorPatch, ReLUDerivative, inputTensor)
-    

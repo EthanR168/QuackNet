@@ -1,8 +1,8 @@
-from quacknet.CNN.convulationalOptimiser import CNNoptimiser
+from quacknet.CNN.cnnOptimiser import CNNoptimiser
 from quacknet.main import Network
 import numpy as np
 
-from quacknet.CNN.convulationalManager import CNNModel
+from quacknet.CNN.manager import CNNModel
 
 def test_adamsWeightBiasUpdateWithoutBatches():
     weights = [[np.array([1.0])]]

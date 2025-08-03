@@ -4,7 +4,7 @@ from quacknet.core.lossFunctions import MSELossFunction, MAELossFunction, CrossE
 from quacknet.NN.optimisers import Optimisers
 from quacknet.NN.initialisers import Initialisers
 from quacknet.NN.writeAndReadWeightBias import writeAndRead
-from quacknet.CNN.convulationalManager import CNNModel
+from quacknet.CNN.manager import CNNModel
 from quacknet.core.dataAugmentation import Augementation
 import numpy as np
 import matplotlib.pyplot as plt

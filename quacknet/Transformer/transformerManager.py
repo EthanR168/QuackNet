@@ -202,12 +202,33 @@ class TransformerBlock:
     
     def optimiser(self, inputData, labels, useBatches, batchSize, alpha, beta1, beta2, epsilon):
         if(useBatches == True):
-            AllOutputs = self.optimiserClass._AdamsOptimiserWithBatches(inputData, labels, batchSize, alpha, beta1, beta2, epsilon)
+            AllOutputs, Parameters = self.optimiserClass._AdamsOptimiserWithBatches(inputData, labels, batchSize, alpha, beta1, beta2, epsilon)
         else:
-            AllOutputs = self.optimiserClass._AdamsOptimiserWithoutBatches(inputData, labels, alpha, beta1, beta2, epsilon)
-        return AllOutputs
+            AllOutputs, Parameters = self.optimiserClass._AdamsOptimiserWithoutBatches(inputData, labels, alpha, beta1, beta2, epsilon)
+        return AllOutputs, Parameters
 
     def train(self, inputData, labels, useBatches = False, batchSize = 16, alpha = 0.001, beta1 = 0.9, beta2 = 0.999, epsilon = 1e-8):
-        AllOutputs = self.optimiser(inputData, labels, useBatches, batchSize, alpha, beta1, beta2, epsilon)
+        AllOutputs, self.Parameters = self.optimiser(inputData, labels, useBatches, batchSize, alpha, beta1, beta2, epsilon)
         loss = MSELossFunction(AllOutputs, labels)
         return loss
+
+    def saveWeights(self, fileName = "TransformerParameters.npz"):
+        np.savez(fileName, **self.Parameters)
+
+    def loadWeights(self, fileName = "TransformerParameters.npz"):
+        loaded = np.load(fileName)
+
+        self.norm1.gamma            = loaded["Norm1_gamma"]
+        self.norm1.beta             = loaded["Norm1_beta"]
+        self.norm2.gamma            = loaded["Norm2_gamma"]
+        self.norm2.beta             = loaded["Norm2_beta"]
+        self.FFN.W1                 = loaded["FFN_W1"]
+        self.FFN.b1                 = loaded["FFN_b1"]
+        self.FFN.W2                 = loaded["FFN_W2"]
+        self.FFN.b2                 = loaded["FFN_b2"]
+        self.attention.outputWeight = loaded["ATT_WO"]
+        self.attention.outputBias   = loaded["ATT_BO"]
+        self.attention.QueryWeights = loaded["ATT_WQ"]
+        self.attention.KeyWeights   = loaded["ATT_WK"]
+        self.attention.ValueWeights = loaded["ATT_WV"]
+        self.embedding.weights      = loaded["Embed_W"]

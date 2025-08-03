@@ -1,4 +1,4 @@
-from quacknet.CNN.convulationalManager import ConvLayer, PoolingLayer, ActivationLayer, DenseLayer
+from quacknet.CNN.manager import ConvLayer, PoolingLayer, ActivationLayer, DenseLayer
 from quacknet.core.activationFunctions import relu, linear
 from quacknet.core.activationDerivativeFunctions import ReLUDerivative, LinearDerivative
 from quacknet.core.lossDerivativeFunctions import MSEDerivative

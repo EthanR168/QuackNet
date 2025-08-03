@@ -1,6 +1,6 @@
 import numpy as np
-from _oldCode.main import Network 
-from quacknet.core.activationFunctions import relu, sigmoid, tanH, linear, softMax
+from quacknet import Network 
+from quacknet import relu, sigmoid, tanH, linear, softMax
 
 class TestNetwork_CalculateLayerNodes:
     def test_calculateLayerNodes_Relu(self):

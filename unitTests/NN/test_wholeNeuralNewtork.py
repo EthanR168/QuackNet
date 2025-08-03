@@ -1,10 +1,10 @@
 import numpy as np
-from quacknet.core.activationFunctions import relu, linear
+from quacknet import relu, linear
 from quacknet.NN.backPropgation import _backPropgation
-from quacknet.core.activationDerivativeFunctions import ReLUDerivative, LinearDerivative
-from quacknet.core.lossDerivativeFunctions import MSEDerivative
-from quacknet.core.lossFunctions import MSELossFunction
-from _oldCode.main import Network
+from quacknet import ReLUDerivative, LinearDerivative
+from quacknet import MSEDerivative
+from quacknet import MSELossFunction
+from quacknet import Network
 
 np.random.seed(55)
 

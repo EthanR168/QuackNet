@@ -7,6 +7,7 @@ from .Transformer import Transformer, TransformerBlock
 from .RNN import StackedRNN, SingularRNN
 
 from .core import *
+from .core.optimisers.adam import Adam
 
 from .NN import Network
 

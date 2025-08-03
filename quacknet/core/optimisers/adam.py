@@ -1,12 +1,18 @@
 import numpy as np
 
-class TransformerOptimiser:
-    def __init__(self, forwardPropagation, backwardPropagation):
+class Adam:
+    def __init__(self, forwardPropagationFunction, backwardPropagationFunction):
         self.firstMoment = {}
         self.secondMoment = {}
         self.t = 0
-        self.forwardPropagation = forwardPropagation
-        self.backwardPropagation = backwardPropagation
+        self.forwardPropagationFunction = forwardPropagationFunction
+        self.backwardPropagationFunction = backwardPropagationFunction
+
+    def optimiser(self, inputData, labels, useBatches, batchSize, alpha, beta1, beta2, epsilon):
+        if(useBatches == True):
+            return self._AdamsOptimiserWithBatches(inputData, labels, batchSize, alpha, beta1, beta2, epsilon)
+        else:
+            return self._AdamsOptimiserWithoutBatches(inputData, labels, alpha, beta1, beta2, epsilon)
 
     def _AdamsOptimiserWithBatches(self, inputData, labels, batchSize, alpha, beta1, beta2, epsilon):     
         AllOutputs = []
@@ -16,9 +22,9 @@ class TransformerOptimiser:
             acculumalatedGradients = {}
             Parameters = None
             for j in range(len(batchData)):
-                output = self.forwardPropagation(batchData[j])
+                output = self.forwardPropagationFunction(batchData[j])
                 AllOutputs.append(output)
-                Parameters, Gradients  = self.backwardPropagation(output, batchLabels[j])
+                Parameters, Gradients = self.backwardPropagationFunction(output, batchLabels[j])
                 
                 for key in Gradients:
                     if key not in acculumalatedGradients:
@@ -35,9 +41,9 @@ class TransformerOptimiser:
     def _AdamsOptimiserWithoutBatches(self, inputData, labels, alpha, beta1, beta2, epsilon):   
         AllOutputs = []
         for i in range(len(inputData)):
-            output = self.forwardPropagation(inputData[i])
+            output = self.forwardPropagationFunction(inputData[i])
             AllOutputs.append(output)
-            Parameters, Gradients  = self.backwardPropagation(output, labels[i])
+            Parameters, Gradients  = self.backwardPropagationFunction(output, labels[i])
             Parameters = self._Adams(Parameters, Gradients, alpha, beta1, beta2, epsilon)
         return AllOutputs, Parameters
 
@@ -46,7 +52,6 @@ class TransformerOptimiser:
             for key in Gradients:
                 self.firstMoment[key] = np.zeros_like(Gradients[key])
                 self.secondMoment[key] = np.zeros_like(Gradients[key])
-
         self.t += 1
         for key in Parameters:
             g = Gradients[key]
@@ -58,6 +63,5 @@ class TransformerOptimiser:
             secondMomentWeightHat = self.secondMoment[key] / (1 - beta2 ** self.t)
 
             Parameters[key] -= alpha * firstMomentWeightHat / (np.sqrt(secondMomentWeightHat) + epsilon)
-        
         return Parameters
     

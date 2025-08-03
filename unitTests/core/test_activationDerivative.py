@@ -1,4 +1,4 @@
-from  quacknet.core.activationDerivativeFunctions import ReLUDerivative, SigmoidDerivative, TanHDerivative, LinearDerivative, SoftMaxDerivative
+from  quacknet import ReLUDerivative, SigmoidDerivative, TanHDerivative, LinearDerivative, SoftMaxDerivative
 import numpy as np
 
 def test_ReLUDerivative():

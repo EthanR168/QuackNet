@@ -3,15 +3,16 @@ from quacknet.CNN.layers.convLayer import ConvLayer
 from quacknet.CNN.layers.poolingLayer import PoolingLayer
 from quacknet.CNN.layers.globalAveragePoolingLayer import GlobalAveragePooling
 from quacknet.CNN.layers.denseLayer import DenseLayer
-from quacknet.CNN.optimiser import CNNoptimiser
+from quacknet.core.optimisers.adam import Adam
 import numpy as np
 
-class CNNModel(CNNoptimiser):
+class CNNModel:
     def __init__(self, NeuralNetworkClass):
         self.layers = []
         self.weights = []
         self.biases = []
         self.NeuralNetworkClass = NeuralNetworkClass
+        self.adam = Adam(self.forward, self._backpropagation)
     
     def addLayer(self, layer):
         """
@@ -62,9 +63,18 @@ class CNNModel(CNNoptimiser):
                 allWeightGradients.insert(0, weightGradients)
                 allBiasGradients.insert(0, biasGradients)
         
-        return allWeightGradients, allBiasGradients
+        Parameters =  {
+            "weight": self.weights,
+            "biases": self.biases,
+        }
+  
+        Gradients =  {
+            "weight": allWeightGradients,
+            "biases": allBiasGradients,
+        }
+        return Parameters, Gradients 
     
-    def _optimser(self, inputData, labels, useBatches, weights, biases, batchSize, alpha, beta1, beta2, epsilon):
+    def _optimser(self, inputData, labels, useBatches, batchSize, alpha, beta1, beta2, epsilon):
         """
         Runs the Adam optimiser either with or without batches.
 
@@ -85,10 +95,10 @@ class CNNModel(CNNoptimiser):
             list: Updated weights after optimisation
             list: Updated biases after optimisation
         """
-        if(useBatches == True):
-            return CNNoptimiser._AdamsOptimiserWithBatches(self, inputData, labels, weights, biases, batchSize, alpha, beta1, beta2, epsilon)
-        else:
-            return CNNoptimiser._AdamsOptimiserWithoutBatches(self, inputData, labels, weights, biases, alpha, beta1, beta2, epsilon)
+        allOutputs, Parameters = self.adam.optimiser(inputData, labels, useBatches, batchSize, alpha, beta1, beta2, epsilon)
+        self.weights = Parameters["weight"]
+        self.biases = Parameters["biases"]
+        return allOutputs, Parameters
     
     def train(self, inputData, labels, useBatches, batchSize, alpha = 0.001, beta1 = 0.9, beta2 = 0.999, epsilon = 1e-8):
         """
@@ -110,7 +120,7 @@ class CNNModel(CNNoptimiser):
         """
         correct, totalLoss = 0, 0
         
-        nodes, self.weights, self.biases = self._optimser(inputData, labels, useBatches, self.weights, self.biases, batchSize, alpha, beta1, beta2, epsilon)        
+        nodes, _ = self._optimser(inputData, labels, useBatches, batchSize, alpha, beta1, beta2, epsilon)        
         
         lastLayer = len(nodes[0]) - 1
         for i in range(len(nodes)): 

@@ -1,9 +1,9 @@
-from quacknet.CNN.manager import ConvLayer, PoolingLayer, ActivationLayer, DenseLayer
-from quacknet.core.activationFunctions import relu, linear
-from quacknet.core.activationDerivativeFunctions import ReLUDerivative, LinearDerivative
-from quacknet.core.lossDerivativeFunctions import MSEDerivative
-from quacknet.core.lossFunctions import MSELossFunction
-from _oldCode.main import Network
+from quacknet import ConvLayer, PoolingLayer, ActivationLayer, DenseLayer
+from quacknet import relu, linear
+from quacknet import ReLUDerivative, LinearDerivative
+from quacknet import MSEDerivative
+from quacknet import MSELossFunction
+from quacknet import Network
 import numpy as np
 
 def test_ConvulutionalBackpropagation():

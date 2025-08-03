@@ -3,10 +3,10 @@ from quacknet.Transformer.layers.FeedForwardNetwork import FeedForwardNetwork
 from quacknet.Transformer.layers.MultiHeadAttention import MultiAttentionHeadLayer
 from quacknet.Transformer.layers.NormLayer import NormLayer
 from quacknet.Transformer.layers.PositionalEncoding import PositionalEncoding
-from quacknet.Transformer.OptimiserTransformer import TransformerOptimiser
 from quacknet.Transformer.layers.EmbeddingLayer import EmbeddingLayer
 from quacknet.core.lossDerivativeFunctions import MSEDerivative
 from quacknet.core.lossFunctions import MSELossFunction
+from quacknet.core.optimisers.adam import Adam
 import numpy as np
 
 """
@@ -101,7 +101,7 @@ class TransformerBlock:
             self.norm1 = NormLayer(embedDimension)
             self.norm2 = NormLayer(embedDimension)
 
-        self.optimiserClass = TransformerOptimiser(self.forwardPropagation, self.backwardPropagation)
+        self.adam = Adam(self.forwardPropagation, self.backwardPropagation)
 
     def forwardPropagation(self, input):
         input = self.embedding.forwardPropagation(input)
@@ -201,10 +201,23 @@ class TransformerBlock:
         return Parameters, Gradients 
     
     def optimiser(self, inputData, labels, useBatches, batchSize, alpha, beta1, beta2, epsilon):
-        if(useBatches == True):
-            AllOutputs, Parameters = self.optimiserClass._AdamsOptimiserWithBatches(inputData, labels, batchSize, alpha, beta1, beta2, epsilon)
-        else:
-            AllOutputs, Parameters = self.optimiserClass._AdamsOptimiserWithoutBatches(inputData, labels, alpha, beta1, beta2, epsilon)
+        AllOutputs, Parameters = self.adam.optimiser(inputData, labels, useBatches, batchSize, alpha, beta1, beta2, epsilon)       
+
+        self.norm1.gamma = Parameters["Norm1_gamma"]
+        self.norm1.beta = Parameters["Norm1_beta"] 
+        self.norm2.gamma = Parameters["Norm2_gamma"] 
+        self.norm2.beta = Parameters["Norm2_beta"]
+        self.FFN.W1 = Parameters["FFN_W1"] 
+        self.FFN.b1 = Parameters["FFN_b1"] 
+        self.FFN.W2 = Parameters["FFN_W2"] 
+        self.FFN.b2 = Parameters["FFN_b2"] 
+        self.attention.outputWeight = Parameters["ATT_WO"] 
+        self.attention.outputBias = Parameters["ATT_BO"] 
+        self.attention.QueryWeights = Parameters["ATT_WQ"] 
+        self.attention.KeyWeights = Parameters["ATT_WK"] 
+        self.attention.ValueWeights = Parameters["ATT_WV"]
+        self.embedding.weights = Parameters["Embed_W"]
+
         return AllOutputs, Parameters
 
     def train(self, inputData, labels, useBatches = False, batchSize = 16, alpha = 0.001, beta1 = 0.9, beta2 = 0.999, epsilon = 1e-8):

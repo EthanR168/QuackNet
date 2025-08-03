@@ -3,7 +3,7 @@ from quacknet.core.lossFunctions import MAELossFunction, MSELossFunction, CrossE
 from quacknet.core.lossDerivativeFunctions import MAEDerivative, MSEDerivative, CrossEntropyLossDerivative
 from quacknet.core.activationDerivativeFunctions import ReLUDerivative, SigmoidDerivative, LinearDerivative, TanHDerivative, SoftMaxDerivative
 from quacknet.RNN.Stacked.StackedBackPropRNN import RNNBackProp
-from quacknet.RNN.Stacked.StackedOptimiserRNN import StackedRNNOptimiser
+from quacknet.core.optimisers.adam import Adam
 import numpy as np
 import math
 
@@ -12,12 +12,12 @@ Stacked RNN only has lots of hidden states
 InputData --> [ Hidden State Layer 1 --> Hidden State Layer 2 --> ... --> Hidden State Layer N ] --> Dense Layer (output layer)
 """
 
-class StackedRNN(RNNBackProp, StackedRNNOptimiser): 
+class StackedRNN(RNNBackProp): 
     def __init__(self, hiddenStateActivationFunction, outputLayerActivationFunction, lossFunction, numberOfHiddenStates, hiddenSizes, useBatches = False, batchSize = 64):
         self.inputWeights = None
         self.hiddenWeights = None
         self.biases = None
-        self.outputWeights = None
+        self.outputWeight = None
         self.outputBias = None
         self.hiddenStates = None
         
@@ -67,6 +67,8 @@ class StackedRNN(RNNBackProp, StackedRNNOptimiser):
         assert type(self.hiddenSizes) == list, f"hiddenSizes has to be a list"
         for num in self.hiddenSizes:
             assert isinstance(num, int), f"hiddenSize has to be a list of integers"
+
+        self.adam = Adam(self.forwardSequence, self.backwardPropagation)
 
     def forwardSequence(self, inputData): # goes through the whole sequence / time steps
         preActivations = []
@@ -142,13 +144,31 @@ class StackedRNN(RNNBackProp, StackedRNNOptimiser):
         self.outputSize = outputSize
 
     def backwardPropagation(self, inputs, AllHiddenStates, preActivationValues, outputPreAct, targets, outputs):
-        return self._Stacked_BPTT(inputs, AllHiddenStates, preActivationValues, outputPreAct, targets, outputs)
+        inputWeightGradients, hiddenStateWeightGradients, biasGradients, outputWeightGradients, outputbiasGradients = self._Stacked_BPTT(inputs, AllHiddenStates, preActivationValues, outputPreAct, targets, outputs)
+        Parameters =  {
+            "I_W": self.inputWeights,
+            "b": self.biases,
+            "H_W": self.hiddenWeights,
+            "O_W": self.outputWeight,
+            "O_b": self.outputBias,
+        }
+  
+        Gradients =  {
+            "I_W": inputWeightGradients,
+            "b": biasGradients,
+            "H_W": hiddenStateWeightGradients,
+            "O_W": outputWeightGradients,
+            "O_b": outputbiasGradients,
+        }
+        return Parameters, Gradients 
 
     def optimiser(self, inputData, labels, alpha, beta1, beta2, epsilon):
-        if(self.useBatches == True):
-            AllOutputs, self.inputWeights, self.hiddenWeights, self.biases, self.outputWeight, self.outputBiases = self._Stacked_AdamsOptimiserWithBatches(inputData, labels, self.inputWeights, self.hiddenWeights, self.biases, self.outputWeight, self.outputBias, self.batchSize, alpha, beta1, beta2, epsilon)
-        else:
-            AllOutputs, self.inputWeights, self.hiddenWeights, self.biases, self.outputWeight, self.outputBiases = self._Stacked_AdamsOptimiserWithoutBatches(inputData, labels, self.inputWeights, self.hiddenWeights, self.biases, self.outputWeight, self.outputBias, alpha, beta1, beta2, epsilon)
+        AllOutputs, Parameters = self.adam.optimiser(inputData, labels, self.useBatches, self.batchSize, alpha, beta1, beta2, epsilon)
+        self.inputWeights = Parameters["I_W"]
+        self.biases = Parameters["b"]
+        self.hiddenWeights = Parameters["H_W"]
+        self.outputWeight = Parameters["O_W"]
+        self.outputBias = Parameters["O_b"]
         return AllOutputs
 
     def train(self, inputData, labels, alpha = 0.001, beta1 = 0.9, beta2 = 0.999, epsilon = 1e-8):

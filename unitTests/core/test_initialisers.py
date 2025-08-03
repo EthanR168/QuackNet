@@ -1,5 +1,5 @@
 from quacknet.NN.initialisers import Initialisers
-from _oldCode.main import Network
+from quacknet import Network
 import numpy as np
 
 def test_initialiser():

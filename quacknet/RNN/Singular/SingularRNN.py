@@ -1,9 +1,9 @@
 from quacknet.core.activationFunctions import relu, sigmoid, linear, tanH, softMax
 from quacknet.RNN.Singular.SingularBackPropRNN import RNNBackProp
-from quacknet.RNN.Singular.SingularOptimiserRNN import RNNOptimiser
 from quacknet.core.lossFunctions import MAELossFunction, MSELossFunction, CrossEntropyLossFunction
 from quacknet.core.lossDerivativeFunctions import MAEDerivative, MSEDerivative, CrossEntropyLossDerivative
 from quacknet.core.activationDerivativeFunctions import ReLUDerivative, SigmoidDerivative, LinearDerivative, TanHDerivative, SoftMaxDerivative
+from quacknet.core.optimisers.adam import Adam
 import numpy as np
 import math
 
@@ -13,7 +13,7 @@ Singular RNN only has 1 hidden state
 InputData --> Hidden State --> Dense Layer (output layer)
 """
 
-class SingularRNN(RNNBackProp, RNNOptimiser): 
+class SingularRNN(RNNBackProp): 
     def __init__(self, hiddenStateActivationFunction, outputLayerActivationFunction, lossFunction, useBatches = False, batchSize = 64):
         self.inputWeight = None
         self.hiddenWeight = None
@@ -62,6 +62,8 @@ class SingularRNN(RNNBackProp, RNNOptimiser):
         self.useBatches = useBatches
         self.batchSize = batchSize
 
+        self.adam = Adam(self.forwardSequence, self.backwardPropagation)
+
     def forwardSequence(self, inputData): # goes through the whole sequence / time steps
         preActivations = []
         allHiddenStates = []
@@ -108,13 +110,31 @@ class SingularRNN(RNNBackProp, RNNOptimiser):
         self.outputSize = outputSize
 
     def backwardPropagation(self, inputs, AllHiddenStates, preActivationValues, outputPreAct, targets, outputs):
-        return self._Singular_BPTT(inputs, AllHiddenStates, preActivationValues, outputPreAct, targets, outputs)
+        inputWeightGradients, hiddenStateWeightGradients, biasGradients, outputWeightGradients, outputbiasGradients = self._Singular_BPTT(inputs, AllHiddenStates, preActivationValues, outputPreAct, targets, outputs)
+        Parameters =  {
+            "I_W": self.inputWeights,
+            "b": self.biases,
+            "H_W": self.hiddenWeights,
+            "O_W": self.outputWeight,
+            "O_b": self.outputBias,
+        }
+  
+        Gradients =  {
+            "I_W": inputWeightGradients,
+            "b": biasGradients,
+            "H_W": hiddenStateWeightGradients,
+            "O_W": outputWeightGradients,
+            "O_b": outputbiasGradients,
+        }
+        return Parameters, Gradients 
 
     def optimiser(self, inputData, labels, alpha, beta1, beta2, epsilon):
-        if(self.useBatches == True):
-            AllOutputs, self.inputWeight, self.hiddenWeight, self.biases, self.outputWeight, self.outputBiases = self._AdamsOptimiserWithBatches(inputData, labels, self.inputWeight, self.hiddenWeight, self.bias, self.outputWeight, self.outputBias, self.batchSize, alpha, beta1, beta2, epsilon)
-        else:
-            AllOutputs, self.inputWeight, self.hiddenWeight, self.biases, self.outputWeight, self.outputBiases = self._AdamsOptimiserWithoutBatches(inputData, labels, self.inputWeight, self.hiddenWeight, self.bias, self.outputWeight, self.outputBias, alpha, beta1, beta2, epsilon)
+        AllOutputs, Parameters = self.adam.optimiser(inputData, labels, self.useBatches, self.batchSize, alpha, beta1, beta2, epsilon)
+        self.inputWeights = Parameters["I_W"]
+        self.biases = Parameters["b"]
+        self.hiddenWeights = Parameters["H_W"]
+        self.outputWeight = Parameters["O_W"]
+        self.outputBias = Parameters["O_b"]
         return AllOutputs
 
     def train(self, inputData, labels, alpha = 0.001, beta1 = 0.9, beta2 = 0.999, epsilon = 1e-8):

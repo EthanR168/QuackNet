@@ -1,5 +1,6 @@
+from quacknet.CNN.layers.globalAveragePoolingLayer import GlobalAveragePooling
 from quacknet.CNN.manager import CNNModel, ConvLayer, PoolingLayer, DenseLayer, ActivationLayer
-from _oldCode.main import Network
+from quacknet import Network
 import numpy as np
 
 class Test_ConvLayer:
@@ -181,7 +182,6 @@ class Test_PoolingLayer:
         pool = PoolingLayer(sizeOfGrid, strideLength, "max")
         output = pool.forward(inputTensor)
 
-
         expected = np.array([
         [
             [4, 4],
@@ -266,7 +266,7 @@ class Test_PoolingLayer:
             ],
         ]) 
 
-        pool = PoolingLayer(None, None, "gap")
+        pool = GlobalAveragePooling()
         output = pool.forward(inputTensor)
 
         expected = np.array([2.5, 1, 8.5])

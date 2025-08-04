@@ -1,4 +1,4 @@
-from quacknet import ConvulationalNetwork
+from quacknet import ConvLayer, PoolingLayer, GlobalAveragePooling, DenseLayer, ActivationLayer
 import numpy as np
 
 class Test_Padding:
@@ -7,7 +7,7 @@ class Test_Padding:
         kernalSize, strideLength = 2, 2
         typeOfPadding = 0
 
-        paddingTensor = ConvulationalNetwork._padImage(self, inputTensor, kernalSize, strideLength, typeOfPadding)
+        paddingTensor = ConvLayer._padImage(self, inputTensor, kernalSize, strideLength, typeOfPadding)
 
         paddingSize = int(np.ceil(((strideLength - 1) * inputTensor.shape[1] - strideLength + kernalSize) / 2))
         expectedPaddedTensor = []
@@ -22,7 +22,7 @@ class Test_Padding:
         kernalSize, strideLength = 2, 2
         typeOfPadding = 0
 
-        paddingTensor = ConvulationalNetwork._padImage(self, inputTensor, kernalSize, strideLength, typeOfPadding)
+        paddingTensor = ConvLayer._padImage(self, inputTensor, kernalSize, strideLength, typeOfPadding)
 
         paddingSize = int(np.ceil(((strideLength - 1) * inputTensor.shape[1] - strideLength + kernalSize) / 2))
         expectedPaddedTensor = []
@@ -54,11 +54,16 @@ class Test_kernalisation:
             [2, 1]
         ]
         ])
+
         kernalBias = [2]
         kernalSize = strideLength = 2
-        usePadding = False
 
-        output = ConvulationalNetwork._kernalisation(self, inputTensor, kernalWeights, kernalBias, kernalSize, strideLength=strideLength, usePadding=usePadding)
+        Conv = ConvLayer(kernalSize, 2, 1, strideLength, "no")
+
+        Conv.kernalBiases = kernalBias
+        Conv.kernalWeights = kernalWeights
+
+        output = Conv.forward(inputTensor)
 
         '''
         [1, 2]      X       [4, 3]    =   [4, 6]     =  20
@@ -117,9 +122,14 @@ class Test_kernalisation:
         ])
         kernalBias = [2, 4]
         kernalSize = strideLength = 2
-        usePadding = False
+        usePadding = "no"
 
-        output = ConvulationalNetwork._kernalisation(self, inputTensor, kernalWeights, kernalBias, kernalSize, strideLength=strideLength, usePadding=usePadding)
+        Conv = ConvLayer(kernalSize, 2, 1, strideLength, usePadding)
+
+        Conv.kernalBiases = kernalBias
+        Conv.kernalWeights = kernalWeights
+
+        output = Conv.forward(inputTensor)
 
         '''
         Kernal 1:
@@ -173,9 +183,6 @@ class Test_kernalisation:
         ]
         ])
         
-        print(expected)
-        print(output)
-
         assert expected.shape == output.shape
         assert np.allclose(expected, output)
 
@@ -201,9 +208,12 @@ class Test_Pooling:
                 [13, 14, 15, 16],
             ],
         ]) 
-        sizeOfGrid = strideLength = 2
 
-        output = ConvulationalNetwork._pooling(self, inputTensor, sizeOfGrid, strideLength, "max")
+        sizeOfGrid = strideLength = 2
+        
+        Pool = PoolingLayer(sizeOfGrid, strideLength, "max")
+
+        output = Pool.forward(inputTensor)
 
         expected = np.array([
         [
@@ -244,9 +254,12 @@ class Test_Pooling:
                 [13, 14, 15, 16],
             ],
         ]) 
+
         sizeOfGrid = strideLength = 2
 
-        output = ConvulationalNetwork._pooling(self, inputTensor, sizeOfGrid, strideLength, "ave")
+        Pool = PoolingLayer(sizeOfGrid, strideLength, "ave")
+
+        output = Pool.forward(inputTensor)
 
         expected = np.array([
         [
@@ -288,7 +301,7 @@ class Test_PoolingGlobalAverage:
             ],
         ]) 
 
-        output = ConvulationalNetwork._poolingGlobalAverage(self, inputTensor)
+        output = GlobalAveragePooling.forward(self, inputTensor)
 
         expected = np.array([2.5, 1, 8.5])
 
@@ -318,7 +331,7 @@ class Test_Flattening:
             ],
         ]) 
 
-        output = ConvulationalNetwork._flatternTensor(self, inputTensor)
+        output = DenseLayer._flatternTensor(self, inputTensor)
 
         expected = np.array([1, 2, 1, 2, 3, 4, 3, 4, 1, 2, 1, 2, 3, 4, 3, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16])
         
@@ -333,7 +346,7 @@ class Test_ActivationLayer:
             ]
         ]) 
 
-        output = ConvulationalNetwork._activation(self, inputTensor)
+        output = ActivationLayer.forward(self, inputTensor)
 
         expected = np.array([
             [

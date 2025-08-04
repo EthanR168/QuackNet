@@ -38,6 +38,7 @@ Default transformer architecture [called transformer block] (only the encoder se
 -   Layer Normalisation
 """
 
+"""
 class Transformer:
     def __init__(self):
         pass
@@ -53,6 +54,7 @@ class Transformer:
                 ResidualConnection.forwardPropagation(None, input, output)
                 continue
             output = layer.forwardPropagation(input)
+"""
 
 class TransformerBlock:
     def __init__(self, batchSize, sequenceLength, vocabSize, embedDimension, positionalEmbddingDimension, numberHeads, hiddenDimensionFFN, useResidual = True, useNorm = True):

@@ -6,6 +6,8 @@ from quacknet import MSELossFunction
 from quacknet import Network
 import numpy as np
 
+from quacknet.CNN.layers.globalAveragePoolingLayer import GlobalAveragePooling
+
 def test_ConvulutionalBackpropagation():
     stride = 1
     conv = ConvLayer(2, 1, 1, stride)
@@ -82,9 +84,9 @@ def test_GlobalAveragePoolingBackpropagation():
         [4, 1, 3, 2],
         [3, 2, 4, 1],
     ]])
-    pool = PoolingLayer(None, None, "gap")
+    pool = GlobalAveragePooling()
 
-    errorTerm = pool._backpropagation(None, inputTensor)
+    errorTerm = pool._backpropagation(inputTensor)
 
     '''
     1 * 1 / (4 * 4) = 1 / 16 = 0.0625

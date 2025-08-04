@@ -68,7 +68,7 @@ class StackedRNN(RNNBackProp):
         for num in self.hiddenSizes:
             assert isinstance(num, int), f"hiddenSize has to be a list of integers"
 
-        self.adam = Adam(self.forwardSequence, self.backwardPropagation)
+        self.adam = Adam(self.forwardSequence, self.backwardPropagation, giveInputsToBackprop=True)
 
     def forwardSequence(self, inputData): # goes through the whole sequence / time steps
         preActivations = []
@@ -77,7 +77,10 @@ class StackedRNN(RNNBackProp):
             allPreAct, outputPreAct, output, allHidenStates = self._oneStep(inputData[i])
             preActivations.append(allPreAct)
             allHiddenStates.append(allHidenStates)
-        return preActivations, allHiddenStates, output, outputPreAct
+        self.preActivations = preActivations
+        self.allHiddenStates = allHiddenStates
+        self.outputPreAct = outputPreAct
+        return output
 
     def _oneStep(self, inputData): # forward prop on 1 time step
         allPreActivations = []
@@ -143,8 +146,8 @@ class StackedRNN(RNNBackProp):
         self.inputSize = inputSize
         self.outputSize = outputSize
 
-    def backwardPropagation(self, inputs, AllHiddenStates, preActivationValues, outputPreAct, targets, outputs):
-        inputWeightGradients, hiddenStateWeightGradients, biasGradients, outputWeightGradients, outputbiasGradients = self._Stacked_BPTT(inputs, AllHiddenStates, preActivationValues, outputPreAct, targets, outputs)
+    def backwardPropagation(self, inputs, outputs, targets):
+        inputWeightGradients, hiddenStateWeightGradients, biasGradients, outputWeightGradients, outputbiasGradients = self._Stacked_BPTT(inputs, self.allHiddenStates, self.preActivations, self.outputPreAct, targets, outputs)
         Parameters =  {
             "I_W": self.inputWeights,
             "b": self.biases,

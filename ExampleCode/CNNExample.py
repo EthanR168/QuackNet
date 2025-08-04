@@ -1,8 +1,5 @@
-from quacknet import CNNModel, ConvLayer, PoolingLayer, DenseLayer, ActivationLayer
-from quacknet import Network
+from quacknet import CNNModel, ConvLayer, GlobalAveragePooling, DenseLayer, ActivationLayer, Network
 import numpy as np
-
-from quacknet.CNN.layers.globalAveragePoolingLayer import GlobalAveragePooling
 
 # Creating parameters for convulational layer
 inputTensor = [np.random.randn(4, 4, 4), np.random.randn(4, 4, 4)] #[(depth, height, width), (depth, height, width)]

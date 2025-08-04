@@ -47,7 +47,6 @@ class ConvLayer():
             paddingTensor.append(padding)
         return np.array(paddingTensor)
 
-
     def forward(self, inputTensor):
         """
         Performs the convolution operation on the input tensor.
@@ -80,7 +79,6 @@ class ConvLayer():
             tensorKernals.append(output)
         return np.stack(tensorKernals, axis = 0) #tensorKernals = (outputHeight, outputWidth, numberOfKernals)
                     
-
     def _backpropagation(self, errorPatch, inputTensor):
         """
         Compute gradients for conolutional layer weights, biases and input errors during backpropagation.
@@ -139,3 +137,5 @@ class ConvLayer():
         
         weightGradients = np.transpose(weightGradients, (1, 0, 2, 3))
         return weightGradients, biasGradients, inputErrorTerms
+    
+    

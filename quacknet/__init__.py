@@ -2,12 +2,18 @@ from .CNN import CNNModel
 from .CNN import ConvLayer, ActivationLayer, DenseLayer, PoolingLayer, GlobalAveragePooling
 
 from .Transformer import EmbeddingLayer, FeedForwardNetwork, MultiAttentionHeadLayer, NormLayer, PositionalEncoding, ResidualConnection
-from .Transformer import Transformer, TransformerBlock
+from .Transformer import TransformerBlock
 
 from .RNN import StackedRNN, SingularRNN
 
 from .core import *
 from .core.optimisers.adam import Adam
+from .core.lossFunctions import *
+from .core.lossDerivativeFunctions import *
+from .core.activationFunctions import *
+from .core.activationDerivativeFunctions import *
+from .core.dataAugmentation import *
+from .core.drawGraphs import *
 
 from .NN import Network
 

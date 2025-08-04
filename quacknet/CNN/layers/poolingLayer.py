@@ -34,13 +34,13 @@ class PoolingLayer():
             raise ValueError(f"pooling mode isnt correct: '{self.mode}', expected 'max' or 'ave'")
 
         for image in inputTensor: # tensor is a 3d structures, so it is turning it into a 2d array (eg. an layer or image)
-            outputHeight = (image.shape[0] - self.gridSize) // self.strideLength + 1
-            outputWidth = (image.shape[1] - self.gridSize) // self.strideLength + 1
+            outputHeight = (image.shape[0] - self.gridSize) // self.stride + 1
+            outputWidth = (image.shape[1] - self.gridSize) // self.stride + 1
             output = np.zeros((outputHeight, outputWidth))
             for x in range(outputHeight):
                 for y in range(outputWidth):
-                    indexX = x * self.strideLength
-                    indexY = y * self.strideLength
+                    indexX = x * self.stride
+                    indexY = y * self.stride
                     gridOfValues = image[indexX: indexX + self.gridSize, indexY: indexY + self.gridSize]
                     output[x, y] = poolFunc(gridOfValues)
             tensorPools.append(output)
@@ -58,9 +58,9 @@ class PoolingLayer():
             inputGradient (ndarray): Gradient of the loss.
         """
         if(self.mode == "max"):
-            return self._MaxPoolingDerivative(self, errorPatch, inputTensor, self.gridSize, self.stride)
+            return self._MaxPoolingDerivative(errorPatch, inputTensor, self.gridSize, self.stride)
         elif(self.mode == "ave"):
-            return self._AveragePoolingDerivative(self, errorPatch, inputTensor, self.gridSize, self.stride)
+            return self._AveragePoolingDerivative(errorPatch, inputTensor, self.gridSize, self.stride)
 
     def _MaxPoolingDerivative(self, errorPatch, inputTensor, sizeOfGrid, strideLength):
         """

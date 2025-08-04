@@ -1,16 +1,20 @@
-from quacknet.CNN.convulationalBackpropagation import CNNbackpropagation
-from quacknet.CNN.manager import ConvLayer
+from quacknet import ConvLayer, PoolingLayer, GlobalAveragePooling, ActivationLayer
 import numpy as np
 
 def test_ConvulutionalDerivative():
     stride = 1
-    Conv = ConvLayer(2, 1, 1, stride)
 
     inputTensor = np.array([[[1, 2, 3], [4, 5, 6], [7, 8, 9]]])
     kernals = np.array([[[[1, 0], [0, -1]]]])
     errorPatch = np.array([[[1, 2], [3, 4]]])
 
-    weightGradients, biasGradients, errorTerms = CNNbackpropagation._ConvolutionDerivative(Conv, errorPatch, kernals, inputTensor, stride)
+    Conv = ConvLayer(2, 1, 1, stride)
+
+    Conv.kernalSize = 2
+    Conv.kernalWeights = kernals
+    Conv.stride = stride
+
+    weightGradients, biasGradients, errorTerms = Conv._backpropagation(errorPatch, inputTensor)
 
     expectedWeightGradients = np.array([[[[37, 47], [67, 77]]]])
     expectedBiasGradients = np.array([10])
@@ -34,7 +38,7 @@ def test_MaxPooling():
     gridSize = 2
     strideLength = 2
 
-    errorTerm = CNNbackpropagation._MaxPoolingDerivative(None, errorPatch, inputTensor, gridSize, strideLength)
+    errorTerm = PoolingLayer._MaxPoolingDerivative(None, errorPatch, inputTensor, gridSize, strideLength)
 
     expectedInputErrorTerms = np.array([[
         [0, 0, 0, 20],
@@ -57,7 +61,7 @@ def test_AveragePooling():
     gridSize = 2
     strideLength = 2
 
-    errorTerm = CNNbackpropagation._AveragePoolingDerivative(None, errorPatch, inputTensor, gridSize, strideLength)
+    errorTerm = PoolingLayer._AveragePoolingDerivative(None, errorPatch, inputTensor, gridSize, strideLength)
 
     expectedInputErrorTerms = np.array([[
         [2.5, 2.5, 5, 5],
@@ -77,7 +81,7 @@ def test_GlobalAveragePooling():
         [3, 2, 4, 1],
     ]])
 
-    errorTerm = CNNbackpropagation._GlobalAveragePoolingDerivative(None, inputTensor)
+    errorTerm = GlobalAveragePooling._backpropagation(None, inputTensor)
 
     '''
     1 * 1 / (4 * 4) = 1 / 16 = 0.0625
@@ -89,7 +93,6 @@ def test_GlobalAveragePooling():
     assert np.allclose(errorTerm, expectedInputErrorTerms)
 
 def test_ActivationLayer():
-    from quacknet.core.activationDerivativeFunctions import ReLUDerivative
     inputTensor = np.array([[
         [1, -3, 2, -4],
         [2, -4, -1, 3],
@@ -104,7 +107,7 @@ def test_ActivationLayer():
         [3, 2, 4, 1],
     ]]) 
 
-    errorTerm = CNNbackpropagation._ActivationLayerDerivative(None, errorPatch, ReLUDerivative, inputTensor)
+    errorTerm = ActivationLayer._backpropagation(None, errorPatch, inputTensor)
 
     leakyReluDerive = np.where(inputTensor > 0, 1, 0.01)
     expectedInputErrorTerms = errorPatch * leakyReluDerive

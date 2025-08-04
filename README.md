@@ -76,7 +76,9 @@ For more detailed examples, see [Advanced Usage](#advanced-usage) or [Examples](
 -   [Simple Neural Network Example](/ExampleCode/NNExample.py): A basic neural network implementation demonstrating forward and backpropagation
 -   [Convolutional Neural Network Example](/ExampleCode/CNNExample.py): Shows how to use the convolutional layers in the library
 -   [MNIST Neural Network Example](/ExampleCode/MNISTExample/mnistExample.py): Trains a neural network on the MNIST dataset using QuackNet
-
+-   [Singular Recurrent Neural Network Example](/ExampleCode/RNNSingularExample.py): Shows how to use the Singular RNN 
+-   [Stacked Recurrent Neural Network Example](/ExampleCode/RNNStackedExample%20copy.py): Shows how to use the Stacked RNN 
+-   [Transformer Example](/ExampleCode/TransformerExample.py): Shows how to use the Transformer
 ---
 
 ## Advanced Usage
@@ -111,7 +113,7 @@ print(f"Average loss: {averageLoss}")
 
 ### QuackNet vs PyTorch & TensorFlow
 
-The library was benchmarked on the MNIST dataset against PyTorch and TensorFlow using identical architectures and hyperparameters to ensure fair comparison.
+The library was benchmarked on the MNIST dataset against PyTorch and TensorFlow using identical architectures and hyperparameters to ensure fair comparison. Also each framework ran 5 times, and was averaged at the end.
 Parameters:
 -   **Neural Network Model Architecture:** 784 (input) → 128 → 64 → 10 (output)
 -   **Activation Function:** Leaky ReLU for input and hidden layers, and SoftMax for output layer
@@ -198,14 +200,17 @@ Below is the graph showing the training accuracy and loss over 10 epochs, across
 
 ## Unit Tests
 
-QuackNet includes unit tests that ensures the reliability of QuackNet's neural and convolutional components. They help to confirm that all layers and training processes behave as expected after every major update to ensure structural stability of all components. The tests are organised into two directories:
+QuackNet includes unit tests that ensures the reliability of QuackNet's neural and convolutional components. They help to confirm that all layers and training processes behave as expected after every major update to ensure structural stability of all components. The tests are organised into directories:
 -   [Unit Tests for NN](/unitTests/NN/) - for standard neural network tests 
 -   [Unit Tests for CNN](/unitTests/CNN/) - for convolutional network specific tests 
+-   [Unit Tests for RNN](/unitTests/RNN/) - for recurrent network specific tests 
+-   [Unit Tests for Transformers](/unitTests/Transformer/) - for transformer specific tests 
+-   [Unit Tests for Core code](/unitTests/core/) - for core code specific tests
 
 These tests cover:
 
--   Forward and backward propagation for both neural networks and convolutional neural networks.
--   CNN specific layers: Dense, Convolutional, Pooling
+-   Forward and backward propagation for both NN, CNN, RNN, and transformers
+-   Specific layers: Dense, Convolutional, Pooling, Multi head attention, Norm
 -   Activation functions and loss functions, including their derivatives
 -   Optimisation algorithms: SGD, GD, Adam
 
@@ -258,7 +263,7 @@ This project demonstrates how QuackNet can be applied to real-world image classi
 
 ### Transformer Class
 -   Multi head self attention
--   Residuals, Layer Norm, position wise FFN
+-   Residuals, Layer Norm, position wise FFN, embedding
 
 ---
 

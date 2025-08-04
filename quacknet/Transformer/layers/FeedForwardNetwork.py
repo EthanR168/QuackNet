@@ -41,7 +41,6 @@ class FeedForwardNetwork:
         biasGradient2 = np.sum(outputGradient, axis=(0, 1), keepdims=True)
 
         activatedGradient = np.matmul(outputGradient, self.W2.T)
-
         firstLayerDerivative = activatedGradient * (self.firstLayer > 0)
 
         weightGradient1 = np.matmul(self.input.transpose(0, 2, 1), firstLayerDerivative)

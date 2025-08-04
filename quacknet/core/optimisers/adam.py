@@ -1,12 +1,13 @@
 import numpy as np
 
 class Adam:
-    def __init__(self, forwardPropagationFunction, backwardPropagationFunction):
+    def __init__(self, forwardPropagationFunction, backwardPropagationFunction, giveInputsToBackprop = False):
         self.firstMoment = {}
         self.secondMoment = {}
         self.t = 0
         self.forwardPropagationFunction = forwardPropagationFunction
         self.backwardPropagationFunction = backwardPropagationFunction
+        self.giveInputsToBackprop = giveInputsToBackprop 
 
     def optimiser(self, inputData, labels, useBatches, batchSize, alpha, beta1, beta2, epsilon):
         if(useBatches == True):
@@ -24,7 +25,11 @@ class Adam:
             for j in range(len(batchData)):
                 output = self.forwardPropagationFunction(batchData[j])
                 AllOutputs.append(output)
-                Parameters, Gradients = self.backwardPropagationFunction(output, batchLabels[j])
+
+                if(self.giveInputsToBackprop == False):
+                    Parameters, Gradients = self.backwardPropagationFunction(output, batchLabels[j])
+                else:
+                    Parameters, Gradients = self.backwardPropagationFunction(batchData[j], output, batchLabels[j])
                 
                 for key in Gradients:
                     if key not in acculumalatedGradients:
@@ -33,7 +38,11 @@ class Adam:
                         acculumalatedGradients[key] += Gradients[key]
 
             for key in acculumalatedGradients:
-                acculumalatedGradients[key] /= batchSize
+                if(isinstance(acculumalatedGradients[key], list)): # inhomengous array
+                    for i in range(len(acculumalatedGradients[key])):
+                        acculumalatedGradients[key][i] = np.array(acculumalatedGradients[key][i]) / batchSize
+                else:
+                    acculumalatedGradients[key] = acculumalatedGradients[key] / batchSize
 
             Parameters = self._Adams(Parameters, acculumalatedGradients, alpha, beta1, beta2, epsilon)
         return AllOutputs, Parameters
@@ -43,25 +52,44 @@ class Adam:
         for i in range(len(inputData)):
             output = self.forwardPropagationFunction(inputData[i])
             AllOutputs.append(output)
-            Parameters, Gradients  = self.backwardPropagationFunction(output, labels[i])
+
+            if(self.giveInputsToBackprop == False):
+                Parameters, Gradients = self.backwardPropagationFunction(output, labels[i])
+            else:
+                Parameters, Gradients = self.backwardPropagationFunction(inputData[i], output, labels[i])
+
             Parameters = self._Adams(Parameters, Gradients, alpha, beta1, beta2, epsilon)
         return AllOutputs, Parameters
 
     def _Adams(self, Parameters, Gradients, alpha, beta1, beta2, epsilon):
-        if not self.firstMoment:
-            for key in Gradients:
-                self.firstMoment[key] = np.zeros_like(Gradients[key])
-                self.secondMoment[key] = np.zeros_like(Gradients[key])
         self.t += 1
-        for key in Parameters:
-            g = Gradients[key]
+        for key in Gradients:
+            if(isinstance(Gradients[key], list)): # if the Gradient is a inhomengous list (jagged array, which numpy doesnt like)
+                for i, grad in enumerate(Gradients[key]):
+                    grad = np.array(grad)
 
-            self.firstMoment[key] = beta1 * self.firstMoment[key] + (1 - beta1) * g
-            self.secondMoment[key] = beta2 * self.secondMoment[key] + (1 - beta2) * (g ** 2)
+                    if key not in self.firstMoment:
+                        self.firstMoment[key] = [np.zeros_like(g) for g in Gradients[key]]
+                        self.secondMoment[key] = [np.zeros_like(g) for g in Gradients[key]]
+                        
+                    self.firstMoment[key][i] = beta1 * self.firstMoment[key][i] + (1 - beta1) * grad
+                    self.secondMoment[key][i] = beta2 * self.secondMoment[key][i] + (1 - beta2) * (grad ** 2)
 
-            firstMomentWeightHat = self.firstMoment[key] / (1 - beta1 ** self.t)
-            secondMomentWeightHat = self.secondMoment[key] / (1 - beta2 ** self.t)
+                    firstMomentWeightHat = self.firstMoment[key][i] / (1 - beta1 ** self.t)
+                    secondMomentWeightHat = self.secondMoment[key][i] / (1 - beta2 ** self.t)
 
-            Parameters[key] -= alpha * firstMomentWeightHat / (np.sqrt(secondMomentWeightHat) + epsilon)
+                    Parameters[key][i] -= alpha * firstMomentWeightHat / (np.sqrt(secondMomentWeightHat) + epsilon)
+            else:
+                if key not in self.firstMoment:
+                    self.firstMoment[key] = np.zeros_like(Gradients[key])
+                    self.secondMoment[key] = np.zeros_like(Gradients[key])
+                        
+                self.firstMoment[key] = beta1 * self.firstMoment[key] + (1 - beta1) * Gradients[key]
+                self.secondMoment[key] = beta2 * self.secondMoment[key] + (1 - beta2) * (Gradients[key] ** 2)
+
+                firstMomentWeightHat = self.firstMoment[key] / (1 - beta1 ** self.t)
+                secondMomentWeightHat = self.secondMoment[key] / (1 - beta2 ** self.t)
+
+                Parameters[key] -= alpha * firstMomentWeightHat / (np.sqrt(secondMomentWeightHat) + epsilon)
         return Parameters
     

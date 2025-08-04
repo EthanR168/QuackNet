@@ -62,7 +62,7 @@ class SingularRNN(RNNBackProp):
         self.useBatches = useBatches
         self.batchSize = batchSize
 
-        self.adam = Adam(self.forwardSequence, self.backwardPropagation)
+        self.adam = Adam(self.forwardSequence, self.backwardPropagation, giveInputsToBackprop=True)
 
     def forwardSequence(self, inputData): # goes through the whole sequence / time steps
         preActivations = []
@@ -71,7 +71,10 @@ class SingularRNN(RNNBackProp):
             preAct, outputPreAct, output = self._oneStep(inputData[i])
             preActivations.append(preAct)
             allHiddenStates.append(self.hiddenState.copy())
-        return preActivations, allHiddenStates, output, outputPreAct
+        self.preActivations = preActivations
+        self.allHiddenStates = allHiddenStates
+        self.outputPreAct = outputPreAct
+        return output
 
     def _oneStep(self, inputData): # forward prop on 1 time step
         preActivation, self.hiddenState = self._calculateHiddenLayer(inputData, self.hiddenState, self.inputWeight, self.hiddenWeight, self.bias, self.hiddenStateActivationFunction)
@@ -109,12 +112,12 @@ class SingularRNN(RNNBackProp):
         self.hiddenSize = hiddenSize
         self.outputSize = outputSize
 
-    def backwardPropagation(self, inputs, AllHiddenStates, preActivationValues, outputPreAct, targets, outputs):
-        inputWeightGradients, hiddenStateWeightGradients, biasGradients, outputWeightGradients, outputbiasGradients = self._Singular_BPTT(inputs, AllHiddenStates, preActivationValues, outputPreAct, targets, outputs)
+    def backwardPropagation(self, inputs, outputs, targets):
+        inputWeightGradients, hiddenStateWeightGradients, biasGradients, outputWeightGradients, outputbiasGradients = self._Singular_BPTT(inputs, self.allHiddenStates, self.preActivations, self.outputPreAct, targets, outputs)
         Parameters =  {
-            "I_W": self.inputWeights,
-            "b": self.biases,
-            "H_W": self.hiddenWeights,
+            "I_W": self.inputWeight,
+            "b": self.bias,
+            "H_W": self.hiddenWeight,
             "O_W": self.outputWeight,
             "O_b": self.outputBias,
         }

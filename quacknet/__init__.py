@@ -7,13 +7,16 @@ from .Transformer import TransformerBlock
 from .RNN import StackedRNN, SingularRNN
 
 from .core import *
-from .core.optimisers.adam import Adam
 from .core.lossFunctions import *
 from .core.lossDerivativeFunctions import *
 from .core.activationFunctions import *
 from .core.activationDerivativeFunctions import *
 from .core.dataAugmentation import *
 from .core.drawGraphs import *
+
+from .core.optimisers.adam import Adam
+from .core.optimisers.stochasticGD import SGD
+from .core.optimisers.gradientDescent import GD
 
 from .NN import Network
 

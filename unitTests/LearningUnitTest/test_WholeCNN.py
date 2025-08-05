@@ -21,7 +21,7 @@ def test_CNN_CheckIfModelCanLearnOnSimpleData():
 
     _, initialLoss = CNN.train(inputTensor, trueLabels, useBatches = False, batchSize = None, alpha = learningRate)
 
-    for _ in range(4):
+    for _ in range(10):
         _, loss = CNN.train(inputTensor, trueLabels, useBatches = False, batchSize = None, alpha = learningRate)
 
     

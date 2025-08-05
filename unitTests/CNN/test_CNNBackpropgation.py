@@ -177,7 +177,7 @@ class Test_DenseLayer:
 
         expectedWeightGradients, expectedBiasGradients = self.calculateGradients(layerNodes, weights, trueValues, activationDerivatives, lossDerivative)
 
-        _, _, expectedErrorTerms = net._backPropgation(layerNodes, weights, biases, trueValues, True)
+        _, _, expectedErrorTerms = net._backPropgation(layerNodes, trueValues, True)
 
         for i in reversed(range(len(net.weights))):
             expectedErrorTerms = net.weights[i] @ expectedErrorTerms

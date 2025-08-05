@@ -9,7 +9,7 @@ class Adam:
         self.backwardPropagationFunction = backwardPropagationFunction
         self.giveInputsToBackprop = giveInputsToBackprop 
 
-    def optimiser(self, inputData, labels, useBatches, batchSize, alpha, beta1, beta2, epsilon):
+    def optimiser(self, inputData, labels, useBatches, batchSize, alpha, beta1=0.9, beta2=0.999, epsilon=1e-8):
         if(useBatches == True):
             return self._AdamsOptimiserWithBatches(inputData, labels, batchSize, alpha, beta1, beta2, epsilon)
         else:

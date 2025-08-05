@@ -52,8 +52,6 @@ class DenseLayer: # basically a fancy neural network
         """  
         weightGradients, biasGradients, errorTerms = self.NeuralNetworkClass._backPropgation(
             self.layerNodes, 
-            self.NeuralNetworkClass.weights,
-            self.NeuralNetworkClass.biases,
             trueValues,
             True
         )

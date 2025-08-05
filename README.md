@@ -1,6 +1,6 @@
 # QuackNet
 
-**QuackNet** is a deep learning library built from scratch in Python using NumPy. It's designed for educational use and hands on experimentation with Neural Networks, CNNs, RNNs, and Transformers without relying on PyTorch or TensorFlow.
+**QuackNet** is a deep learning library built from scratch using NumPy. Designed for educational use and hands on experimentation with Neural Networks, CNNs, RNNs, and Transformers without relying on PyTorch or TensorFlow.
 
 [![PyPI version](https://img.shields.io/pypi/v/QuackNet)](https://pypi.org/project/QuackNet/) 
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://sirquackpng.github.io/QuackNet/quacknet.html)
@@ -57,8 +57,8 @@ Ideal for students, researchers, and hobbyists wanting to understand how deep le
 from quacknet import Network
 
 n = Network(lossFunc="Cross Entropy", learningRate=0.01, optimisationFunc="SGD")
-n.addLayer(5, "ReLU")
-n.addLayer(3, "SoftMax")
+n.addLayer(3, "ReLU")
+n.addLayer(1, "SoftMax")
 n.createWeightsAndBiases()
 
 inputData = [[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]]

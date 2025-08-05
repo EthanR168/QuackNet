@@ -1,22 +1,19 @@
 from quacknet.NN import backPropgation
 from quacknet.core.activationFunctions import relu, sigmoid, tanH, linear, softMax
 from quacknet.core.lossFunctions import MSELossFunction, MAELossFunction, CrossEntropyLossFunction
-from quacknet.NN.optimisers import Optimisers
 from quacknet.NN.initialisers import Initialisers
 from quacknet.NN.writeAndReadWeightBias import writeAndRead
 from quacknet.core.dataAugmentation import Augementation
+from quacknet.core.optimisers.adam import Adam
 import numpy as np
 
-class Network(Optimisers, Initialisers, writeAndRead, Augementation):
-    def __init__(self, lossFunc = "MSE", learningRate = 0.01, optimisationFunc = "gd", useMomentum = False, momentumCoefficient = 0.9, momentumDecay = 0.99, useBatches = False, batchSize = 32):
+class Network(Initialisers, writeAndRead, Augementation):
+    def __init__(self, lossFunc = "MSE", learningRate = 0.01, useBatches = False, batchSize = 32, optimisationFunction = Adam):
         """
         Args:
             lossFunc (str): Loss function name ('mse', 'mae', 'cross'). Default is "MSE".
             learningRate (float, optional): Learning rate for training. Default is 0.01.
             optimisationFunc (str, optional): Optimisaztion method ('gd', 'sgd', 'batching'). Default is "gd".
-            useMomentum (bool, optional): Wether to use momentum in optimisation. Default is False.
-            momentumCoefficient (float, optional): Momentum coefficient if used. Default is 0.9.
-            momentumDecay (float, optional): Decay rate for momentum. Default is 0.99.
             useBatches (bool, optional): Wether to use mini batches. Default is False.
             batchSize (int, optional): size of mini batches. Default is 32.
         """
@@ -32,20 +29,7 @@ class Network(Optimisers, Initialisers, writeAndRead, Augementation):
         }
         self.lossFunction = lossFunctionDict[lossFunc.lower()]
 
-        optimisationFunctionDict = {
-            "gd": self._trainGradientDescent,
-            "sgd": self._trainStochasticGradientDescent,
-            "batching": self._trainGradientDescentUsingBatching, "batches": self._trainGradientDescentUsingBatching, 
-        }
-        self.optimisationFunction = optimisationFunctionDict[optimisationFunc.lower()]
-        if(useBatches == True):
-            self.optimisationFunction = self._trainGradientDescentUsingBatching
-
-        self.useMomentum = useMomentum
-        self.momentumCoefficient = momentumCoefficient
-        self.momentumDecay = momentumDecay
-        self.velocityWeight = None
-        self.velocityBias = None
+        self.optimisationFunction = optimisationFunction(self.forwardPropagation, self._backPropgation)
 
         self.useBatches = useBatches
         self.batchSize = batchSize
@@ -104,7 +88,7 @@ class Network(Optimisers, Initialisers, writeAndRead, Augementation):
             layerNodes.append(np.array(self._calculateLayerNodes(layerNodes[i - 1], self.weights[i - 1], self.biases[i - 1], self.layers[i])))
         return layerNodes
     
-    def _backPropgation(self, layerNodes, weights, biases, trueValues, returnErrorTermForCNN = False):
+    def _backPropgation(self, layerNodes, trueValues, returnErrorTermForCNN = False):
         """
         Perform backpropagation over the network layers to compute gradients for weights and biases.
 
@@ -121,8 +105,25 @@ class Network(Optimisers, Initialisers, writeAndRead, Augementation):
             If returnErrorTermForCNN is True:
                 hiddenWeightErrorTermsForCNNBackpropgation (ndarray): Error terms from the output layer weights.   
         """  
-        return backPropgation._backPropgation(layerNodes, weights, biases, trueValues, self.layers, self.lossFunction, returnErrorTermForCNN)
-    
+        if(returnErrorTermForCNN):
+            return backPropgation._backPropgation(layerNodes, self.weights, self.biases, trueValues, self.layers, self.lossFunction, returnErrorTermForCNN)
+        else:
+            weightGradients, biasGradients = backPropgation._backPropgation(layerNodes, self.weights, self.biases, trueValues, self.layers, self.lossFunction, returnErrorTermForCNN)
+        
+        Parameters =  {
+            "weight": self.weights,
+            "biases": self.biases,
+        }
+  
+        Gradients =  {
+            "weight": weightGradients,
+            "biases": biasGradients,
+        }
+        return Parameters, Gradients 
+
+    def optimise(self, inputData, labels, learningRate, batchSize):
+        return self.optimisationFunction.optimiser(inputData, labels, self.useBatches, batchSize, learningRate) 
+
     def train(self, inputData, labels, epochs):
         """
         Train the neural network using the specified optimisation function.
@@ -139,9 +140,13 @@ class Network(Optimisers, Initialisers, writeAndRead, Augementation):
         self._checkIfNetworkCorrect()
         correct = 0
         totalLoss = 0
-        nodes, self.weights, self.biases, self.velocityWeight, self.velocityBias = self.optimisationFunction(inputData, labels, epochs, self.weights, self.biases, self.momentumCoefficient, self.momentumDecay, self.useMomentum, self.velocityWeight, self.velocityBias, self.learningRate, self.batchSize)        
+        nodes, Parameters = self.optimise(inputData, labels, self.learningRate, self.batchSize)        
+        self.weights = Parameters["weight"]
+        self.biases = Parameters["biases"]
+        
         lastLayer = len(nodes[0]) - 1
-        labels = np.tile(labels, (epochs, 1)) # duplicates the labels ([1, 2], (3, 1)) would become [[1, 2], [1, 2], [1, 2]]
+        if(epochs > 1):
+            labels = np.tile(labels, (epochs, 1)) # duplicates the labels ([1, 2], (3, 1)) would become [[1, 2], [1, 2], [1, 2]]
         for i in range(len(nodes)): 
             totalLoss += self.lossFunction(nodes[i][lastLayer], labels[i])
             nodeIndex = np.argmax(nodes[i][lastLayer])

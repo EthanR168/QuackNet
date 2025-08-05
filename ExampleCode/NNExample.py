@@ -1,10 +1,10 @@
-from quacknet import Network
+from quacknet import Network, SGD
 
 # Define a basic neural network architecture
 n = Network(
     lossFunc = "cross entropy",
     learningRate = 0.01,
-    optimisationFunc = "sgd", # Stochastic Gradient Descent
+    optimisationFunction = SGD, # Stochastic Gradient Descent
 )
 n.addLayer(5, "relu") # Input layer
 n.addLayer(4, "relu") # Hidden layer

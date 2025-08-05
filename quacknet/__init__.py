@@ -2,7 +2,7 @@ from .CNN import CNNModel
 from .CNN import ConvLayer, ActivationLayer, DenseLayer, PoolingLayer, GlobalAveragePooling
 
 from .Transformer import EmbeddingLayer, FeedForwardNetwork, MultiAttentionHeadLayer, NormLayer, PositionalEncoding, ResidualConnection
-from .Transformer import TransformerBlock
+from .Transformer import TransformerBlock, Transformer
 
 from .RNN import StackedRNN, SingularRNN
 

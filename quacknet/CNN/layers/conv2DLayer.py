@@ -1,7 +1,7 @@
 import numpy as np
 import math
 
-class ConvLayer():
+class Conv2DLayer():
     def __init__(self, kernalSize, depth, numKernals, stride, padding = "no"):
         """
         Initialises a convolutional layer.

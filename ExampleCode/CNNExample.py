@@ -1,4 +1,4 @@
-from quacknet import CNNModel, ConvLayer, GlobalAveragePooling, DenseLayer, ActivationLayer, Network
+from quacknet import CNNModel, Conv2DLayer, GlobalAveragePooling, DenseLayer, ActivationLayer, Network
 import numpy as np
 
 # Creating parameters for convulational layer
@@ -14,7 +14,7 @@ net.createWeightsAndBiases()
 
 # Create the CNN model and add layers
 CNN = CNNModel(net)
-CNN.addLayer(ConvLayer(kernalSize = 2, depth = 4, numKernals = 3, stride = 2, padding = "0"))
+CNN.addLayer(Conv2DLayer(kernalSize = 2, depth = 4, numKernals = 3, stride = 2, padding = "0"))
 CNN.addLayer(ActivationLayer())      # Leaky ReLU
 CNN.addLayer(GlobalAveragePooling()) # Global Average Pooling
 CNN.addLayer(DenseLayer(net))        # Fully connected Layer

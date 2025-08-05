@@ -1,4 +1,4 @@
-from quacknet import ConvLayer, PoolingLayer, GlobalAveragePooling, ActivationLayer
+from quacknet import Conv2DLayer, PoolingLayer, GlobalAveragePooling, ActivationLayer
 import numpy as np
 
 def test_ConvulutionalDerivative():
@@ -8,7 +8,7 @@ def test_ConvulutionalDerivative():
     kernals = np.array([[[[1, 0], [0, -1]]]])
     errorPatch = np.array([[[1, 2], [3, 4]]])
 
-    Conv = ConvLayer(2, 1, 1, stride)
+    Conv = Conv2DLayer(2, 1, 1, stride)
 
     Conv.kernalSize = 2
     Conv.kernalWeights = kernals

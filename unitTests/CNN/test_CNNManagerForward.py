@@ -1,5 +1,5 @@
 from quacknet.CNN.layers.globalAveragePoolingLayer import GlobalAveragePooling
-from quacknet.CNN.manager import CNNModel, ConvLayer, PoolingLayer, DenseLayer, ActivationLayer
+from quacknet.CNN.manager import CNNModel, Conv2DLayer, PoolingLayer, DenseLayer, ActivationLayer
 from quacknet import Network
 import numpy as np
 
@@ -29,7 +29,7 @@ class Test_ConvLayer:
         kernalSize = strideLength = 2
         usePadding = False
 
-        Conv = ConvLayer(kernalSize, len(inputTensor), len(kernalWeights), strideLength)
+        Conv = Conv2DLayer(kernalSize, len(inputTensor), len(kernalWeights), strideLength)
         Conv.kernalWeights = kernalWeights
         Conv.kernalBiases = kernalBias
         Conv.usePadding = usePadding
@@ -94,7 +94,7 @@ class Test_ConvLayer:
         kernalSize = strideLength = 2
         usePadding = False
 
-        Conv = ConvLayer(kernalSize, len(inputTensor), len(kernalWeights), strideLength)
+        Conv = Conv2DLayer(kernalSize, len(inputTensor), len(kernalWeights), strideLength)
         Conv.kernalWeights = kernalWeights
         Conv.kernalBiases = kernalBias
         Conv.usePadding = usePadding
@@ -368,7 +368,7 @@ class Test_CNNModel:
         net.weights = [0.5]
         net.biases = [1]
 
-        Conv = ConvLayer(2, 4, 1, 2, padding = "no")
+        Conv = Conv2DLayer(2, 4, 1, 2, padding = "no")
         Conv.kernalWeights = kernalWeights
         Conv.kernalBiases = kernalBias
 

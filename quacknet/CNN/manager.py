@@ -1,5 +1,6 @@
 from quacknet.CNN.layers.activationLayer import ActivationLayer
-from quacknet.CNN.layers.convLayer import ConvLayer
+from quacknet.CNN.layers.conv2DLayer import Conv2DLayer
+from quacknet.CNN.layers.conv1DLayer import Conv1DLayer
 from quacknet.CNN.layers.poolingLayer import PoolingLayer
 from quacknet.CNN.layers.globalAveragePoolingLayer import GlobalAveragePooling
 from quacknet.CNN.layers.denseLayer import DenseLayer
@@ -58,7 +59,7 @@ class CNNModel:
                 errorTerms = self.layers[i]._backpropagation(allTensors[i])
             if(type(self.layers[i]) == PoolingLayer or type(self.layers[i]) == ActivationLayer):
                 errorTerms = self.layers[i]._backpropagation(errorTerms, allTensors[i])
-            elif(type(self.layers[i]) == ConvLayer):
+            elif(type(self.layers[i]) == Conv2DLayer or type(self.layers[i]) == Conv1DLayer):
                 weightGradients, biasGradients, errorTerms = self.layers[i]._backpropagation(errorTerms, allTensors[i])
                 allWeightGradients.insert(0, weightGradients)
                 allBiasGradients.insert(0, biasGradients)
@@ -136,7 +137,7 @@ class CNNModel:
         Initialises weights and biases for convolutional and dense layers.
         """
         for i in range(len(self.layers)):
-            if(type(self.layers[i]) == ConvLayer):
+            if(type(self.layers[i]) == Conv2DLayer):
                 kernalSize = self.layers[i].kernalSize
                 numKernals = self.layers[i].numKernals
                 depth = self.layers[i].depth
@@ -148,9 +149,22 @@ class CNNModel:
 
                 self.layers[i].kernalWeights = self.weights[-1]
                 self.layers[i].kernalBiases = self.biases[-1]
+            elif(type(self.layers[i]) == Conv1DLayer):
+                kernalSize = self.layers[i].kernalSize
+                numKernals = self.layers[i].numKernals
+
+                bounds =  np.sqrt(2 / kernalSize) # He initialisation
+
+                self.weights.append(np.random.normal(0, bounds, size=(numKernals, kernalSize, kernalSize)))
+                self.biases.append(np.zeros((numKernals)))
+
+                self.layers[i].kernalWeights = self.weights[-1]
+                self.layers[i].kernalBiases = self.biases[-1]
+
             elif(type(self.layers[i]) == DenseLayer):
                 self.weights.append(self.layers[i].NeuralNetworkClass.weights)
                 self.biases.append(self.layers[i].NeuralNetworkClass.biases)
+
 
     def saveModel(self, NNweights, NNbiases, CNNweights, CNNbiases, filename = "modelWeights.npz"):
         """
@@ -192,7 +206,7 @@ class CNNModel:
 
         currWeightIndex = 0
         for i in range(len(self.layers)):
-            if(type(self.layers[i]) == ConvLayer):
+            if(type(self.layers[i]) == Conv2DLayer or type(self.layers[i]) == Conv1DLayer):
                 self.layers[i].kernalWeights = CNNweights[currWeightIndex]
                 self.layers[i].kernalBiases = CNNbiases[currWeightIndex]
                 currWeightIndex += 1

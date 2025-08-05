@@ -1,4 +1,4 @@
-from quacknet import ConvLayer, PoolingLayer, ActivationLayer, DenseLayer
+from quacknet import Conv1DLayer, Conv2DLayer, PoolingLayer, ActivationLayer, DenseLayer, GlobalAveragePooling
 from quacknet import relu, linear
 from quacknet import ReLUDerivative, LinearDerivative
 from quacknet import MSEDerivative
@@ -6,11 +6,9 @@ from quacknet import MSELossFunction
 from quacknet import Network
 import numpy as np
 
-from quacknet.CNN.layers.globalAveragePoolingLayer import GlobalAveragePooling
-
 def test_ConvulutionalBackpropagation():
     stride = 1
-    conv = ConvLayer(2, 1, 1, stride)
+    conv = Conv2DLayer(2, 1, 1, stride)
 
     inputTensor = np.array([[[1, 2, 3], [4, 5, 6], [7, 8, 9]]])
     conv.kernalWeights = np.array([[[[1, 0], [0, -1]]]])
@@ -24,6 +22,28 @@ def test_ConvulutionalBackpropagation():
 
     assert expectedWeightGradients.shape == weightGradients.shape
     assert expectedBiasGradients.shape == biasGradients.shape
+
+    assert np.allclose(weightGradients, expectedWeightGradients)
+    assert np.allclose(biasGradients, expectedBiasGradients)
+    assert np.allclose(errorTerms, expectedInputErrorTerms)
+
+def test_Conv1DBackpropagation():
+    stride = 1
+    conv = Conv1DLayer(kernalSize=2, numKernals=1, depth=1, stride=stride, padding="no")
+
+    inputTensor = np.array([[1, 2, 3, 4]])
+    conv.kernalWeights = np.array([[[1, 0]]])
+    errorPatch = np.array([[1, 2, 3]])
+
+    weightGradients, biasGradients, errorTerms = conv._backpropagation(errorPatch, inputTensor)
+
+    expectedWeightGradients = np.array([[[14, 20]]])
+    expectedBiasGradients = np.array([6])
+    expectedInputErrorTerms = np.array([[0, 1, 2, 3]])
+
+    assert expectedWeightGradients.shape == weightGradients.shape
+    assert expectedBiasGradients.shape == biasGradients.shape
+    assert expectedInputErrorTerms.shape == errorTerms.shape
 
     assert np.allclose(weightGradients, expectedWeightGradients)
     assert np.allclose(biasGradients, expectedBiasGradients)

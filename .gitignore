@@ -18,7 +18,7 @@ unitTests/RNN/__pycache__/
 .vscode/
 QuackNet.egg-info/
 dist/
-__pycache__/
+*__pycache__/
 _oldCode/
 extra.txt
 *.pyc

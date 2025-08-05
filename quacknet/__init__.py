@@ -1,5 +1,5 @@
 from .CNN import CNNModel
-from .CNN import ConvLayer, ActivationLayer, DenseLayer, PoolingLayer, GlobalAveragePooling
+from .CNN import Conv1DLayer, Conv2DLayer, ActivationLayer, DenseLayer, PoolingLayer, GlobalAveragePooling
 
 from .Transformer import EmbeddingLayer, FeedForwardNetwork, MultiAttentionHeadLayer, NormLayer, PositionalEncoding, ResidualConnection
 from .Transformer import TransformerBlock, Transformer

@@ -1,4 +1,4 @@
-from quacknet import ConvLayer, PoolingLayer, GlobalAveragePooling, DenseLayer, ActivationLayer
+from quacknet import Conv1DLayer, Conv2DLayer, PoolingLayer, GlobalAveragePooling, DenseLayer, ActivationLayer
 import numpy as np
 
 class Test_Padding:
@@ -7,7 +7,7 @@ class Test_Padding:
         kernalSize, strideLength = 2, 2
         typeOfPadding = 0
 
-        paddingTensor = ConvLayer._padImage(self, inputTensor, kernalSize, strideLength, typeOfPadding)
+        paddingTensor = Conv2DLayer._padImage(self, inputTensor, kernalSize, strideLength, typeOfPadding)
 
         paddingSize = int(np.ceil(((strideLength - 1) * inputTensor.shape[1] - strideLength + kernalSize) / 2))
         expectedPaddedTensor = []
@@ -22,7 +22,7 @@ class Test_Padding:
         kernalSize, strideLength = 2, 2
         typeOfPadding = 0
 
-        paddingTensor = ConvLayer._padImage(self, inputTensor, kernalSize, strideLength, typeOfPadding)
+        paddingTensor = Conv2DLayer._padImage(self, inputTensor, kernalSize, strideLength, typeOfPadding)
 
         paddingSize = int(np.ceil(((strideLength - 1) * inputTensor.shape[1] - strideLength + kernalSize) / 2))
         expectedPaddedTensor = []
@@ -58,7 +58,7 @@ class Test_kernalisation:
         kernalBias = [2]
         kernalSize = strideLength = 2
 
-        Conv = ConvLayer(kernalSize, 2, 1, strideLength, "no")
+        Conv = Conv2DLayer(kernalSize, 2, 1, strideLength, "no")
 
         Conv.kernalBiases = kernalBias
         Conv.kernalWeights = kernalWeights
@@ -124,7 +124,7 @@ class Test_kernalisation:
         kernalSize = strideLength = 2
         usePadding = "no"
 
-        Conv = ConvLayer(kernalSize, 2, 1, strideLength, usePadding)
+        Conv = Conv2DLayer(kernalSize, 2, 1, strideLength, usePadding)
 
         Conv.kernalBiases = kernalBias
         Conv.kernalWeights = kernalWeights
@@ -357,3 +357,99 @@ class Test_ActivationLayer:
         assert expected.shape == output.shape
         assert np.allclose(expected, output)
 
+class Test_Conv1D:
+    def test_kernalisation1(self):
+        inputTensor = np.array([
+            [1, 2, 1, 2],
+            [1, 1, 1, 1],
+        ])
+        kernalWeights = np.array([
+            [
+                [4, 3],
+                [2, 1]
+            ]
+        ])
+
+        kernalBias = [2]
+
+        Conv = Conv1DLayer(kernalSize=2, numKernals=1, depth=2, stride=2, padding="no")
+
+        Conv.kernalBiases = kernalBias
+        Conv.kernalWeights = kernalWeights
+
+        output = Conv.forward(inputTensor)
+
+        expected = np.array([
+            [15, 15],
+        ])
+        
+        assert expected.shape == output.shape
+        assert np.allclose(expected, output)
+    
+    def test_kernalisation2(self):
+        inputTensor = np.array([
+            [1, 2, 1, 2],
+            [1, 1, 1, 1],
+        ])
+        kernalWeights = np.array([
+            [
+                [4, 3],
+                [2, 1]
+            ],   
+            [
+                [2, 2],
+                [2, 2]
+            ]
+        ])
+
+        kernalBias = [2, 4]
+
+        Conv = Conv1DLayer(kernalSize=2, numKernals=2, depth=2, stride=2, padding="no")
+
+        Conv.kernalBiases = kernalBias
+        Conv.kernalWeights = kernalWeights
+
+        output = Conv.forward(inputTensor)
+
+        expected = np.array([
+            [15, 15],
+            [14, 14],
+        ])
+        
+        assert expected.shape == output.shape
+        assert np.allclose(expected, output)
+
+class Test_Conv1DPadding:
+    def test_PadImage1(self):
+        inputTensor = np.ones([3, 4])
+        kernalSize, strideLength = 2, 2
+        typeOfPadding = 0
+
+        paddingTensor = Conv1DLayer._padImage(self, inputTensor, kernalSize, strideLength, typeOfPadding)
+
+        paddingSize = int(np.ceil(((strideLength - 1) * inputTensor.shape[1] - strideLength + kernalSize) / 2))
+        
+        expectedPaddedTensor = []
+        for layer in inputTensor:
+            padded = np.concatenate([np.full(paddingSize, typeOfPadding), layer, np.full(paddingSize, typeOfPadding)])
+            expectedPaddedTensor.append(padded)
+
+        assert np.array(paddingTensor).shape == np.array(expectedPaddedTensor).shape
+        assert np.allclose(paddingTensor, expectedPaddedTensor)
+
+    def test_PadImage2(self):
+        inputTensor = np.ones([2, 5])
+        kernalSize, strideLength = 3, 1
+        typeOfPadding = -1
+
+        paddingTensor = Conv1DLayer._padImage(self, inputTensor, kernalSize, strideLength, typeOfPadding)
+
+        paddingSize = int(np.ceil(((strideLength - 1) * inputTensor.shape[1] - strideLength + kernalSize) / 2))
+        
+        expectedPaddedTensor = []
+        for layer in inputTensor:
+            padded = np.concatenate([np.full(paddingSize, typeOfPadding), layer, np.full(paddingSize, typeOfPadding)])
+            expectedPaddedTensor.append(padded)
+
+        assert np.array(paddingTensor).shape == np.array(expectedPaddedTensor).shape
+        assert np.allclose(paddingTensor, expectedPaddedTensor)

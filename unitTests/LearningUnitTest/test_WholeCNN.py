@@ -1,4 +1,4 @@
-from quacknet import Network, CNNModel, ConvLayer, DenseLayer, GlobalAveragePooling, ActivationLayer
+from quacknet import Network, CNNModel, Conv2DLayer, DenseLayer, GlobalAveragePooling, ActivationLayer
 import numpy as np
 
 def test_CNN_CheckIfModelCanLearnOnSimpleData():
@@ -12,7 +12,7 @@ def test_CNN_CheckIfModelCanLearnOnSimpleData():
     net.createWeightsAndBiases()
 
     CNN = CNNModel(net)
-    CNN.addLayer(ConvLayer(kernalSize = 2, depth = 4, numKernals = 3, stride = 2, padding = "0"))
+    CNN.addLayer(Conv2DLayer(kernalSize = 2, depth = 4, numKernals = 3, stride = 2, padding = "0"))
     CNN.addLayer(ActivationLayer())      
     CNN.addLayer(GlobalAveragePooling()) 
     CNN.addLayer(DenseLayer(net))        

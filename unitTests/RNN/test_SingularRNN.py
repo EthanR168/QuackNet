@@ -23,8 +23,8 @@ def test_calculate_hidden_layer_output_shape():
         x, prev_h, rnn.inputWeight, rnn.hiddenWeight, rnn.bias, rnn.hiddenStateActivationFunction
     )
 
-    assert pre_act.shape == (3, 1)
-    assert new_h.shape == (3, 1)
+    assert pre_act.shape == (1, 3, 1)
+    assert new_h.shape == (1, 3, 1)
 
 def test_calculate_output_layer_output_shape():
     rnn = SingularRNN("relu", "linear", "mse")
@@ -35,8 +35,8 @@ def test_calculate_output_layer_output_shape():
         hidden_state, rnn.outputWeight, rnn.outputBias, rnn.outputLayerActivationFunction
     )
 
-    assert pre_act.shape == (2, 1)
-    assert out.shape == (2, 1)
+    assert pre_act.shape == (1, 2, 1)
+    assert out.shape == (1, 2, 1)
 
 def test_one_step_shapes():
     rnn = SingularRNN("tanh", "sigmoid", "mse")
@@ -45,16 +45,24 @@ def test_one_step_shapes():
     x = np.random.randn(5, 1)
     pre_act, out_pre, out = rnn._oneStep(x)
 
-    assert pre_act.shape == (4, 1)
-    assert out_pre.shape == (3, 1)
-    assert out.shape == (3, 1)
+    assert pre_act.shape == (1, 4, 1)
+    assert out_pre.shape == (1, 3, 1)
+    assert out.shape == (1, 3, 1)
 
 def test_forward_sequence_output_shape():
-    rnn = SingularRNN("tanh", "sigmoid", "mse")
-    rnn.initialiseWeights(inputSize=5, hiddenSize=4, outputSize=2)
+    input_size = 5
+    hidden_size = 4
+    output_size = 3
+    batch_size = 2
+    sequence_length = 6
 
-    input_seq = [np.random.randn(5, 1) for _ in range(7)]
-    final_output = rnn.forwardSequence(input_seq)
+    input_data = np.random.randn(batch_size, sequence_length, input_size)
 
-    assert isinstance(final_output, np.ndarray)
-    assert final_output.shape == (2, 1) 
+    rnn = SingularRNN("tanh", "linear", "mse")
+    rnn.initialiseWeights(input_size, hidden_size, output_size)
+
+    output = rnn.forwardSequence(input_data)
+
+    assert isinstance(output, np.ndarray)
+    assert output.shape == (2, 3, 1)
+    assert np.all(np.isfinite(output))

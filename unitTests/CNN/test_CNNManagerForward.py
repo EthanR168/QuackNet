@@ -5,7 +5,7 @@ import numpy as np
 
 class Test_ConvLayer:
     def test_ConvLayer1(self):
-        inputTensor = np.array([
+        inputTensor = np.array([[
             [
                 [1, 2, 1, 2],
                 [3, 4, 3, 4],
@@ -18,7 +18,7 @@ class Test_ConvLayer:
                 [1, 1, 1, 1],
                 [1, 1, 1, 1],
             ],
-        ])
+        ]])
         kernalWeights = np.array([
         [
             [4, 3],
@@ -55,18 +55,18 @@ class Test_ConvLayer:
         [10, 10]    +     [20, 20]                     [32, 32]
         '''
 
-        expected = np.array([
+        expected = np.array([[
         [
             [32, 32],
             [32, 32],
         ]
-        ])
+        ]])
         
         assert expected.shape == output.shape
         assert np.allclose(expected, output)
     
     def test_ConvLayer2(self):
-        inputTensor = np.array([
+        inputTensor = np.array([[
             [
                 [1, 2, 1, 2],
                 [3, 4, 3, 4],
@@ -79,7 +79,7 @@ class Test_ConvLayer:
                 [1, 1, 1, 1],
                 [1, 1, 1, 1],
             ],
-        ])
+        ]])
         kernalWeights = np.array([
         [
             [4, 3],
@@ -141,7 +141,7 @@ class Test_ConvLayer:
         [8, 8]    +     [20, 20]                     [32, 32]
         '''
 
-        expected = np.array([
+        expected = np.array([[
         [
             [32, 32],
             [32, 32],
@@ -150,14 +150,14 @@ class Test_ConvLayer:
             [32, 32],
             [32, 32],
         ]
-        ])
+        ]])
         
         assert expected.shape == output.shape
         assert np.allclose(expected, output)
 
 class Test_PoolingLayer:
     def test_maxPoolingLayer(self):
-        inputTensor = np.array([
+        inputTensor = np.array([[
             [
                 [1, 2, 1, 2],
                 [3, 4, 3, 4],
@@ -176,13 +176,13 @@ class Test_PoolingLayer:
                 [9, 10, 11, 12],
                 [13, 14, 15, 16],
             ],
-        ]) 
+        ]]) 
         sizeOfGrid = strideLength = 2
 
         pool = PoolingLayer(sizeOfGrid, strideLength, "max")
         output = pool.forward(inputTensor)
 
-        expected = np.array([
+        expected = np.array([[
         [
             [4, 4],
             [4, 4],
@@ -195,13 +195,13 @@ class Test_PoolingLayer:
             [6, 8],
             [14, 16],
         ]
-        ])
+        ]])
 
         assert expected.shape == output.shape
         assert np.allclose(expected, output)
 
     def test_averagePoolingLayer(self):
-        inputTensor = np.array([
+        inputTensor = np.array([[
             [
                 [1, 2, 1, 2],
                 [3, 4, 3, 4],
@@ -220,13 +220,13 @@ class Test_PoolingLayer:
                 [9, 10, 11, 12],
                 [13, 14, 15, 16],
             ],
-        ]) 
+        ]]) 
         sizeOfGrid = strideLength = 2
 
         pool = PoolingLayer(sizeOfGrid, strideLength, "ave")
         output = pool.forward(inputTensor)
 
-        expected = np.array([
+        expected = np.array([[
         [
             [2.5, 2.5],
             [2.5, 2.5],
@@ -239,13 +239,13 @@ class Test_PoolingLayer:
             [3.5, 5.5],
             [11.5, 13.5],
         ]
-        ])
+        ]])
         
         assert expected.shape == output.shape
         assert np.allclose(expected, output)
 
     def test_poolingGlobalAverage(self):
-        inputTensor = np.array([
+        inputTensor = np.array([[
             [
                 [1, 2, 1, 2],
                 [3, 4, 3, 4],
@@ -264,14 +264,15 @@ class Test_PoolingLayer:
                 [9, 10, 11, 12],
                 [13, 14, 15, 16],
             ],
-        ]) 
+        ]]) 
 
         pool = GlobalAveragePooling()
         output = pool.forward(inputTensor)
 
-        expected = np.array([2.5, 1, 8.5])
+        expected = np.array([[2.5, 1, 8.5]])
+        print(output)
 
-        assert expected.shape == output.shape
+        assert output.shape == expected.shape
         assert np.allclose(expected, output)
 
 class Test_ActivationLayer:
@@ -300,7 +301,7 @@ class Test_DenseLayer:
         n.addLayer(1)
 
         n.weights = np.array([[0.75, 0.5]])
-        inputLayer = [0.25, 0.5]
+        inputLayer = [[0.25, 0.5]]
         n.biases = np.array([0.2])
 
         net = DenseLayer(n)
@@ -321,7 +322,7 @@ class Test_DenseLayer:
             np.array([0.2, 0.3, 0.1]),
             np.array([0.4, 0.5])
         ]
-        inputLayer = [0.25, 0.5]
+        inputLayer = [[0.25, 0.5]]
 
         #0.25 * 0.75 + 0.5 * 0.5 + 0.2 = 0.6375
         #0.25 * 0.25 + 0.5 * 0.75 + 0.3 = 0.7375
@@ -338,7 +339,7 @@ class Test_DenseLayer:
 
 class Test_CNNModel:
     def test_CNNModel(self):
-        inputTensor = np.array([
+        inputTensor = np.array([[
             [
                 [1, 2, 1, 2],
                 [3, 4, 3, 4],
@@ -351,7 +352,7 @@ class Test_CNNModel:
                 [1, 1, 1, 1],
                 [1, 1, 1, 1],
             ],
-        ])
+        ]])
         kernalWeights = np.array([
         [
             [4, 3],
@@ -402,25 +403,26 @@ class Test_CNNModel:
         '''
 
         expectedTensor = [
-            inputTensor,
+            np.array(inputTensor),
+            np.array([[[
+                [32, 32],
+                [32, 32],
+            ]]]),
+            np.array([[[
+                [32, 32],
+                [32, 32],
+            ]]]),
             np.array([[
-                [32, 32],
-                [32, 32],
-            ]]),
-            np.array([[
-                [32, 32],
-                [32, 32],
-            ]]),
-            np.array([
                 [[32]],
-            ]),
-            np.array([
+            ]]),
+            np.array([[
                 17,
-            ])
+            ]])
 
         ]
 
         for i in range(len(allTensors)):
+            print(i)
             assert np.array(allTensors[i]).shape == expectedTensor[i].shape 
             assert np.allclose(np.array(allTensors[i]), expectedTensor[i])
 

@@ -17,46 +17,42 @@ class Adam:
 
     def _AdamsOptimiserWithBatches(self, inputData, labels, batchSize, alpha, beta1, beta2, epsilon):     
         AllOutputs = []
-        for i in range(0, len(inputData), batchSize):
-            batchData = inputData[i:i+batchSize]
-            batchLabels = labels[i:i+batchSize]
-            acculumalatedGradients = {}
+        numBatches = len(inputData) // batchSize
+        for i in range(numBatches):
+            batchData = np.array(inputData[i:i+batchSize])
+            batchLabels = np.array(labels[i:i+batchSize])
             Parameters = None
-            for j in range(len(batchData)):
-                output = self.forwardPropagationFunction(batchData[j])
-                AllOutputs.append(output)
 
-                if(self.giveInputsToBackprop == False):
-                    Parameters, Gradients = self.backwardPropagationFunction(output, batchLabels[j])
+            output = self.forwardPropagationFunction(batchData)
+            AllOutputs.append(output)
+
+            if(self.giveInputsToBackprop == False):
+                Parameters, Gradients = self.backwardPropagationFunction(output, batchLabels)
+            else:
+                Parameters, Gradients = self.backwardPropagationFunction(batchData, output, batchLabels)
+
+            for key in Gradients:
+                if(isinstance(Gradients[key], list)): # inhomengous array
+                    for i in range(len(Gradients[key])):
+                        Gradients[key][i] = np.array(Gradients[key][i]) / batchSize
                 else:
-                    Parameters, Gradients = self.backwardPropagationFunction(batchData[j], output, batchLabels[j])
-                
-                for key in Gradients:
-                    if key not in acculumalatedGradients:
-                        acculumalatedGradients[key] = Gradients[key]
-                    else:
-                        acculumalatedGradients[key] += Gradients[key]
+                    Gradients[key] = Gradients[key] / batchSize
 
-            for key in acculumalatedGradients:
-                if(isinstance(acculumalatedGradients[key], list)): # inhomengous array
-                    for i in range(len(acculumalatedGradients[key])):
-                        acculumalatedGradients[key][i] = np.array(acculumalatedGradients[key][i]) / batchSize
-                else:
-                    acculumalatedGradients[key] = acculumalatedGradients[key] / batchSize
-
-            Parameters = self._Adams(Parameters, acculumalatedGradients, alpha, beta1, beta2, epsilon)
+            Parameters = self._Adams(Parameters, Gradients, alpha, beta1, beta2, epsilon)
         return AllOutputs, Parameters
 
     def _AdamsOptimiserWithoutBatches(self, inputData, labels, alpha, beta1, beta2, epsilon):   
         AllOutputs = []
         for i in range(len(inputData)):
-            output = self.forwardPropagationFunction(inputData[i])
+            input = np.array([inputData[i]])
+            lab = np.array([labels[i]])
+            output = self.forwardPropagationFunction(input)
             AllOutputs.append(output)
 
             if(self.giveInputsToBackprop == False):
-                Parameters, Gradients = self.backwardPropagationFunction(output, labels[i])
+                Parameters, Gradients = self.backwardPropagationFunction(output, lab)
             else:
-                Parameters, Gradients = self.backwardPropagationFunction(inputData[i], output, labels[i])
+                Parameters, Gradients = self.backwardPropagationFunction(input, output, lab)
 
             Parameters = self._Adams(Parameters, Gradients, alpha, beta1, beta2, epsilon)
         return AllOutputs, Parameters

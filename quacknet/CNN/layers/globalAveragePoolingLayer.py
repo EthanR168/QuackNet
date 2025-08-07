@@ -6,22 +6,22 @@ class GlobalAveragePooling():
         Performs global average pooling, reducing each feuture map to a single value.
 
         Args:
-            inputTensor (ndarray): A 3D array representing the images with shape (number of images, height, width).
+            inputTensor (ndarray): A 4D array representing the images with shape (batches, number of images, height, width).
         
         Returns:
-            ndarray: A 2D array containing global averages for each feuture map.
+            ndarray: A 3D array containing global averages for each feuture map for each batch.
         """
-        output = np.mean(inputTensor, axis = (1, 2))
+        self.inputShape = inputTensor.shape
+        output = np.mean(inputTensor, axis = (2, 3))
         return output
 
-    def _backpropagation(self, inputTensor):
-        """
-        Compute the gradient of the loss with respect to the input of the global average pooling layer during backpropagation.
+    def _backpropagation(self, gradient):   
+        batch_size, channels, height, width = self.inputShape
 
-        Args:
-            inputTensor (ndarray): Input to the global average pooling layer during forward propagation.
+        grad = np.zeros((batch_size, channels, height, width), dtype=np.float64)
+
+        for b in range(batch_size):
+            for c in range(channels):
+                grad[b, c] = gradient[b, c] / (height * width)
         
-        Returns:
-            inputGradient (ndarray): Gradient of the loss with respect to the inputTensor
-        """     
-        return np.ones_like(inputTensor) * (1 / (inputTensor.shape[1] * inputTensor.shape[2]))
+        return grad

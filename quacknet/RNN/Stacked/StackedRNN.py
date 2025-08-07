@@ -1,3 +1,4 @@
+from sympy import sequence
 from quacknet.core.activationFunctions import relu, sigmoid, linear, tanH, softMax
 from quacknet.core.lossFunctions import MAELossFunction, MSELossFunction, CrossEntropyLossFunction
 from quacknet.core.lossDerivativeFunctions import MAEDerivative, MSEDerivative, CrossEntropyLossDerivative
@@ -59,7 +60,10 @@ class StackedRNN(RNNBackProp):
         self.lossDerivative = lossDerivs[self.lossFunction]
 
         self.useBatches = useBatches
-        self.batchSize = batchSize
+        if(useBatches == False):
+            self.batchSize = 1
+        else:
+            self.batchSize = batchSize
 
         self.numberOfHiddenStates = numberOfHiddenStates
         self.hiddenSizes = hiddenSizes
@@ -71,10 +75,14 @@ class StackedRNN(RNNBackProp):
         self.adam = Adam(self.forwardSequence, self.backwardPropagation, giveInputsToBackprop=True)
 
     def forwardSequence(self, inputData): # goes through the whole sequence / time steps
+        assert inputData.shape[0] == self.batchSize, f"Input data isnt batched"
+        assert inputData.ndim == 3, f"Input data isnt 3D (batchsize, sequenceLength, inputSize)"
         preActivations = []
         allHiddenStates = []
-        for i in range(len(inputData)):
-            allPreAct, outputPreAct, output, allHidenStates = self._oneStep(inputData[i])
+        sequenceLength = inputData.shape[1]
+        for i in range(sequenceLength):
+            xi = inputData[:, i, :]
+            allPreAct, outputPreAct, output, allHidenStates = self._oneStep(xi)
             preActivations.append(allPreAct)
             allHiddenStates.append(allHidenStates)
         self.preActivations = preActivations
@@ -99,12 +107,12 @@ class StackedRNN(RNNBackProp):
         return allPreActivations, preAct, output.reshape(-1, 1), allHidenStates
 
     def _calculateHiddenLayer(self, inputData, lastHiddenState, inputWeights, hiddenWeights, bias, activationFunction): # a( w_x * x + w_h * h + b )
-        preActivation = np.dot(inputWeights, inputData) + np.dot(hiddenWeights, lastHiddenState) + bias
+        preActivation = np.dot(inputData, inputWeights.T) + np.dot(lastHiddenState, hiddenWeights.T) + bias.T
         newHiddenState = activationFunction(preActivation)
         return preActivation, newHiddenState
 
     def _calculateOutputLayer(self, input, outputWeight, outputBias, activationFunction): # a( w_o * o + b_o)
-        preActivation = np.dot(outputWeight, input) + outputBias
+        preActivation = np.dot(input, outputWeight.T) + outputBias.T
         output = activationFunction(preActivation)
         return preActivation, output
 
@@ -132,7 +140,7 @@ class StackedRNN(RNNBackProp):
             inputW = self._initialiseWeights(hiddenSize, inSize, self.hiddenStateActivationFunction)
             hiddenW = self._initialiseWeights(hiddenSize, hiddenSize, self.hiddenStateActivationFunction)
             bias = np.zeros((hiddenSize, 1))
-            hiddenState = np.zeros((hiddenSize, 1))
+            hiddenState = np.zeros((self.batchSize, hiddenSize))
         
             self.inputWeights.append(inputW)
             self.hiddenWeights.append(hiddenW)
@@ -141,7 +149,6 @@ class StackedRNN(RNNBackProp):
 
         self.outputWeight = self._initialiseWeights(outputSize, self.hiddenSizes[-1], self.outputLayerActivationFunction)
         self.outputBias = np.zeros((outputSize, 1))
-    
     
         self.inputSize = inputSize
         self.outputSize = outputSize
@@ -175,6 +182,8 @@ class StackedRNN(RNNBackProp):
         return AllOutputs
 
     def train(self, inputData, labels, alpha = 0.001, beta1 = 0.9, beta2 = 0.999, epsilon = 1e-8):
+        assert np.array(inputData).ndim == 3, f"Dimension wrong size, got {np.array(inputData).ndim}, expected 3"
         AllOutputs = self.optimiser(inputData, labels, alpha, beta1, beta2, epsilon)
+        AllOutputs = np.reshape(AllOutputs, (np.array(labels).shape))
         loss = self.lossFunction(AllOutputs, labels)
         return loss

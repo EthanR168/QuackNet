@@ -21,7 +21,9 @@ class DenseLayer: # basically a fancy neural network
         Returns:
             ndarray: A 1D array containing every element of the input tensor.
         """
-        return np.array(inputTensor).reshape(-1)
+        inputTensor = np.array(inputTensor)
+        batchSize = inputTensor.shape[0]
+        return inputTensor.reshape(batchSize, -1)
 
     def forward(self, inputTensor):
         """
@@ -59,7 +61,8 @@ class DenseLayer: # basically a fancy neural network
         #errorTerms = errorTerms.reshape(self.orignalShape)
 
         for i in reversed(range(len(self.NeuralNetworkClass.weights))):
-            errorTerms = self.NeuralNetworkClass.weights[i] @ errorTerms
+            errorTerms = self.NeuralNetworkClass.weights[i] @ errorTerms.T
+            errorTerms = errorTerms.T
         errorTerms = errorTerms.reshape(self.orignalShape)
 
         return weightGradients, biasGradients, errorTerms

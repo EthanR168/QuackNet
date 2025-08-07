@@ -65,10 +65,14 @@ class SingularRNN(RNNBackProp):
         self.adam = Adam(self.forwardSequence, self.backwardPropagation, giveInputsToBackprop=True)
 
     def forwardSequence(self, inputData): # goes through the whole sequence / time steps
+        batchSize, sequenceLegth, _ = inputData.shape
+        
         preActivations = []
         allHiddenStates = []
-        for i in range(len(inputData)):
-            preAct, outputPreAct, output = self._oneStep(inputData[i])
+
+        for i in range(sequenceLegth):
+            xi = inputData[:, i, :].reshape(batchSize, -1, 1)
+            preAct, outputPreAct, output = self._oneStep(xi)
             preActivations.append(preAct)
             allHiddenStates.append(self.hiddenState.copy())
         self.preActivations = preActivations
@@ -79,15 +83,20 @@ class SingularRNN(RNNBackProp):
     def _oneStep(self, inputData): # forward prop on 1 time step
         preActivation, self.hiddenState = self._calculateHiddenLayer(inputData, self.hiddenState, self.inputWeight, self.hiddenWeight, self.bias, self.hiddenStateActivationFunction)
         preAct, output = self._calculateOutputLayer(self.hiddenState, self.outputWeight, self.outputBias, self.outputLayerActivationFunction)
-        return preActivation, preAct, output.reshape(-1, 1)
+        return preActivation, preAct, output
 
     def _calculateHiddenLayer(self, inputData, lastHiddenState, inputWeight, hiddenWeight, bias, activationFunction): # a( w_x * x + w_h * h + b )
-        preActivation = np.dot(inputWeight, inputData) + np.dot(hiddenWeight, lastHiddenState) + bias
+        weighttedInp = np.matmul(inputWeight, inputData)
+        weightedHidden = np.matmul(hiddenWeight, lastHiddenState)
+        biasBrodcast = bias.reshape(1, -1, 1)
+        preActivation = weighttedInp + weightedHidden + biasBrodcast
         newHiddenState = activationFunction(preActivation)
         return preActivation, newHiddenState
 
     def _calculateOutputLayer(self, input, outputWeight, outputBias, activationFunction): # a( w_o * o + b_o)
-        preActivation = np.dot(outputWeight, input) + outputBias
+        weigthedOutput = np.matmul(outputWeight, input)
+        outputBiasBrodcast = outputBias.reshape(1, -1, 1)
+        preActivation = weigthedOutput + outputBiasBrodcast
         output = activationFunction(preActivation)
         return preActivation, output
 
@@ -141,6 +150,8 @@ class SingularRNN(RNNBackProp):
         return AllOutputs
 
     def train(self, inputData, labels, alpha = 0.001, beta1 = 0.9, beta2 = 0.999, epsilon = 1e-8):
+        assert np.array(inputData).ndim == 3, f"Dimension wrong size, got {np.array(inputData).ndim}, expected 3"
         AllOutputs = self.optimiser(inputData, labels, alpha, beta1, beta2, epsilon)
+        AllOutputs = np.reshape(AllOutputs, (np.array(labels).shape))
         loss = self.lossFunction(AllOutputs, labels)
         return loss

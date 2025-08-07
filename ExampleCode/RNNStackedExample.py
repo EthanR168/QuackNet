@@ -1,12 +1,14 @@
-from quacknet import SingularRNN
+from quacknet import StackedRNN
 import numpy as np
 
-rnn = SingularRNN(
+rnn = StackedRNN(
     hiddenStateActivationFunction="tanh",
     outputLayerActivationFunction="sigmoid",
     lossFunction="mse",
+    numberOfHiddenStates=2,
+    hiddenSizes=[4, 4],
     useBatches=False,
-    batchSize=2
+    batchSize=1,
 )
 
 inputs = [ # Simple XOR
@@ -17,16 +19,16 @@ inputs = [ # Simple XOR
 ]
 
 targets = [
-    np.array([[0]]),
-    np.array([[1]]),
-    np.array([[1]]),
-    np.array([[0]]),
+    np.array([0]),
+    np.array([1]),
+    np.array([1]),
+    np.array([0]),
 ]
 
-learningRate = 0.01
+learningRate = 0.1
 epochs = 500
 
-rnn.initialiseWeights(inputSize=1, hiddenSize=64, outputSize=1)
+rnn.initialiseWeights(inputSize=1, outputSize=1)
 for i in range(epochs):
     loss = rnn.train(inputs, targets)
     if((i + 1) % 20 == 0 or i == 0):

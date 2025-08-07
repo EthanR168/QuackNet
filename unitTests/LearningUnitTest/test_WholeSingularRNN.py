@@ -5,10 +5,10 @@ def test_Singular_CheckIfModelCanLearnOnSimpleData():
     rnn = SingularRNN(hiddenStateActivationFunction="tanh", outputLayerActivationFunction="sigmoid", lossFunction="mse")
 
     inputs = [ 
-        [np.array([[0]]), np.array([[0]])],
-        [np.array([[0]]), np.array([[1]])], 
-        [np.array([[1]]), np.array([[0]])],
-        [np.array([[1]]), np.array([[1]])], 
+        [np.array([0]), np.array([0])],
+        [np.array([0]), np.array([1])], 
+        [np.array([1]), np.array([0])],
+        [np.array([1]), np.array([1])], 
     ]
 
     targets = [

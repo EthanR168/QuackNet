@@ -15,6 +15,7 @@ class PoolingLayer():
         self.mode = mode.lower()
     
     def forward(self, inputTensor):
+        print(inputTensor.shape)
         """
         Applies pooling (max or average) to reduce the size of the batch of inputs.
 
@@ -24,7 +25,7 @@ class PoolingLayer():
         Returns:
             ndarray: A 3D array of feuture maps with reduced shape.
         """
-        tensorPools = []
+        batch_size, channels, height, width = inputTensor.shape
 
         if(self.mode.lower() == "max"):
             poolFunc = np.max
@@ -33,18 +34,20 @@ class PoolingLayer():
         else:
             raise ValueError(f"pooling mode isnt correct: '{self.mode}', expected 'max' or 'ave'")
 
-        for image in inputTensor: # tensor is a 3d structures, so it is turning it into a 2d array (eg. an layer or image)
-            outputHeight = (image.shape[0] - self.gridSize) // self.stride + 1
-            outputWidth = (image.shape[1] - self.gridSize) // self.stride + 1
-            output = np.zeros((outputHeight, outputWidth))
-            for x in range(outputHeight):
-                for y in range(outputWidth):
-                    indexX = x * self.stride
-                    indexY = y * self.stride
-                    gridOfValues = image[indexX: indexX + self.gridSize, indexY: indexY + self.gridSize]
-                    output[x, y] = poolFunc(gridOfValues)
-            tensorPools.append(output)
-        return np.array(tensorPools)
+        outputHeight = (height - self.gridSize) // self.stride + 1
+        outputWidth = (width - self.gridSize) // self.stride + 1
+
+        output = np.zeros((batch_size, channels, outputHeight, outputWidth))
+        
+        for b in range(batch_size):
+            for c in range(channels):
+                for x in range(outputHeight):
+                    for y in range(outputWidth):
+                        startX = x * self.stride
+                        startY = y * self.stride
+                        window = inputTensor[b, c, startX:startX+self.gridSize, startY:startY+self.gridSize]
+                        output[b, c, x, y] = poolFunc(window)
+        return output
 
     def _backpropagation(self, errorPatch, inputTensor):
         """
@@ -75,24 +78,24 @@ class PoolingLayer():
         Returns:
             inputGradient (ndarray): Gradient of the loss with respect to the inputTensor
         """
+        batch_size, channels, height, width = inputTensor.shape
+        sizeOfGrid = self.gridSize
+        strideLength = self.stride
+        
         inputGradient = np.zeros_like(inputTensor, dtype=np.float64)
-        outputHeight = (inputTensor.shape[1] - sizeOfGrid) // strideLength + 1
-        outputWidth = (inputTensor.shape[2] - sizeOfGrid) // strideLength + 1
-        for image in range(len(inputTensor)): # tensor is a 3d structures, so it is turning it into a 2d array (eg. an layer or image)
-            for x in range(outputHeight):
-                for y in range(outputWidth):
-                    indexX = x * strideLength
-                    indexY = y * strideLength
-
-                    gridOfValues = inputTensor[image, indexX: indexX + sizeOfGrid, indexY: indexY + sizeOfGrid]
-                    indexMax = np.argmax(gridOfValues)
-                    maxX, maxY = divmod(indexMax, sizeOfGrid)
-
-                    #newValues = np.zeros((sizeOfGrid, sizeOfGrid))
-                    #newValues[maxX, maxY] = 1
-                    #inputGradient[image, indexX: indexX + sizeOfGrid, indexY: indexY + sizeOfGrid] += newValues * errorPatch[image, x, y]
-
-                    inputGradient[image, indexX + maxX, indexY + maxY] += errorPatch[image, x, y]
+        outputHeight = (height - sizeOfGrid) // strideLength + 1
+        outputWidth = (width - sizeOfGrid) // strideLength + 1
+        
+        for b in range(batch_size):
+            for c in range(channels):
+                for x in range(outputHeight):
+                    for y in range(outputWidth):
+                        startX = x * strideLength
+                        startY = y * strideLength
+                        window = inputTensor[b, c, startX:startX+sizeOfGrid, startY:startY+sizeOfGrid]
+                        maxIndex = np.argmax(window)
+                        maxX, maxY = divmod(maxIndex, sizeOfGrid)
+                        inputGradient[b, c, startX+maxX, startY+maxY] += errorPatch[b, c, x, y]
         return inputGradient
 
     def _AveragePoolingDerivative(self, errorPatch, inputTensor, sizeOfGrid, strideLength):
@@ -108,16 +111,20 @@ class PoolingLayer():
         Returns:
             inputGradient (ndarray): Gradient of the loss with respect to the inputTensor
         """       
+        batch_size, channels, height, width = inputTensor.shape
+        sizeOfGrid = self.gridSize
+        strideLength = self.stride
+        
         inputGradient = np.zeros_like(inputTensor, dtype=np.float32)
-        outputHeight = (inputTensor.shape[1] - sizeOfGrid) // strideLength + 1
-        outputWidth = (inputTensor.shape[2] - sizeOfGrid) // strideLength + 1
+        outputHeight = (height - sizeOfGrid) // strideLength + 1
+        outputWidth = (width - sizeOfGrid) // strideLength + 1
         avgMultiplier = 1 / (sizeOfGrid ** 2)
-        for image in range(len(inputTensor)): # tensor is a 3d structures, so it is turning it into a 2d array (eg. an layer or image)
-            for x in range(outputHeight):
-                for y in range(outputWidth):
-                    indexX = x * strideLength
-                    indexY = y * strideLength
-                    #newValues = np.ones((sizeOfGrid, sizeOfGrid)) * errorPatch[image, x, y] / (sizeOfGrid ** 2)
-                    newValues = errorPatch[image, x, y] * avgMultiplier
-                    inputGradient[image, indexX: indexX + sizeOfGrid, indexY: indexY + sizeOfGrid] += newValues 
+        
+        for b in range(batch_size):
+            for c in range(channels):
+                for x in range(outputHeight):
+                    for y in range(outputWidth):
+                        startX = x * strideLength
+                        startY = y * strideLength
+                        inputGradient[b, c, startX:startX+sizeOfGrid, startY:startY+sizeOfGrid] += errorPatch[b, c, x, y] * avgMultiplier
         return inputGradient

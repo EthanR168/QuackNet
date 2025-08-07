@@ -66,7 +66,6 @@ class Network(Initialisers, writeAndRead, Augementation):
         Returns:
             ndarray: Output of the current layer.
         """
-        
         summ = np.dot(lastLayerNodes, lastLayerWeights) + biases
         if(currentLayer[1] != softMax):
             return currentLayer[1](summ)
@@ -137,6 +136,7 @@ class Network(Initialisers, writeAndRead, Augementation):
             float: Average accauracy over all epochs.
             float: Average loss over all epochs.
         """
+        assert np.array(inputData).ndim == 2, f"Dimension wrong size, got {np.array(inputData).ndim}, expected 2"
         self._checkIfNetworkCorrect()
         correct = 0
         totalLoss = 0

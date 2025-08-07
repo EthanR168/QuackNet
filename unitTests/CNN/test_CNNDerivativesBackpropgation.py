@@ -4,9 +4,9 @@ import numpy as np
 def test_ConvulutionalDerivative():
     stride = 1
 
-    inputTensor = np.array([[[1, 2, 3], [4, 5, 6], [7, 8, 9]]])
+    inputTensor = np.array([[[[1, 2, 3], [4, 5, 6], [7, 8, 9]]]])
     kernals = np.array([[[[1, 0], [0, -1]]]])
-    errorPatch = np.array([[[1, 2], [3, 4]]])
+    errorPatch = np.array([[[[1, 2], [3, 4]]]])
 
     Conv = Conv2DLayer(2, 1, 1, stride)
 
@@ -28,66 +28,68 @@ def test_ConvulutionalDerivative():
     assert np.allclose(errorTerms, expectedInputErrorTerms)
 
 def test_MaxPooling():
-    inputTensor = np.array([[
+    inputTensor = np.array([[[
         [1, 3, 2, 4],
         [2, 4, 1, 3],
         [4, 1, 3, 2],
         [3, 2, 4, 1],
-    ]])
-    errorPatch = np.array([[[10, 20], [30, 40]]])
+    ]]])
+    errorPatch = np.array([[[[10, 20], [30, 40]]]])
     gridSize = 2
     strideLength = 2
+    pool = PoolingLayer(gridSize, strideLength, "max")
 
-    errorTerm = PoolingLayer._MaxPoolingDerivative(None, errorPatch, inputTensor, gridSize, strideLength)
+    errorTerm = pool._MaxPoolingDerivative(errorPatch, inputTensor, gridSize, strideLength)
 
-    expectedInputErrorTerms = np.array([[
+    expectedInputErrorTerms = np.array([[[
         [0, 0, 0, 20],
         [0, 10, 0, 0],
         [30, 0, 0, 0],
         [0, 0, 40, 0],
-    ]])
+    ]]])
 
     assert errorTerm.shape == expectedInputErrorTerms.shape
     assert np.allclose(errorTerm, expectedInputErrorTerms)
 
 def test_AveragePooling():
-    inputTensor = np.array([[
+    inputTensor = np.array([[[
         [1, 3, 2, 4],
         [2, 4, 1, 3],
         [4, 1, 3, 2],
         [3, 2, 4, 1],
-    ]])
-    errorPatch = np.array([[[10, 20], [30, 40]]])
+    ]]])
+    errorPatch = np.array([[[[10, 20], [30, 40]]]])
     gridSize = 2
     strideLength = 2
+    pool = PoolingLayer(gridSize, strideLength, "ave")
 
-    errorTerm = PoolingLayer._AveragePoolingDerivative(None, errorPatch, inputTensor, gridSize, strideLength)
+    errorTerm = pool._AveragePoolingDerivative(errorPatch, inputTensor, gridSize, strideLength)
 
-    expectedInputErrorTerms = np.array([[
+    expectedInputErrorTerms = np.array([[[
         [2.5, 2.5, 5, 5],
         [2.5, 2.5, 5, 5],
         [7.5, 7.5, 10, 10],
         [7.5, 7.5, 10, 10],
-    ]])
+    ]]])
 
     assert errorTerm.shape == expectedInputErrorTerms.shape
     assert np.allclose(errorTerm, expectedInputErrorTerms)
 
 def test_GlobalAveragePooling():
-    inputTensor = np.array([[
-        [1, 3, 2, 4],
+    inputTensor = np.array([[[[
+        1, 3, 2, 4],
         [2, 4, 1, 3],
         [4, 1, 3, 2],
-        [3, 2, 4, 1],
-    ]])
+        [3, 2, 4, 1]
+    ]]]).astype(np.float64)
 
-    errorTerm = GlobalAveragePooling._backpropagation(None, inputTensor)
+    gap = GlobalAveragePooling()
+    gap.inputShape = inputTensor.shape
 
-    '''
-    1 * 1 / (4 * 4) = 1 / 16 = 0.0625
-    '''
+    outputGradient = np.array([[[1]]])  # simulate dL/dOutput = 1
+    errorTerm = gap._backpropagation(outputGradient)
 
-    expectedInputErrorTerms = np.full(inputTensor.shape, fill_value = 0.0625)
+    expectedInputErrorTerms = np.full(inputTensor.shape, fill_value=1 / 16)
 
     assert errorTerm.shape == expectedInputErrorTerms.shape
     assert np.allclose(errorTerm, expectedInputErrorTerms)

@@ -1,40 +1,39 @@
 from quacknet import Conv1DLayer, Conv2DLayer, PoolingLayer, GlobalAveragePooling, DenseLayer, ActivationLayer
 import numpy as np
+import math
 
 class Test_Padding:
     def test_PadImage1(self):
-        inputTensor = np.ones([3, 3, 3])
-        kernalSize, strideLength = 2, 2
-        typeOfPadding = 0
+        inputTensor = np.array([[[
+            [1, 2],
+            [3, 4]
+        ]]])
 
-        paddingTensor = Conv2DLayer._padImage(self, inputTensor, kernalSize, strideLength, typeOfPadding)
+        kernelSize = 3
+        stride = 1
+        paddingValue = 0
 
-        paddingSize = int(np.ceil(((strideLength - 1) * inputTensor.shape[1] - strideLength + kernalSize) / 2))
-        expectedPaddedTensor = []
-        for layer in inputTensor:
-            expectedPaddedTensor.append(np.pad(layer, (paddingSize,paddingSize)))
+        paddingSize = math.ceil(((stride - 1) * 1 - stride + kernelSize) / 2)
 
-        assert np.array(paddingTensor).shape == np.array(expectedPaddedTensor).shape
-        assert np.allclose(paddingTensor, expectedPaddedTensor)
+        conv = Conv2DLayer(None, None, None, None, paddingSize)
 
-    def test_PadImage2(self):
-        inputTensor = np.ones([5, 6, 6])
-        kernalSize, strideLength = 2, 2
-        typeOfPadding = 0
+        padded = conv._padImage(inputTensor, kernelSize, stride, paddingValue)
 
-        paddingTensor = Conv2DLayer._padImage(self, inputTensor, kernalSize, strideLength, typeOfPadding)
+        expectedShape = (1, 1, 2 + 2 * paddingSize, 2 + 2 * paddingSize)
+        assert padded.shape == expectedShape
 
-        paddingSize = int(np.ceil(((strideLength - 1) * inputTensor.shape[1] - strideLength + kernalSize) / 2))
-        expectedPaddedTensor = []
-        for layer in inputTensor:
-            expectedPaddedTensor.append(np.pad(layer, (paddingSize,paddingSize)))
-            
-        assert np.array(paddingTensor).shape == np.array(expectedPaddedTensor).shape
-        assert np.allclose(paddingTensor, expectedPaddedTensor)
+        expected = np.array([[[
+            [0, 0, 0, 0],
+            [0, 1, 2, 0],
+            [0, 3, 4, 0],
+            [0, 0, 0, 0]
+        ]]])
+
+        assert np.array_equal(padded, expected)
 
 class Test_kernalisation:
     def test_kernalisation1(self):
-        inputTensor = np.array([
+        inputTensor = np.array([[
             [
                 [1, 2, 1, 2],
                 [3, 4, 3, 4],
@@ -47,80 +46,55 @@ class Test_kernalisation:
                 [1, 1, 1, 1],
                 [1, 1, 1, 1],
             ],
-        ])
+        ]])
+
         kernalWeights = np.array([
-        [
-            [4, 3],
-            [2, 1]
-        ]
+            [
+                [[4, 3], [2, 1]],
+                [[1, 1], [1, 1]],
+            ],
+            [
+                [[1, 0], [0, 1]],
+                [[0, 1], [1, 0]],
+            ]
         ])
 
-        kernalBias = [2]
+        kernalBias = np.array([2, 1])
         kernalSize = strideLength = 2
 
-        Conv = Conv2DLayer(kernalSize, 2, 1, strideLength, "no")
+        Conv = Conv2DLayer(kernalSize, 2, 2, strideLength, "no")
 
-        Conv.kernalBiases = kernalBias
         Conv.kernalWeights = kernalWeights
+        Conv.kernalBiases = kernalBias
 
         output = Conv.forward(inputTensor)
 
-        '''
-        [1, 2]      X       [4, 3]    =   [4, 6]     =  20
-        [3, 4]              [2, 1]        [6, 4]
+        expected = np.array([[
+            [
+                [26, 26],
+                [26, 26]
+            ],
+            [
+                [8, 8],
+                [8, 8]
+            ]
+        ]])
 
-        [1, 2]      X       [4, 3]    =   [4, 6]     =  20
-        [3, 4]              [2, 1]        [6, 4]
-
-        [20, 20]
-        [20, 20]
-
-        [1, 1]      X       [4, 3]    =   [4, 3]     =  10
-        [1, 1]              [2, 1]        [2, 1]
-
-        [1, 1]      X       [4, 3]    =   [4, 3]     =  10
-        [1, 1]              [2, 1]        [2, 1]
-
-        [10, 10]    +     [20, 20]     +     2    =    [32, 32]
-        [10, 10]    +     [20, 20]                     [32, 32]
-        '''
-
-        expected = np.array([
-        [
-            [32, 32],
-            [32, 32],
-        ]
-        ])
-        
-        assert expected.shape == output.shape
-        assert np.allclose(expected, output)
+        assert output.shape == expected.shape
+        assert np.allclose(output, expected)
     
     def test_kernalisation2(self):
-        inputTensor = np.array([
-            [
-                [1, 2, 1, 2],
-                [3, 4, 3, 4],
-                [1, 2, 1, 2],
-                [3, 4, 3, 4],
-            ],
-            [
-                [1, 1, 1, 1],
-                [1, 1, 1, 1],
-                [1, 1, 1, 1],
-                [1, 1, 1, 1],
-            ],
-        ])
-        kernalWeights = np.array([
-        [
+        inputTensor = np.array([[[
+            [1, 2, 1, 2],
+            [3, 4, 3, 4],
+            [1, 2, 1, 2],
+            [3, 4, 3, 4]
+        ]]]) 
+        kernalWeights = np.array([[
             [4, 3],
             [2, 1]
-        ],
-        [
-            [2, 2],
-            [2, 2]
-        ]
-        ])
-        kernalBias = [2, 4]
+        ]]) 
+        kernalBias = [2]
         kernalSize = strideLength = 2
         usePadding = "no"
 
@@ -131,64 +105,17 @@ class Test_kernalisation:
 
         output = Conv.forward(inputTensor)
 
-        '''
-        Kernal 1:
-        [1, 2]      X       [4, 3]    =   [4, 6]     =  20
-        [3, 4]              [2, 1]        [6, 4]
+        expected = np.array([[[
+            [22, 22],
+            [22, 22]
+        ]]])
 
-        [1, 2]      X       [4, 3]    =   [4, 6]     =  20
-        [3, 4]              [2, 1]        [6, 4]
-
-        [20, 20]
-        [20, 20]
-
-        [1, 1]      X       [4, 3]    =   [4, 3]     =  10
-        [1, 1]              [2, 1]        [2, 1]
-
-        [1, 1]      X       [4, 3]    =   [4, 3]     =  10
-        [1, 1]              [2, 1]        [2, 1]
-
-        [10, 10]    +     [20, 20]     +     2    =    [32, 32]
-        [10, 10]    +     [20, 20]                     [32, 32]
-
-        
-        Kernal 2:
-        [1, 2]      X       [2, 2]    =   [2, 4]     =  20
-        [3, 4]              [2, 2]        [6, 8]
-
-        [1, 2]      X       [2, 2]    =   [2, 4]     =  20
-        [3, 4]              [2, 2]        [6, 8]
-
-        [20, 20]
-        [20, 20]
-
-        [1, 1]      X       [2, 2]    =   [2, 2]     =  8
-        [1, 1]              [2, 2]        [2, 2]
-
-        [1, 1]      X       [2, 2]    =   [2, 2]     =  8
-        [1, 1]              [2, 2]        [2, 2]
-
-        [8, 8]    +     [20, 20]     +     4    =    [32, 32]
-        [8, 8]    +     [20, 20]                     [32, 32]
-        '''
-
-        expected = np.array([
-        [
-            [32, 32],
-            [32, 32],
-        ],
-        [
-            [32, 32],
-            [32, 32],
-        ]
-        ])
-        
-        assert expected.shape == output.shape
+        assert output.shape == expected.shape
         assert np.allclose(expected, output)
 
 class Test_Pooling:
     def test_maxPooling(self):
-        inputTensor = np.array([
+        inputTensor = np.array([[
             [
                 [1, 2, 1, 2],
                 [3, 4, 3, 4],
@@ -207,7 +134,7 @@ class Test_Pooling:
                 [9, 10, 11, 12],
                 [13, 14, 15, 16],
             ],
-        ]) 
+        ]]) 
 
         sizeOfGrid = strideLength = 2
         
@@ -215,7 +142,7 @@ class Test_Pooling:
 
         output = Pool.forward(inputTensor)
 
-        expected = np.array([
+        expected = np.array([[
         [
             [4, 4],
             [4, 4],
@@ -228,13 +155,13 @@ class Test_Pooling:
             [6, 8],
             [14, 16],
         ]
-        ])
+        ]])
 
         assert expected.shape == output.shape
         assert np.allclose(expected, output)
 
     def test_averagePooling2(self):
-        inputTensor = np.array([
+        inputTensor = np.array([[
             [
                 [1, 2, 1, 2],
                 [3, 4, 3, 4],
@@ -253,7 +180,7 @@ class Test_Pooling:
                 [9, 10, 11, 12],
                 [13, 14, 15, 16],
             ],
-        ]) 
+        ]]) 
 
         sizeOfGrid = strideLength = 2
 
@@ -261,7 +188,7 @@ class Test_Pooling:
 
         output = Pool.forward(inputTensor)
 
-        expected = np.array([
+        expected = np.array([[
         [
             [2.5, 2.5],
             [2.5, 2.5],
@@ -274,13 +201,13 @@ class Test_Pooling:
             [3.5, 5.5],
             [11.5, 13.5],
         ]
-        ])
+        ]])
         assert expected.shape == output.shape
         assert np.allclose(expected, output)
 
 class Test_PoolingGlobalAverage:
     def test_poolingGlobalAverage(self):
-        inputTensor = np.array([
+        inputTensor = np.array([[
             [
                 [1, 2, 1, 2],
                 [3, 4, 3, 4],
@@ -299,43 +226,43 @@ class Test_PoolingGlobalAverage:
                 [9, 10, 11, 12],
                 [13, 14, 15, 16],
             ],
-        ]) 
+        ]]) 
 
         output = GlobalAveragePooling.forward(self, inputTensor)
 
-        expected = np.array([2.5, 1, 8.5])
+        expected = np.array([[2.5, 1, 8.5]])
 
-        assert expected.shape == output.shape
+        assert output.shape == expected.shape
         assert np.allclose(expected, output)
 
 class Test_Flattening:
     def test_flattening(self):
         inputTensor = np.array([
-            [
+            [[
                 [1, 2, 1, 2],
                 [3, 4, 3, 4],
                 [1, 2, 1, 2],
                 [3, 4, 3, 4],
-            ],
-            [
+            ]],
+            [[
                 [1, 1, 1, 1],
                 [1, 1, 1, 1],
                 [1, 1, 1, 1],
                 [1, 1, 1, 1],
-            ],
-            [
+            ]],
+            [[
                 [1, 2, 3, 4],
                 [5, 6, 7, 8],
                 [9, 10, 11, 12],
                 [13, 14, 15, 16],
-            ],
+            ]],
         ]) 
 
         output = DenseLayer._flatternTensor(self, inputTensor)
 
-        expected = np.array([1, 2, 1, 2, 3, 4, 3, 4, 1, 2, 1, 2, 3, 4, 3, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16])
+        expected = np.array([[1, 2, 1, 2, 3, 4, 3, 4, 1, 2, 1, 2, 3, 4, 3, 4], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]])
         
-        assert expected.shape == output.shape
+        assert output.shape == expected.shape
         assert np.allclose(expected, output)
 
 class Test_ActivationLayer:

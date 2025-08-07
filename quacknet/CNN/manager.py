@@ -56,7 +56,7 @@ class CNNModel:
         allBiasGradients = [biasGradients]
         for i in range(len(self.layers) - 2, -1, -1):
             if(type(self.layers[i]) == GlobalAveragePooling):
-                errorTerms = self.layers[i]._backpropagation(allTensors[i])
+                errorTerms = self.layers[i]._backpropagation(errorTerms)
             if(type(self.layers[i]) == PoolingLayer or type(self.layers[i]) == ActivationLayer):
                 errorTerms = self.layers[i]._backpropagation(errorTerms, allTensors[i])
             elif(type(self.layers[i]) == Conv2DLayer or type(self.layers[i]) == Conv1DLayer):
@@ -119,6 +119,8 @@ class CNNModel:
             float: accuracy percentage.
             float: average loss.
         """
+        # InputData: (numImages, channels, height, width)   or (numImages, channels, width)  <--- if using Conv1D layer
+        assert np.array(inputData).ndim == 4 or np.array(inputData).ndim == 3, f"Dimension wrong size, got {np.array(inputData).ndim}, expected 4 or 3"
         correct, totalLoss = 0, 0
         
         nodes, _ = self._optimser(inputData, labels, useBatches, batchSize, alpha, beta1, beta2, epsilon)        

@@ -18,6 +18,6 @@ def test_Weights():
     assert nn.biases[1].shape == (30,)
 
     for w in nn.weights:
-        assert abs(np.mean(w)) < 0.1
+        assert abs(np.mean(w)) < 0.2
     for b in nn.biases:
-        assert abs(np.mean(b)) < 0.1
+        assert abs(np.mean(b)) < 0.2

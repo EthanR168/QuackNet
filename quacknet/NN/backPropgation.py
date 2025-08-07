@@ -62,7 +62,14 @@ def _outputLayerWeightChange(lossDerivative, activationDerivative, currentLayerN
     else:
         lossDerivativeValue = lossDerivative(currentLayerNodes, trueValues, len(currentLayerNodes))
         errorTerms = lossDerivativeValue * activationDerivative(currentLayerNodes)
-    weightGradients = np.outer(pastLayerNodes, errorTerms)
+    
+    if(pastLayerNodes.ndim == 1):
+        weightGradients = np.outer(pastLayerNodes, errorTerms)
+    elif(pastLayerNodes.ndim == 2):
+        weightGradients = pastLayerNodes.T @ errorTerms
+    else:
+        raise ValueError(f"Shouldnt be a 3D tensor")
+
     return weightGradients, errorTerms
 
 def _hiddenLayerWeightChange(pastLayerErrorTerms, pastLayerWeights, activationDerivative, currentLayerNodes, pastLayerNodes):
@@ -81,7 +88,13 @@ def _hiddenLayerWeightChange(pastLayerErrorTerms, pastLayerWeights, activationDe
         errorTerms (ndarray): Error terms for the current layer nodes.
     """   
     errorTerms = (pastLayerErrorTerms @ pastLayerWeights.T) * activationDerivative(currentLayerNodes)
-    weightGradients = np.outer(pastLayerNodes, errorTerms)
+    if(pastLayerNodes.ndim == 1):
+        weightGradients = np.outer(pastLayerNodes, errorTerms)
+    elif(pastLayerNodes.ndim == 2):
+        weightGradients = pastLayerNodes.T @ errorTerms
+    else:
+        raise ValueError(f"Shouldnt be a 3D tensor")
+    
     return weightGradients, errorTerms
 
 def _outputLayerBiasChange(lossDerivative, activationDerivative, currentLayerNodes, trueValues):
@@ -103,7 +116,13 @@ def _outputLayerBiasChange(lossDerivative, activationDerivative, currentLayerNod
     else:
         lossDerivativeValue = lossDerivative(currentLayerNodes, trueValues, len(currentLayerNodes))
         errorTerms = lossDerivativeValue * activationDerivative(currentLayerNodes)
-    biasGradients = errorTerms
+    if(currentLayerNodes.ndim == 1):
+        biasGradients = errorTerms
+    elif(currentLayerNodes.ndim == 2):
+        biasGradients = np.mean(errorTerms, axis=0)
+    else:
+        raise ValueError(f"Shouldnt be a 3D tensor")
+
     return biasGradients, errorTerms
 
 
@@ -122,7 +141,13 @@ def _hiddenLayerBiasChange(pastLayerErrorTerms, pastLayerWeights, activationDeri
         errorTerms (ndarray): Error terms for the current layer nodes.
     """  
     errorTerms = (pastLayerErrorTerms @ pastLayerWeights.T) * activationDerivative(currentLayerNodes)
-    biasGradients = errorTerms
+    if(currentLayerNodes.ndim == 1):
+        biasGradients = errorTerms
+    elif(currentLayerNodes.ndim == 2):
+        biasGradients = np.mean(errorTerms, axis=0)
+    else:
+        raise ValueError(f"Shouldnt be a 3D tensor")
+
     return biasGradients, errorTerms
 
 def _backPropgation(layerNodes, weights, biases, trueValues, layers, lossFunction, returnErrorTermForCNN = False):

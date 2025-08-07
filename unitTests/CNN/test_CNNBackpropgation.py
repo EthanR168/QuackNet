@@ -31,15 +31,15 @@ def test_Conv1DBackpropagation():
     stride = 1
     conv = Conv1DLayer(kernalSize=2, numKernals=1, depth=1, stride=stride, padding="no")
 
-    inputTensor = np.array([[1, 2, 3, 4]])
+    inputTensor = np.array([[[1, 2, 3, 4]]])
     conv.kernalWeights = np.array([[[1, 0]]])
-    errorPatch = np.array([[1, 2, 3]])
+    errorPatch = np.array([[[1, 2, 3]]])
 
     weightGradients, biasGradients, errorTerms = conv._backpropagation(errorPatch, inputTensor)
 
     expectedWeightGradients = np.array([[[14, 20]]])
     expectedBiasGradients = np.array([6])
-    expectedInputErrorTerms = np.array([[0, 1, 2, 3]])
+    expectedInputErrorTerms = np.array([[[0, 1, 2, 3]]])
 
     assert expectedWeightGradients.shape == weightGradients.shape
     assert expectedBiasGradients.shape == biasGradients.shape

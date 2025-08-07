@@ -2,8 +2,12 @@ from quacknet import CNNModel, Conv2DLayer, GlobalAveragePooling, DenseLayer, Ac
 import numpy as np
 
 # Creating parameters for convulational layer
-inputTensor = [np.random.randn(4, 4, 4), np.random.randn(4, 4, 4)] #[(depth, height, width), (depth, height, width)]
+batch_size = 2
+channels = 2
+height = width = 4
+inputTensor = np.random.randn(batch_size, channels, height, width)
 trueLabels = np.array([[1], [1]])
+
 learningRate = 0.001
 
 # Define the dense layer
@@ -14,11 +18,10 @@ net.createWeightsAndBiases()
 
 # Create the CNN model and add layers
 CNN = CNNModel(net)
-CNN.addLayer(Conv2DLayer(kernalSize = 2, depth = 4, numKernals = 3, stride = 2, padding = "0"))
+CNN.addLayer(Conv2DLayer(kernalSize=2, depth=channels, numKernals=3, stride=2, padding="no"))
 CNN.addLayer(ActivationLayer())      # Leaky ReLU
 CNN.addLayer(GlobalAveragePooling()) # Global Average Pooling
 CNN.addLayer(DenseLayer(net))        # Fully connected Layer
-
 CNN.createWeightsBiases()
 
 # Train the model

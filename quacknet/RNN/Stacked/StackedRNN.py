@@ -15,6 +15,19 @@ InputData --> [ Hidden State Layer 1 --> Hidden State Layer 2 --> ... --> Hidden
 
 class StackedRNN(RNNBackProp): 
     def __init__(self, hiddenStateActivationFunction, outputLayerActivationFunction, lossFunction, numberOfHiddenStates, hiddenSizes, useBatches = False, batchSize = 64):
+        """
+        Initializes the RNN model with specified activation functions, loss function,
+        hidden layer configuration, and batching options.
+
+        Args:
+            hiddenStateActivationFunction (str): Name of activation function for hidden states (e.g., "relu", "sigmoid").
+            outputLayerActivationFunction (str): Name of activation function for output layer.
+            lossFunction (str): Name of the loss function to use (e.g., "mse", "mae", "cross entropy").
+            numberOfHiddenStates (int): Number of hidden layers in the RNN.
+            hiddenSizes (list of int): List specifying the size of each hidden layer.
+            useBatches (bool, optional): Whether to use batching during training. Default is False.
+            batchSize (int, optional): Batch size if batching is enabled. Default is 64.
+        """
         self.inputWeights = None
         self.hiddenWeights = None
         self.biases = None
@@ -127,6 +140,13 @@ class StackedRNN(RNNBackProp):
         return w
     
     def initialiseWeights(self, inputSize, outputSize):
+        """
+        Initializes weights, biases, and hidden states for each hidden layer and the output layer.
+
+        Args:
+            inputSize (int): Size of the input feature vector.
+            outputSize (int): Size of the output vector.
+        """
         self.inputWeights = []
         self.hiddenWeights = []
         self.biases = []
@@ -182,6 +202,21 @@ class StackedRNN(RNNBackProp):
         return AllOutputs
 
     def train(self, inputData, labels, alpha = 0.001, beta1 = 0.9, beta2 = 0.999, epsilon = 1e-8):
+        """
+        Trains the model on the given input data and labels using the Adam optimizer,
+        then calculates and returns the loss.
+
+        Args:
+            inputData (ndarray): 3D array of input sequences with shape (batchSize, sequenceLength, inputSize).
+            labels (ndarray): True labels corresponding to the input data.
+            alpha (float, optional): Learning rate for the optimizer. Default is 0.001.
+            beta1 (float, optional): Beta1 parameter for Adam optimizer. Default is 0.9.
+            beta2 (float, optional): Beta2 parameter for Adam optimizer. Default is 0.999.
+            epsilon (float, optional): Epsilon parameter for Adam optimizer to avoid division by zero. Default is 1e-8.
+
+        Returns:
+            float: Calculated loss between the model output and true labels.
+        """
         assert np.array(inputData).ndim == 3, f"Dimension wrong size, got {np.array(inputData).ndim}, expected 3"
         AllOutputs = self.optimiser(inputData, labels, alpha, beta1, beta2, epsilon)
         AllOutputs = np.reshape(AllOutputs, (np.array(labels).shape))

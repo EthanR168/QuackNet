@@ -39,7 +39,7 @@ Ideal for students, researchers, and hobbyists wanting to understand how deep le
     -   Dense (Fully connected)
     -   Convolutional (with pooling and flattening)
     -   Stacked RNN (no LSTM / GRU)
-    -   Transformer (multi head attention, norm, positional encoding)
+    -   Transformer (multi head attention, norm, residual, positional encoding)
 -   **Activation Functions** ReLU, Leaky Relu, Sigmoid, SoftMax, Tanh
 -   **Loss Functions** Cross Entropy, MSE, MAE
 -   **Optimisers** GD, SGD, Adam
@@ -48,6 +48,7 @@ Ideal for students, researchers, and hobbyists wanting to understand how deep le
     -   Visualise training progress (accuracy/loss graphs)
     -   Evaluate metrics (accuracy, loss)
     -   Real world demo projects (MNIST, HAM10000 skin lesions)
+
 ---
 
 ## Quick Start
@@ -57,7 +58,7 @@ Ideal for students, researchers, and hobbyists wanting to understand how deep le
 from quacknet import Network
 
 n = Network(lossFunc="Cross Entropy", learningRate=0.01, optimisationFunc="SGD")
-n.addLayer(3, "ReLU")
+n.addLayer(3)
 n.addLayer(1, "SoftMax")
 n.createWeightsAndBiases()
 
@@ -77,7 +78,7 @@ For more detailed examples, see [Advanced Usage](#advanced-usage) or [Examples](
 -   [Convolutional Neural Network Example](/ExampleCode/CNNExample.py): Shows how to use the convolutional layers in the library
 -   [MNIST Neural Network Example](/ExampleCode/MNISTExample/mnistExample.py): Trains a neural network on the MNIST dataset using QuackNet
 -   [Singular Recurrent Neural Network Example](/ExampleCode/RNNSingularExample.py): Shows how to use the Singular RNN 
--   [Stacked Recurrent Neural Network Example](/ExampleCode/RNNStackedExample%20copy.py): Shows how to use the Stacked RNN 
+-   [Stacked Recurrent Neural Network Example](/ExampleCode/RNNStackedExample.py): Shows how to use the Stacked RNN 
 -   [Transformer Example](/ExampleCode/TransformerExample.py): Shows how to use the Transformer
 ---
 
@@ -92,8 +93,8 @@ n = Network(
     learningRate = 0.01,
     optimisationFunc = "SGD", # Stochastic Gradient Descent
 )
-n.addLayer(3) # Input layer
-n.addLayer(2, "ReLU") # Hidden layer
+n.addLayer(3)            # Input layer
+n.addLayer(2, "ReLU")    # Hidden layer
 n.addLayer(1, "SoftMax") # Output layer
 n.createWeightsAndBiases()
 
@@ -156,7 +157,7 @@ Below is the graph showing the training accuracy and loss over 10 epochs, across
 -   Optimisers like SGD, GD, and Adam
 
 **Computer Science Practice**
--   80% test coverage with unit tests
+-   90% test coverage with unit tests
 -   Modular, beginner friendly API design
 -   Efficient vectorised operations via NumPy
 -   Automated documentation with ```pdoc```
@@ -272,3 +273,4 @@ This project demonstrates how QuackNet can be applied to real-world image classi
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
+

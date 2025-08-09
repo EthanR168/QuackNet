@@ -19,8 +19,8 @@ class Adam:
         AllOutputs = []
         numBatches = len(inputData) // batchSize
         for i in range(numBatches):
-            batchData = np.array(inputData[i:i+batchSize])
-            batchLabels = np.array(labels[i:i+batchSize])
+            batchData = np.array(inputData[i*batchSize:(i+1)*batchSize])
+            batchLabels = np.array(labels[i*batchSize:(i+1)*batchSize])
             Parameters = None
 
             output = self.forwardPropagationFunction(batchData)

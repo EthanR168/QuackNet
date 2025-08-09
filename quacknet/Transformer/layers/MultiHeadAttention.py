@@ -45,7 +45,7 @@ Order of forward prop:
 """
 
 class MultiAttentionHeadLayer:
-    def __init__(self, batchSize, sequenceLength, embedDimension, numberOfHeads, QueryWeights, KeyWeights, ValueWeights, outputWeight, outputBias):
+    def __init__(self, batchSize, sequenceLength, embedDimension, numberOfHeads, QueryWeights, KeyWeights, ValueWeights, outputWeight, outputBias, useCasualMasking = False):
         self.embedDimension = embedDimension
         self.numberOfHeads = numberOfHeads
         self.QueryWeights = QueryWeights
@@ -55,6 +55,9 @@ class MultiAttentionHeadLayer:
         self.outputBias = outputBias
         self.batchSize = batchSize 
         self.sequenceLength = sequenceLength
+        self.useCasualMasking = useCasualMasking
+        if(self.useCasualMasking == True):
+            self.casualMask = self.createCausalMask(sequenceLength)
 
         assert embedDimension % numberOfHeads == 0, "Embedding Dimension must be divisible by the number of heads"
 
@@ -101,6 +104,10 @@ class MultiAttentionHeadLayer:
     def _calculateAttentionForOneHead(self, QueryHead, KeyHead, ValueHead):
         # a(Q, K, V) = softmax( (Q @ K.T) / sqrt(d) ) @ V 
         attentionScore = (QueryHead @ KeyHead.transpose(0, 2, 1)) / np.sqrt(ValueHead.shape[1])
+        
+        if(self.useCasualMasking == True):
+            attentionScore = np.where(self.casualMask == 0, -1e9, attentionScore) # masks attention with very large negative number 
+        
         attentionWeights = self._TransformerSoftMax(attentionScore)  # this is used in backprop
         attentionOutput = attentionWeights @ ValueHead
         return attentionOutput, attentionWeights
@@ -109,9 +116,14 @@ class MultiAttentionHeadLayer:
         self.attentionHeads = []
         self.attentionWeights = []
         for i in range(self.numberOfHeads):
-            att, att_W = self._calculateAttentionForOneHead(QueryHead[:, i, :, :], KeyHead[:, i, :, :], ValueHead[:, i, :, :])
+            att, att_W = self._calculateAttentionForOneHead(
+                QueryHead[:, i, :, :],
+                KeyHead[:, i, :, :], 
+                ValueHead[:, i, :, :],
+            )
             self.attentionHeads.append(att)
             self.attentionWeights.append(att_W)
+            
         stackedHeads = np.stack(self.attentionHeads, axis=1)
         stackedHeads = np.transpose(stackedHeads, (0, 2, 1, 3))
         batchSize, sequenceLength, numberHeads, headDimension = stackedHeads.shape
@@ -157,3 +169,6 @@ class MultiAttentionHeadLayer:
         )
         return outputWeightGradient, outputBiasGradient, inputDerivative, QueryWeightDerivative, KeyWeightDerivative, ValueWeightDerivative
     
+    def createCausalMask(self, sequenceLength):
+        mask = np.tril(np.ones((sequenceLength, sequenceLength), dtype=np.bool_))
+        return mask

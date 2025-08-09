@@ -167,7 +167,6 @@ class CNNModel:
                 self.weights.append(self.layers[i].NeuralNetworkClass.weights)
                 self.biases.append(self.layers[i].NeuralNetworkClass.biases)
 
-
     def saveModel(self, NNweights, NNbiases, CNNweights, CNNbiases, filename = "modelWeights.npz"):
         """
         Saves model weights and biases to a compressed npz file.

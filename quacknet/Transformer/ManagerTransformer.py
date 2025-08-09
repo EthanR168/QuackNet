@@ -3,11 +3,21 @@ from quacknet.core.lossFunctions import MSELossFunction
 
 class Transformer:
     def __init__(self):
+        """
+        Initializes the model with an Adam optimizer instance and
+        an empty dictionary to store model blocks.        
+        """
         self.adam = Adam(self.forwardPropagation, self.backwardPropagation)
         
         self.blocks = {}
 
     def addBlock(self, block):
+        """
+        Adds a new block/module to the model's blocks dictionary.
+
+        Args:
+            block (object): A model block or layer to be added.
+        """
         self.blocks.update({len(self.blocks): block})
     
     def forwardPropagation(self, input):
@@ -53,6 +63,23 @@ class Transformer:
         return AllOutputs, Parameters
 
     def train(self, inputData, labels, useBatches = False, batchSize = 16, alpha = 0.001, beta1 = 0.9, beta2 = 0.999, epsilon = 1e-8):
+        """
+        Trains the model on the input data and labels using the Adam optimizer,
+        optionally with batching, and returns the mean squared error loss.
+
+        Args:
+            inputData (ndarray): Input data for training.
+            labels (ndarray): True labels corresponding to the input data.
+            useBatches (bool, optional): Whether to use mini-batching. Default is False.
+            batchSize (int, optional): Size of each batch if batching is used. Default is 16.
+            alpha (float, optional): Learning rate for the Adam optimizer. Default is 0.001.
+            beta1 (float, optional): Beta1 parameter for Adam optimizer. Default is 0.9.
+            beta2 (float, optional): Beta2 parameter for Adam optimizer. Default is 0.999.
+            epsilon (float, optional): Epsilon parameter to prevent division by zero in Adam optimizer. Default is 1e-8.
+
+        Returns:
+            float: Mean squared error loss between predicted outputs and true labels.
+        """
         AllOutputs, self.Parameters = self.optimiser(inputData, labels, useBatches, batchSize, alpha, beta1, beta2, epsilon)
         loss = MSELossFunction(AllOutputs, labels)
         return loss

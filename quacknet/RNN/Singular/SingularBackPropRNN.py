@@ -1,5 +1,5 @@
 import numpy as np
-from quacknet.core.checker import globalChecker
+from quacknet.core.utilities.checker import globalChecker
 
 class RNNBackProp:
     def _Singular_BPTT(self, inputs, AllHiddenStates, hiddenPreActivationValues, outputPreActivation, targets, outputs):

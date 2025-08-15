@@ -73,6 +73,34 @@ def test_MaxPoolingBackpropagation():
     assert errorTerm.shape == expectedInputErrorTerms.shape
     assert np.allclose(errorTerm, expectedInputErrorTerms)
 
+def test_MaxPoolingBackpropagation_with3Ddim():
+    inputTensor = np.array([[
+        [1, 3, 2, 4],
+        [2, 4, 1, 3],
+        [4, 1, 3, 2],
+        [3, 2, 4, 1],
+    ]])  
+
+    errorPatch = np.array([[
+        [10, 20],
+        [30, 40]
+    ]]) 
+
+    gridSize = strideLength = 2
+    pool = PoolingLayer(gridSize, strideLength, "max")
+
+    errorTerm = pool._backpropagation(errorPatch, inputTensor)
+
+    expectedInputErrorTerms = np.array([[
+        [0, 0, 0, 20],
+        [0, 10, 0, 0],
+        [30, 0, 0, 0],
+        [0, 0, 40, 0],
+    ]])
+
+    assert errorTerm.shape == expectedInputErrorTerms.shape
+    assert np.allclose(errorTerm, expectedInputErrorTerms)
+
 def test_AveragePoolingBackpropagation():
     inputTensor = np.array([[[
         [1, 3, 2, 4],
@@ -97,6 +125,35 @@ def test_AveragePoolingBackpropagation():
     assert errorTerm.shape == expectedInputErrorTerms.shape
     assert np.allclose(errorTerm, expectedInputErrorTerms)
 
+def test_AveragePoolingBackpropagation_with3Ddim():
+    inputTensor = np.array([[
+        [1, 3, 2, 4],
+        [2, 4, 1, 3],
+        [4, 1, 3, 2],
+        [3, 2, 4, 1],
+    ]])  
+
+    errorPatch = np.array([[
+        [10, 20],
+        [30, 40]
+    ]])  
+
+    gridSize = 2
+    strideLength = 2
+    pool = PoolingLayer(gridSize, strideLength, "ave")
+
+    errorTerm = pool._backpropagation(errorPatch, inputTensor)
+
+    expectedInputErrorTerms = np.array([[
+        [2.5, 2.5, 5, 5],
+        [2.5, 2.5, 5, 5],
+        [7.5, 7.5, 10, 10],
+        [7.5, 7.5, 10, 10],
+    ]])
+
+    assert errorTerm.shape == expectedInputErrorTerms.shape
+    assert np.allclose(errorTerm, expectedInputErrorTerms)
+
 def test_GlobalAveragePoolingBackpropagation():
     inputTensor = np.array([[[
         [1, 3, 2, 4],
@@ -117,7 +174,7 @@ def test_GlobalAveragePoolingBackpropagation():
     assert np.allclose(errorTerm, expectedInputErrorTerms)
 
 def test_ActivationLayerBackpropagation():
-    from quacknet.core.activationDerivativeFunctions import ReLUDerivative
+    from quacknet.core.activations.activationDerivativeFunctions import ReLUDerivative
     inputTensor = np.array([[
         [1, -3, 2, -4],
         [2, -4, -1, 3],

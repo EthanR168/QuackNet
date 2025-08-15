@@ -1,9 +1,9 @@
-from .activationFunctions import *
-from .activationDerivativeFunctions import *
-from .dataAugmentation import *
-from .lossFunctions import *
-from .lossDerivativeFunctions import *
-from .drawGraphs import *
+from .activations.activationFunctions import *
+from .activations.activationDerivativeFunctions import *
+from .utilities.dataAugmentation import *
+from .losses.lossFunctions import *
+from .losses.lossDerivativeFunctions import *
+from .utilities.drawGraphs import *
 
 __all__ = [
     "activationFunctions",

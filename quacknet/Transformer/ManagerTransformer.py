@@ -1,5 +1,5 @@
 from quacknet.core.optimisers import Adam
-from quacknet.core.lossFunctions import MSELossFunction
+from quacknet.core.losses.lossFunctions import MSELossFunction
 
 class Transformer:
     def __init__(self):

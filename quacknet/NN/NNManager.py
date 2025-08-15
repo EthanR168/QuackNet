@@ -1,9 +1,9 @@
 from quacknet.NN import backPropgation
-from quacknet.core.activationFunctions import relu, sigmoid, tanH, linear, softMax
-from quacknet.core.lossFunctions import MSELossFunction, MAELossFunction, CrossEntropyLossFunction
+from quacknet.core.activations.activationFunctions import relu, sigmoid, tanH, linear, softMax
+from quacknet.core.losses.lossFunctions import MSELossFunction, MAELossFunction, CrossEntropyLossFunction
 from quacknet.NN.initialisers import Initialisers
 from quacknet.NN.writeAndReadWeightBias import writeAndRead
-from quacknet.core.dataAugmentation import Augementation
+from quacknet.core.utilities.dataAugmentation import Augementation
 from quacknet.core.optimisers.adam import Adam
 import numpy as np
 

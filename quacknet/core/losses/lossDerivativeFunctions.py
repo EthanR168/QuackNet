@@ -1,5 +1,5 @@
 import numpy as np
-from quacknet.core.activationDerivativeFunctions import SoftMaxDerivative
+from quacknet.core.activations.activationDerivativeFunctions import SoftMaxDerivative
 
 def MSEDerivative(value, trueValue, sizeOfLayer):
     """

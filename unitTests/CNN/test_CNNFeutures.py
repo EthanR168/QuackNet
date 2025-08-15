@@ -160,7 +160,29 @@ class Test_Pooling:
         assert expected.shape == output.shape
         assert np.allclose(expected, output)
 
-    def test_averagePooling2(self):
+    def test_maxPooling_3Ddim(self):
+        inputTensor = np.array([
+            [
+                [1, 2],
+                [3, 4],
+            ],
+            [
+                [5, 6],
+                [8, 7],
+            ],
+        ]) 
+        sizeOfGrid = strideLength = 2
+        
+        Pool = PoolingLayer(sizeOfGrid, strideLength, "max")
+
+        output = Pool.forward(inputTensor)
+        
+        expected = np.array([[[4]], [[8]]])
+
+        assert expected.shape == output.shape
+        assert np.allclose(expected, output)
+
+    def test_averagePooling(self):
         inputTensor = np.array([[
             [
                 [1, 2, 1, 2],
@@ -205,6 +227,28 @@ class Test_Pooling:
         assert expected.shape == output.shape
         assert np.allclose(expected, output)
 
+    def test_averagePooling_3Ddim(self):
+        inputTensor = np.array([
+            [
+                [1, 2],
+                [3, 4],
+            ],
+            [
+                [5, 6],
+                [8, 7],
+            ],
+        ]) 
+        sizeOfGrid = strideLength = 2
+        
+        Pool = PoolingLayer(sizeOfGrid, strideLength, "ave")
+
+        output = Pool.forward(inputTensor)
+        
+        expected = np.array([[[2.5]], [[6.5]]])
+
+        assert expected.shape == output.shape
+        assert np.allclose(expected, output)
+
 class Test_PoolingGlobalAverage:
     def test_poolingGlobalAverage(self):
         inputTensor = np.array([[
@@ -231,6 +275,24 @@ class Test_PoolingGlobalAverage:
         output = GlobalAveragePooling.forward(self, inputTensor)
 
         expected = np.array([[2.5, 1, 8.5]])
+
+        assert output.shape == expected.shape
+        assert np.allclose(expected, output)
+    
+    def test_poolingGlobalAverage_with3DInputDim(self):
+        inputTensor = np.array([
+            [
+                [1, 2],
+                [3, 4],
+            ],
+            [
+                [5, 6],
+                [8, 7],
+            ],
+        ]) 
+
+        output = GlobalAveragePooling.forward(self, inputTensor)
+        expected = np.array([2.5, 6.5])
 
         assert output.shape == expected.shape
         assert np.allclose(expected, output)

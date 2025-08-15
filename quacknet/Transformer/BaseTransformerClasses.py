@@ -4,8 +4,8 @@ from quacknet.Transformer.layers.MultiHeadAttention import MultiAttentionHeadLay
 from quacknet.Transformer.layers.NormLayer import NormLayer
 from quacknet.Transformer.layers.PositionalEncoding import PositionalEncoding
 from quacknet.Transformer.layers.EmbeddingLayer import EmbeddingLayer
-from quacknet.core.lossDerivativeFunctions import MSEDerivative
-from quacknet.core.lossFunctions import MSELossFunction
+from quacknet.core.losses.lossDerivativeFunctions import MSEDerivative
+from quacknet.core.losses.lossFunctions import MSELossFunction
 from quacknet.core.optimisers.adam import Adam
 import numpy as np
 

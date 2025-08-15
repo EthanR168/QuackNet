@@ -33,8 +33,8 @@ class Adam:
 
             for key in Gradients:
                 if(isinstance(Gradients[key], list)): # inhomengous array
-                    for i in range(len(Gradients[key])):
-                        Gradients[key][i] = np.array(Gradients[key][i]) / batchSize
+                    for j in range(len(Gradients[key])):
+                        Gradients[key][j] = np.array(Gradients[key][j]) / batchSize
                 else:
                     Gradients[key] = Gradients[key] / batchSize
 

@@ -1,8 +1,8 @@
-from quacknet.core.activationFunctions import relu, sigmoid, linear, tanH, softMax
+from quacknet.core.activations.activationFunctions import relu, sigmoid, linear, tanH, softMax
 from quacknet.RNN.Singular.SingularBackPropRNN import RNNBackProp
-from quacknet.core.lossFunctions import MAELossFunction, MSELossFunction, CrossEntropyLossFunction
-from quacknet.core.lossDerivativeFunctions import MAEDerivative, MSEDerivative, CrossEntropyLossDerivative
-from quacknet.core.activationDerivativeFunctions import ReLUDerivative, SigmoidDerivative, LinearDerivative, TanHDerivative, SoftMaxDerivative
+from quacknet.core.losses.lossFunctions import MAELossFunction, MSELossFunction, CrossEntropyLossFunction
+from quacknet.core.losses.lossDerivativeFunctions import MAEDerivative, MSEDerivative, CrossEntropyLossDerivative
+from quacknet.core.activations.activationDerivativeFunctions import ReLUDerivative, SigmoidDerivative, LinearDerivative, TanHDerivative, SoftMaxDerivative
 from quacknet.core.optimisers.adam import Adam
 import numpy as np
 import math

@@ -1,6 +1,6 @@
 import math
 import numpy as np
-from quacknet.core.activationFunctions import relu, sigmoid
+from quacknet.core.activations.activationFunctions import relu, sigmoid
 
 class Initialisers: 
     def createWeightsAndBiases(self):

@@ -1,4 +1,4 @@
-from quacknet.core.activationDerivativeFunctions import ReLUDerivative
+from quacknet.core.activations.activationDerivativeFunctions import ReLUDerivative
 import numpy as np
 
 class ActivationLayer: # basically aplies an activation function over the whole Tensor (eg. leaky relu)

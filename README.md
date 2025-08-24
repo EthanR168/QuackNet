@@ -8,25 +8,14 @@
 
 ---
 
-## Installation
-
-Install QuackNet from PyPI:
-
-```bash
-pip install QuackNet
-```
- 
----
-
 ## Why QuackNet?
 
-Most high level libraries (like TensorFlow and PyTorch) abstract away the inner workings of deep learning models.
+Most high level libraries (like TensorFlow and PyTorch) abstract the inner workings of deep learning models.
 
 **QuackNet** exposes every step of the process:
--   Forward / backward propagation
--   Gradient computation
--   Weight and bias updates
--   Layer by layer training flow
+-   Forward and backward propagation
+-   Manual gradient computation
+-   Weight and bias updates layer by layer
 
 Ideal for students, researchers, and hobbyists wanting to understand how deep learning works.
 
@@ -39,7 +28,7 @@ Ideal for students, researchers, and hobbyists wanting to understand how deep le
     -   Dense (Fully connected)
     -   Convolutional (with pooling and flattening)
     -   Stacked RNN (no LSTM / GRU)
-    -   Transformer (multi head attention, norm, residual, positional encoding)
+    -   Transformer (multi head attention, normalisation, residual connections, positional encoding)
 -   **Activation Functions** ReLU, Leaky Relu, Sigmoid, SoftMax, Tanh
 -   **Loss Functions** Cross Entropy, MSE, MAE
 -   **Optimisers** GD, SGD, Adam
@@ -51,6 +40,16 @@ Ideal for students, researchers, and hobbyists wanting to understand how deep le
 
 ---
 
+## Installation
+
+Install QuackNet from PyPI:
+
+```bash
+pip install QuackNet
+```
+ 
+---
+
 ## Quick Start
 
 ```python
@@ -58,7 +57,7 @@ Ideal for students, researchers, and hobbyists wanting to understand how deep le
 from quacknet import Network
 
 n = Network(lossFunc="Cross Entropy", learningRate=0.01, optimisationFunc="SGD")
-n.addLayer(3)
+n.addLayer(3)           
 n.addLayer(1, "SoftMax")
 n.createWeightsAndBiases()
 
@@ -190,8 +189,10 @@ Below is the graph showing the training accuracy and loss over 10 epochs, across
     Add pixel normalisation of pixels and one-hot encoded label
 - [X] **Skin Lesion detector**    
     Use the neural network library to create a model for detecting skin lesions using HAM10000 for skin lesion images
-- [X] **Recurrent Neural Network and Transformers**
-    Implement BPTT, multi head attention, residual connection 
+- [X] **Recurrent Neural Network**
+    Implement BPTT, with singular and stacked RNN implementation
+- [X] **Transformer**
+    Implement Multi head Attention, residual connections, normalisation, positional encoding
 - [ ] **Additional activation functions**  
     Implement advanced activation functions (eg. GELU and Swish)
 - [ ] **Additional regularisation**
@@ -234,7 +235,7 @@ coverage report -m
 
 ### Skin Lesion Detector
 
-A convolutional neural network (CNN) skin lesion classification model built with QuackNet, trained using the HAM10000 dataset. This model achieved 60.2% accuracy on a balanced validation set of skin lesion images.
+A convolutional neural network (CNN) skin lesion classification model built with QuackNet, trained using the HAM10000 dataset. This model achieved 72% accuracy on a balanced validation set of skin lesion images.
 
 You can explore the full project here:
 [Skin Lesion Detector Repository](https://github.com/SirQuackPng/skinLesionDetector)
@@ -260,11 +261,18 @@ This project demonstrates how QuackNet can be applied to real-world image classi
     -   Optimisers: Adam optimiser, SGD, GD, GD using batching
 
 ### RNN Class
--   Time step unrolling and backpropagation through time (BPTT)
+-   **Purpose** Handles sequential data with temporal dependencies
+-   **Key Components:**
+    -   Layers: Singular RNN, Stacked RNN
+    -   Functions: Forward propagation across time steps, backpropagation through time (BPTT)
+    -   Optimisers: Adam, SGD, GD, GD using batching
 
 ### Transformer Class
--   Multi head self attention
--   Residuals, Layer Norm, position wise FFN, embedding
+-   **Purpose** Handles sequences with long range dependencies using attention mechanisms
+-   **Key Components:**
+    -   Layers: Multi head self attention, position wise feed forward network, embeddings
+    -   Functions: Forward propagation, residual connections, layer normalisation, backpropagation
+    -   Optimisers: Adam, SGD, GD, GD using batching
 
 ---
 

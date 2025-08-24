@@ -57,7 +57,7 @@ class Augementation:
             images.append(normalised)
         return np.array(images)
 
-    def dataAugmentation(self, images):
+    def dataAugmentation(self, images, labels):
         """
         Performs basic data augmentation by flipping horizontally and vertically.
 
@@ -66,11 +66,18 @@ class Augementation:
         
         Returns:
             ndarray: A list containing the augmented and original images.
+            ndarray: A list containing the labels for the augmented images.
         """
         allImages = []
+        allLabels = []
         for img in images:
             allImages.append(img)
             allImages.append(np.fliplr(img))
             allImages.append(np.flipud(img))
             allImages.append(np.flipud(np.fliplr(img)))
-        return np.array(allImages)
+
+            allLabels.append(labels)
+            allLabels.append(labels)
+            allLabels.append(labels)
+            allLabels.append(labels)
+        return np.array(allImages), np.array(allLabels)

@@ -25,7 +25,7 @@ targets = [
     np.array([0]),
 ]
 
-learningRate = 0.1
+learningRate = 0.01
 epochs = 500
 
 rnn.initialiseWeights(inputSize=1, outputSize=1)

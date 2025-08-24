@@ -9,14 +9,21 @@ def test_flip():
 
     img = np.array([[[1, 0, 0]] * 2] * 2)
     images = np.array([img])
+    labels = np.array([[[1, 0, 0]] * 2] * 2)
 
-    augmeted = aug.dataAugmentation(images)
+    augmetedImages, augmetedLabels = aug.dataAugmentation(images, labels)
 
-    assert augmeted.shape == (4, 2, 2, 3)
-    assert np.allclose(augmeted[0], img)
-    assert np.allclose(augmeted[1], np.fliplr(img))
-    assert np.allclose(augmeted[2], np.flipud(img))
-    assert np.allclose(augmeted[3], np.flipud(np.fliplr(img)))
+    assert augmetedImages.shape == (4, 2, 2, 3)
+    assert np.allclose(augmetedImages[0], img)
+    assert np.allclose(augmetedImages[1], np.fliplr(img))
+    assert np.allclose(augmetedImages[2], np.flipud(img))
+    assert np.allclose(augmetedImages[3], np.flipud(np.fliplr(img)))
+
+    assert augmetedLabels.shape == (4, 2, 2, 3)
+    assert np.allclose(augmetedLabels[0], img)
+    assert np.allclose(augmetedLabels[1], np.fliplr(img))
+    assert np.allclose(augmetedLabels[2], np.flipud(img))
+    assert np.allclose(augmetedLabels[3], np.flipud(np.fliplr(img)))
 
 def test_hotEncodeLabels():
     labels = [0, 2, 1]

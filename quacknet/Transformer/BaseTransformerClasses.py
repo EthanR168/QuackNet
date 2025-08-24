@@ -57,7 +57,7 @@ class Transformer:
 """
 
 class TransformerBlock:
-    def __init__(self, batchSize, sequenceLength, vocabSize, embedDimension, positionalEmbddingDimension, numberHeads, hiddenDimensionFFN, useResidual = True, useNorm = True):
+    def __init__(self, batchSize, sequenceLength, vocabSize, embedDimension, positionalEmbddingDimension, numberHeads, hiddenDimensionFFN, blockType = "encoder", useResidual = True, useNorm = True):
         self.batchSize = batchSize
         self.sequenceLength = sequenceLength
         self.vocabSize = vocabSize
@@ -67,6 +67,10 @@ class TransformerBlock:
         self.useResidual = useResidual
         self.useNorm = useNorm
         self.positionalEmbddingDimension = positionalEmbddingDimension
+
+        self.isDecoder = False
+        if(blockType.lower() == "decoder"):
+            self.isDecoder = True
 
         self.embedding = EmbeddingLayer(
             vocabSize=vocabSize,
@@ -88,6 +92,7 @@ class TransformerBlock:
             ValueWeights=None,
             outputWeight=None,
             outputBias=None,
+            useCasualMasking=self.isDecoder, # if it is decoder it uses casual masking to mask future tokens
         )
 
         self.FFN = FeedForwardNetwork(

@@ -125,13 +125,31 @@ class CNNModel:
         
         nodes, _ = self._optimser(inputData, labels, useBatches, batchSize, alpha, beta1, beta2, epsilon)        
         
-        lastLayer = len(nodes[0]) - 1
-        for i in range(len(nodes)): 
-            totalLoss += self.NeuralNetworkClass.lossFunction(nodes[i][lastLayer], labels[i])
-            nodeIndex = np.argmax(nodes[i][lastLayer])
-            labelIndex = np.argmax(labels[i])
-            if(nodeIndex == labelIndex):
-                correct += 1
+        #nodes: (numbatches, numLayers, batchSize, outputSize)
+
+        #lastLayer = len(nodes[0]) - 1
+        #for i in range(len(nodes)): 
+        #    totalLoss += self.NeuralNetworkClass.lossFunction(nodes[i][lastLayer], labels[i])
+        #    nodeIndex = np.argmax(nodes[i][lastLayer])
+        #    labelIndex = np.argmax(labels[i])
+        #    
+        #    if(nodeIndex == labelIndex):
+        #        correct += 1
+
+        if(useBatches == False): 
+            batchSize = 1
+
+        for batch in range(len(nodes)): 
+            lastLayer = nodes[batch][-1] # shape: (batchSize, outputSize) <-- last layer so is the FNN
+            for miniBatch in range(len(lastLayer)): #shape: (outputSize)
+                totalLoss += self.NeuralNetworkClass.lossFunction(lastLayer[miniBatch], labels[batch * batchSize + miniBatch])
+                nodeIndex = np.argmax(lastLayer[miniBatch])
+                labelIndex = np.argmax(labels[batch * batchSize + miniBatch])
+                
+                if(nodeIndex == labelIndex):
+                    correct += 1
+
+
         return 100 * (correct / len(labels)), totalLoss / len(labels)
     
     def createWeightsBiases(self):

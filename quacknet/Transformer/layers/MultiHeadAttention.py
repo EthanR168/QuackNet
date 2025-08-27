@@ -57,7 +57,7 @@ class MultiAttentionHeadLayer:
         self.sequenceLength = sequenceLength
         self.useCasualMasking = useCasualMasking
         if(self.useCasualMasking == True):
-            self.casualMask = self.createCausalMask(batchSize, numberOfHeads, sequenceLength)
+            self.casualMask = self.createCausalMask(batchSize, sequenceLength)
 
         assert embedDimension % numberOfHeads == 0, "Embedding Dimension must be divisible by the number of heads"
 
@@ -169,9 +169,8 @@ class MultiAttentionHeadLayer:
         )
         return outputWeightGradient, outputBiasGradient, inputDerivative, QueryWeightDerivative, KeyWeightDerivative, ValueWeightDerivative
     
-    def createCausalMask(self, batchSize, numberHeads, sequenceLength):
+    def createCausalMask(self, batchSize, sequenceLength):
         mask = np.tril(np.ones((sequenceLength, sequenceLength), dtype=np.bool_))
-        mask = mask[np.newaxis, np.newaxis, :, :]
+        mask = mask[np.newaxis, :, :]
         mask = np.repeat(mask, batchSize, axis=0)
-        mask = np.repeat(mask, numberHeads, axis=1)
         return mask

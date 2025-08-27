@@ -9,40 +9,26 @@ def test_StackedTransformer_CheckIfModelCanLearnOnSimpleData():
     batchSize = 1
     vocabSize = 2
 
-    transformer = Transformer()
-    transformer.addBlock(TransformerBlock(
+    transformer = Transformer(
         batchSize=batchSize,
         sequenceLength=sequenceLength,
-        vocabSize=vocabSize,
         embedDimension=embeddingDimension,
-        positionalEmbddingDimension=sequenceLength,
-        numberHeads=numberHeads,
-        hiddenDimensionFFN=FFNHiddenDimension,
-        useResidual=True,
-        useNorm=True
-    ))
-    transformer.addBlock(TransformerBlock(
-        batchSize=batchSize,
-        sequenceLength=sequenceLength,
         vocabSize=vocabSize,
-        embedDimension=embeddingDimension,
-        positionalEmbddingDimension=sequenceLength,
-        numberHeads=numberHeads,
-        hiddenDimensionFFN=FFNHiddenDimension,
-        useResidual=True,
-        useNorm=True
-    ))
-    transformer.addBlock(TransformerBlock(
-        batchSize=batchSize,
-        sequenceLength=sequenceLength,
-        vocabSize=vocabSize,
-        embedDimension=embeddingDimension,
-        positionalEmbddingDimension=sequenceLength,
-        numberHeads=numberHeads,
-        hiddenDimensionFFN=FFNHiddenDimension,
-        useResidual=True,
-        useNorm=True
-    ))
+        hasDecoderBlock=False,
+    )
+    
+    for _ in range(3):
+        transformer.addBlock(TransformerBlock(
+            batchSize=batchSize,
+            sequenceLength=sequenceLength,
+            vocabSize=vocabSize,
+            embedDimension=embeddingDimension,
+            positionalEmbddingDimension=sequenceLength,
+            numberHeads=numberHeads,
+            hiddenDimensionFFN=FFNHiddenDimension,
+            useResidual=True,
+            useNorm=True
+        ))
 
     inputs = np.array([[0, 1, 1, 1]])
 
@@ -56,7 +42,7 @@ def test_StackedTransformer_CheckIfModelCanLearnOnSimpleData():
 
     initialLoss = transformer.train(inputs, targets, useBatches=False, alpha=learningRate)
         
-    for i in range(100):
+    for _ in range(100):
         loss = transformer.train(inputs, targets, useBatches=False, alpha=learningRate)
 
     assert loss < initialLoss

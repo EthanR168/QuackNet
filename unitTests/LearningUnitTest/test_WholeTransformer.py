@@ -20,6 +20,7 @@ def test_Transformer_CheckIfModelCanLearnOnSimpleData():
         useResidual=True,
         useNorm=True
     )
+    block.firstBlock = True
 
     inputs = np.array([[0, 1, 1, 1]])
 

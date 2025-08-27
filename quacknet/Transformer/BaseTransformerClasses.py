@@ -112,7 +112,7 @@ class TransformerBlock:
 
     def forwardPropagation(self, input, firstBlock = True):
         self.firstBlock = firstBlock
-        if(firstBlock == True):
+        if(self.firstBlock == True):
             input = self.embedding.forwardPropagation(input)
 
             input = self.positionalEncoding.forwardPropagation(input)
@@ -138,7 +138,18 @@ class TransformerBlock:
 
         InputDerivative = MSEDerivative(output, labels, output.shape[-1])
         assert InputDerivative.shape == (self.batchSize, self.sequenceLength, self.embedDimension), f"MSE Derivative expected derviative {(self.batchSize, self.sequenceLength, self.embedDimension)}, got {InputDerivative.shape}"
+        
+        Parameters, Gradients, InputDerivative = self.blockBackPropagation(InputDerivative)
 
+        return Parameters, Gradients
+
+    def blockBackPropagation(self, InputDerivative): #, output, labels): 
+        """
+        assert output.shape == (self.batchSize, self.sequenceLength, self.embedDimension), f"MSE Derivative expected derviative {(self.batchSize, self.sequenceLength, self.embedDimension)}, got {output.shape}"
+
+        InputDerivative = MSEDerivative(output, labels, output.shape[-1])
+        assert InputDerivative.shape == (self.batchSize, self.sequenceLength, self.embedDimension), f"MSE Derivative expected derviative {(self.batchSize, self.sequenceLength, self.embedDimension)}, got {InputDerivative.shape}"
+        """
         if(self.useNorm == True):
             InputDerivative, norm2GammaDerivative, norm2BetaDerivative = self.norm2.backwardPropagation(InputDerivative)
             assert InputDerivative.shape == (self.batchSize, self.sequenceLength, self.embedDimension), f"Norm2 expected derviative {(self.batchSize, self.sequenceLength, self.embedDimension)}, got {InputDerivative.shape}"
@@ -170,6 +181,7 @@ class TransformerBlock:
         embeddingGradient = None
         if(self.firstBlock == True):
             embeddingGradient = self.embedding.backwardPropagation(InputDerivative)
+            InputDerivative = embeddingGradient
 
         Parameters =  {
             "Norm1_gamma": self.norm1.gamma, 
@@ -213,7 +225,7 @@ class TransformerBlock:
             if(Gradients[key].ndim == Parameters[key].ndim + 1 and Gradients[key].shape[0] == 1):
                 Gradients[key] = np.squeeze(Gradients[key], axis=0) # without batches some parameters are (1, x, y) which becomes (x, y) so this turns them back into (x, y)
 
-        return Parameters, Gradients 
+        return Parameters, Gradients, InputDerivative
     
     def optimiser(self, inputData, labels, useBatches, batchSize, alpha, beta1, beta2, epsilon):
         AllOutputs, Parameters = self.adam.optimiser(inputData, labels, useBatches, batchSize, alpha, beta1, beta2, epsilon)       

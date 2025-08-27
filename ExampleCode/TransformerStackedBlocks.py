@@ -8,7 +8,14 @@ FFNHiddenDimension = 16
 batchSize = 1
 vocabSize = 2
 
-transformer = Transformer()
+transformer = Transformer(
+    batchSize=batchSize,
+    sequenceLength=sequenceLength,
+    embedDimension=embeddingDimension,
+    vocabSize=vocabSize,
+    hasDecoderBlock=False,
+)
+
 transformer.addBlock(TransformerBlock(
     batchSize=batchSize,
     sequenceLength=sequenceLength,

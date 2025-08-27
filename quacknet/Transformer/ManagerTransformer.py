@@ -1,15 +1,28 @@
+from quacknet.core.losses.lossDerivativeFunctions import MSEDerivative
 from quacknet.core.optimisers import Adam
 from quacknet.core.losses.lossFunctions import MSELossFunction
+from quacknet.core.activations.activationFunctions import softMax
+from quacknet.core.activations.activationDerivativeFunctions import SoftMaxDerivative
+from quacknet.Transformer.layers.LinearLayer import LinearLayer
 
 class Transformer:
-    def __init__(self):
+    def __init__(self, batchSize, sequenceLength, embedDimension, vocabSize, hasDecoderBlock):
         """
-        Initializes the model with an Adam optimizer instance and
-        an empty dictionary to store model blocks.        
+        Initializes the model with an Adam optimizer instance,
+        an empty dictionary to store model blocks, and
+        the output linear layer for decoder.        
         """
         self.adam = Adam(self.forwardPropagation, self.backwardPropagation)
         
         self.blocks = {}
+
+        self.linearLayer = LinearLayer(
+            batchSize=batchSize,
+            sequenceLength=sequenceLength,
+            inFeatures=embedDimension,
+            outFeatures=vocabSize,
+        )
+        self.hasDecoderBlock = hasDecoderBlock
 
     def addBlock(self, block):
         """
@@ -23,21 +36,36 @@ class Transformer:
     def forwardPropagation(self, input):
         for key in self.blocks:
             if(key == 0):
-                input = self.blocks[key].forwardPropagation(input)
+                input = self.blocks[key].forwardPropagation(input, True)
             else:
                 input = self.blocks[key].forwardPropagation(input, False)
+
+        if(self.hasDecoderBlock == True):
+            input = self.linearLayer.forwardPropagation(input)
+            input = softMax(input)
+        
         return input
 
     def backwardPropagation(self, output, labels):
         Parameters = {}
         Gradients = {}
-        for blockKey in self.blocks:
-            Param, Grad = self.blocks[blockKey].backwardPropagation(output, labels)
+
+        if(self.hasDecoderBlock == True):
+            inpDeriv = SoftMaxDerivative(output, labels)
+            Param, Grad = self.linearLayer.backwardPropagation(inpDeriv)
+            for key in Param:
+                Parameters.update({f"Linear.{key}": Param[key]})
+                Gradients.update({f"Linear.{key}": Grad[key]})   
+        else:
+            inpDeriv = MSEDerivative(output, labels, output.shape[-1])
+
+        for blockKey in reversed(self.blocks):
+            Param, Grad, inpDeriv = self.blocks[blockKey].blockBackPropagation(inpDeriv)
 
             for key in Param:
                 Parameters.update({f"{blockKey}.{key}": Param[key]}) # block key: 2, key: ATT_WO
                 Gradients.update({f"{blockKey}.{key}": Grad[key]})   # will become 2.ATT_WO
-        
+
         return Parameters, Gradients
 
     def optimiser(self, inputData, labels, useBatches, batchSize, alpha, beta1, beta2, epsilon):
@@ -59,6 +87,10 @@ class Transformer:
             self.blocks[i].attention.ValueWeights = Parameters[f"{i}.ATT_WV"]
             if(i == 0):
                 self.blocks[i].embedding.weights = Parameters[f"{i}.Embed_W"]
+
+        if(self.hasDecoderBlock == True):
+            self.linearLayer.weights = Parameters[f"Linear.LO_W"]
+            self.linearLayer.bias = Parameters[f"Linear.LO_b"] 
 
         return AllOutputs, Parameters
 

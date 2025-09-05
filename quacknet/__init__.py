@@ -21,6 +21,8 @@ from .core.optimisers.gradientDescent import GD
 
 from .NN import Network
 
+from .universalLayers import Dropout
+
 """
 # QuackNet
 

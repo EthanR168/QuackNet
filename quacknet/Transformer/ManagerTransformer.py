@@ -4,6 +4,7 @@ from quacknet.core.losses.lossFunctions import MSELossFunction
 from quacknet.core.activations.activationFunctions import softMax
 from quacknet.core.activations.activationDerivativeFunctions import SoftMaxDerivative
 from quacknet.Transformer.layers.LinearLayer import LinearLayer
+import numpy as np
 
 class Transformer:
     def __init__(self, batchSize, sequenceLength, embedDimension, vocabSize, hasDecoderBlock):
@@ -16,13 +17,15 @@ class Transformer:
         
         self.blocks = {}
 
-        self.linearLayer = LinearLayer(
-            batchSize=batchSize,
-            sequenceLength=sequenceLength,
-            inFeatures=embedDimension,
-            outFeatures=vocabSize,
-        )
         self.hasDecoderBlock = hasDecoderBlock
+
+        if(self.hasDecoderBlock == True):
+            self.linearLayer = LinearLayer(
+                batchSize=batchSize,
+                sequenceLength=sequenceLength,
+                inFeatures=embedDimension,
+                outFeatures=vocabSize,
+            )
 
     def addBlock(self, block):
         """
@@ -51,8 +54,8 @@ class Transformer:
         Gradients = {}
 
         if(self.hasDecoderBlock == True):
-            inpDeriv = SoftMaxDerivative(output, labels)
-            Param, Grad = self.linearLayer.backwardPropagation(inpDeriv)
+            inpDeriv = SoftMaxDerivative(labels, output)
+            Param, Grad, inpDeriv = self.linearLayer.backwardPropagation(inpDeriv)
             for key in Param:
                 Parameters.update({f"Linear.{key}": Param[key]})
                 Gradients.update({f"Linear.{key}": Grad[key]})   
@@ -92,7 +95,35 @@ class Transformer:
             self.linearLayer.weights = Parameters[f"Linear.LO_W"]
             self.linearLayer.bias = Parameters[f"Linear.LO_b"] 
 
+        self.params = Parameters
         return AllOutputs, Parameters
+
+    def saveWeights(self, fileName = "TransformerParameters.npz"):
+        np.savez(fileName, **self.params)
+
+    def loadWeights(self, fileName = "TransformerParameters.npz"):
+        loaded = np.load(fileName)
+
+        for i in range(len(self.blocks)):
+            self.blocks[i].norm1.gamma = loaded[f"{i}.Norm1_gamma"]
+            self.blocks[i].norm1.beta = loaded[f"{i}.Norm1_beta"] 
+            self.blocks[i].norm2.gamma = loaded[f"{i}.Norm2_gamma"] 
+            self.blocks[i].norm2.beta = loaded[f"{i}.Norm2_beta"]
+            self.blocks[i].FFN.W1 = loaded[f"{i}.FFN_W1"] 
+            self.blocks[i].FFN.b1 = loaded[f"{i}.FFN_b1"] 
+            self.blocks[i].FFN.W2 = loaded[f"{i}.FFN_W2"] 
+            self.blocks[i].FFN.b2 = loaded[f"{i}.FFN_b2"] 
+            self.blocks[i].attention.outputWeight = loaded[f"{i}.ATT_WO"] 
+            self.blocks[i].attention.outputBias = loaded[f"{i}.ATT_BO"] 
+            self.blocks[i].attention.QueryWeights = loaded[f"{i}.ATT_WQ"] 
+            self.blocks[i].attention.KeyWeights = loaded[f"{i}.ATT_WK"] 
+            self.blocks[i].attention.ValueWeights = loaded[f"{i}.ATT_WV"]
+            if(i == 0):
+                self.blocks[i].embedding.weights = loaded[f"{i}.Embed_W"]
+
+        if(self.hasDecoderBlock == True):
+            self.linearLayer.weights = loaded[f"Linear.LO_W"]
+            self.linearLayer.bias = loaded[f"Linear.LO_b"] 
 
     def train(self, inputData, labels, useBatches = False, batchSize = 16, alpha = 0.001, beta1 = 0.9, beta2 = 0.999, epsilon = 1e-8):
         """
@@ -114,4 +145,5 @@ class Transformer:
         """
         AllOutputs, self.Parameters = self.optimiser(inputData, labels, useBatches, batchSize, alpha, beta1, beta2, epsilon)
         loss = MSELossFunction(AllOutputs, labels)
-        return loss
+        return loss / len(inputData)
+    

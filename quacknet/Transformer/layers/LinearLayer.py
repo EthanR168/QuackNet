@@ -53,5 +53,5 @@ class LinearLayer:
             "LO_b": biasGrad,
         }
 
-        return Parameters, Gradients
+        return Parameters, Gradients, inputDerivative
 

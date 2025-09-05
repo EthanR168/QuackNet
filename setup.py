@@ -2,8 +2,8 @@ from setuptools import setup, find_packages
 
 setup(
     name='QuackNet',
-    version='1.5',
-    description='A lightweight educational neural network library',
+    version='1.6',
+    description='A lightweight educational deep learning library',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     url='https://github.com/SirQuackPng/QuackNet',

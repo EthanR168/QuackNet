@@ -45,7 +45,7 @@ Order of forward prop:
 """
 
 class MultiAttentionHeadLayer:
-    def __init__(self, batchSize, sequenceLength, embedDimension, numberOfHeads, QueryWeights, KeyWeights, ValueWeights, outputWeight, outputBias, useCasualMasking = False):
+    def __init__(self, batchSize, sequenceLength, embedDimension, numberOfHeads, QueryWeights, KeyWeights, ValueWeights, outputWeight, outputBias, useCasualMasking = False, usePaddingMask = False, paddingMask = None):
         self.embedDimension = embedDimension
         self.numberOfHeads = numberOfHeads
         self.QueryWeights = QueryWeights
@@ -56,8 +56,11 @@ class MultiAttentionHeadLayer:
         self.batchSize = batchSize 
         self.sequenceLength = sequenceLength
         self.useCasualMasking = useCasualMasking
+        self.usePaddingMask = usePaddingMask
         if(self.useCasualMasking == True):
             self.casualMask = self.createCausalMask(batchSize, sequenceLength)
+        self.paddingMask = paddingMask
+        self.batchIndex = 0
 
         assert embedDimension % numberOfHeads == 0, "Embedding Dimension must be divisible by the number of heads"
 
@@ -107,7 +110,11 @@ class MultiAttentionHeadLayer:
         
         if(self.useCasualMasking == True):
             attentionScore = np.where(self.casualMask == 0, -1e9, attentionScore) # masks attention with very large negative number 
-        
+
+        if(self.usePaddingMask == True and self.paddingMask is not None):
+            attentionScore = np.where(self.paddingMask[self.batchIndex*self.batchSize: (self.batchIndex+1)*self.batchSize] == 0, -1e9, attentionScore) # masks attention with very large negative number  
+            self.batchIndex += 1
+
         attentionWeights = self._TransformerSoftMax(attentionScore)  # this is used in backprop
         attentionOutput = attentionWeights @ ValueHead
         return attentionOutput, attentionWeights
@@ -142,6 +149,7 @@ class MultiAttentionHeadLayer:
         QHead, KHead, VHead = self.SplitIntoHeads(Query, Key, Value)
         combinedAttention = self.calculateAttention(QHead, KHead, VHead)
         output = self.outputProjectionLayer(combinedAttention)
+        self.batchIndex = 0
         return output
     
     def createWeights(self):

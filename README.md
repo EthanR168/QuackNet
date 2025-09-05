@@ -29,7 +29,7 @@ Ideal for students, researchers, and hobbyists wanting to understand how deep le
     -   Convolutional (with pooling and flattening)
     -   Stacked RNN (no LSTM / GRU)
     -   Transformer (multi head attention, normalisation, residual connections, positional encoding)
--   **Activation Functions** ReLU, Leaky Relu, Sigmoid, SoftMax, Tanh
+-   **Activation Functions** ReLU, Leaky ReLU, Sigmoid, SoftMax, Tanh
 -   **Loss Functions** Cross Entropy, MSE, MAE
 -   **Optimisers** GD, SGD, Adam
 -   **Utilities**

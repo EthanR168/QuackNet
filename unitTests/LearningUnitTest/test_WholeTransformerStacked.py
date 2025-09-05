@@ -37,7 +37,7 @@ def test_StackedTransformer_CheckIfModelCanLearnOnSimpleData():
     targets[0, 1, :] = 1.0
     targets[0, 2, :] = 1.0
     targets[0, 3, :] = 1.0
-
+    
     learningRate = 0.01
 
     initialLoss = transformer.train(inputs, targets, useBatches=False, alpha=learningRate)

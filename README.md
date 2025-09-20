@@ -1,6 +1,9 @@
 # QuackNet
 
-**QuackNet** is a deep learning library built from scratch using NumPy. Designed for educational use and hands on experimentation with Neural Networks, CNNs, RNNs, and Transformers without relying on PyTorch or TensorFlow.
+> Built from scratch by a 16-year-old, QuackNet implements NN, CNN, RNN, and Transformers entirely in NumPy, with 150+ unit tests, PyPI distribution, and benchmarks that outperform PyTorch/TensorFlow on MNIST.
+
+
+**QuackNet** is a from scratch deep learning library in NumPy with full support for Neural Networks, CNNs, RNNs, and Transformers. Educational and benchmarked against PyTorch and TensorFlow.
 
 [![PyPI version](https://img.shields.io/pypi/v/QuackNet)](https://pypi.org/project/QuackNet/) 
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://sirquackpng.github.io/QuackNet/quacknet.html)
@@ -10,33 +13,39 @@
 
 ## Why QuackNet?
 
-Most high level libraries (like TensorFlow and PyTorch) abstract the inner workings of deep learning models.
+Most high level ML libraries (TensorFlow and PyTorch) abstract away the inner workings of deep learning models.
 
 **QuackNet** exposes every step of the process:
 -   Forward and backward propagation
 -   Manual gradient computation
 -   Weight and bias updates layer by layer
 
-Ideal for students, researchers, and hobbyists wanting to understand how deep learning works.
+Built to be both an educational tool and a lightweight research framework, QuackNet allows you to experiment with novel architectures while understanding every underlying computation.
 
 ---
 
 ## Key Features
 
--   **No ML frameworks used** built only with NumPy
--   **Fully Manual Layers**
-    -   Dense (Fully connected)
-    -   Convolutional (with pooling and flattening)
-    -   Stacked RNN (no LSTM / GRU)
-    -   Transformer (multi head attention, normalisation, residual connections, positional encoding)
--   **Activation Functions** ReLU, Leaky ReLU, Sigmoid, SoftMax, Tanh
--   **Loss Functions** Cross Entropy, MSE, MAE
--   **Optimisers** GD, SGD, Adam
--   **Utilities**
+-   **No ML frameworks used:** built only with NumPy
+-   **Core Models:**
+    -   Neural Network (Dense)
+    -   Convolutional Neural Network (Conv1D/2D, Pooling, Flatten, Global Average Pooling)
+    -   Recurrent Neural Network (Singular and Stacked RNN)
+    -   Transformer (Encoder & Decoder, multi head attention, normalisation, residual connections, positional encoding)
+-   **Activation Functions:** ReLU, Leaky ReLU, Sigmoid, SoftMax, Tanh
+-   **Loss Functions:** Cross Entropy, MSE, MAE
+-   **Optimisers:** GD, SGD, Adam, AdamW, RMSProp, Lion
+-   **Utilities:**
     -   Save/load weights and biases
     -   Visualise training progress (accuracy/loss graphs)
     -   Evaluate metrics (accuracy, loss)
     -   Real world demo projects (MNIST, HAM10000 skin lesions)
+    -   Data augmentation (flipping)
+-   **Professional Engineering:**
+    -   PyPi installable
+    -   Automated documentation via ```pdoc```
+    -   150+ unit tests with 91% coverage
+    -   Modular, beginner friendly API
 
 ---
 
@@ -113,7 +122,8 @@ print(f"Average loss: {averageLoss}")
 
 ### QuackNet vs PyTorch & TensorFlow
 
-The library was benchmarked on the MNIST dataset against PyTorch and TensorFlow using identical architectures and hyperparameters to ensure fair comparison. Also each framework ran 5 times, and was averaged at the end.
+QuackNet was benchmarked against PyTorch and TensorFlow using the MNIST dataset,using identical architectures and hyperparameters to ensure fair comparison. Also each framework ran 5 times, and was averaged at the end.
+
 Parameters:
 -   **Neural Network Model Architecture:** 784 (input) → 128 → 64 → 10 (output)
 -   **Activation Function:** Leaky ReLU for input and hidden layers, and SoftMax for output layer
@@ -151,12 +161,12 @@ Below is the graph showing the training accuracy and loss over 10 epochs, across
 ## Learning Outcomes
 
 **ML Foundations**
--   Manual backpropagation (dense, convolutional, BPTT, attention)
--   Deriving gradients and understanding chain rule
--   Optimisers like SGD, GD, and Adam
+-   Manual backpropagation (dense, convolutional, RNN BPTT, attention)
+-   Gradient derivation and chain rule
+-   Optimisers: SGD, GD, Adam, AdamW, RMSProp, Lion
 
 **Computer Science Practice**
--   90% test coverage with unit tests
+-   150+ unit tests, 91% coverage
 -   Modular, beginner friendly API design
 -   Efficient vectorised operations via NumPy
 -   Automated documentation with ```pdoc```
@@ -193,10 +203,19 @@ Below is the graph showing the training accuracy and loss over 10 epochs, across
     Implement BPTT, with singular and stacked RNN implementation
 - [X] **Transformer**
     Implement Multi head Attention, residual connections, normalisation, positional encoding
+
+## Future Roadmap
+
+QuackNet is now fully functional, stable and suitable for educational and experimental use. Future improvements are optional extensions to enchance capabilities and explore advanced research directions:
+
 - [ ] **Additional activation functions**  
     Implement advanced activation functions (eg. GELU and Swish)
 - [ ] **Additional regularisation**
-    Add L1/L2 regularisation and dropout 
+    Add L1/L2 regularisation and dropout to improve model generalisation and reduce overfitting
+- [ ] **Expanded demo projects**
+    Include additional example projects on more complex datasets to demonstrate practical applications of QuackNet
+- [ ] **Experimental optimisers**
+    Implement novel optimisation algorithms for experimentation and research purposes
 
 ---
 
@@ -213,8 +232,8 @@ These tests cover:
 
 -   Forward and backward propagation for both NN, CNN, RNN, and transformers
 -   Specific layers: Dense, Convolutional, Pooling, Multi head attention, Norm
--   Activation functions and loss functions, including their derivatives
--   Optimisation algorithms: SGD, GD, Adam
+-   Activation/loss functions, including their derivatives
+-   Optimisation (SGD, GD, Adam, AdamW, RMSProp, Lion)
 
 To run the tests:
 
@@ -251,28 +270,28 @@ This project demonstrates how QuackNet can be applied to real-world image classi
 -   **Key Components:**
     -   Layers: Dense Layer
     -   Functions: Forward propagation, backpropagation
-    -   Optimisers: SGD, GD, GD using batching
+    -   Optimisers: SGD, GD, GD, Adam, AdamW, RMSProp, Lion
 
 ### Convolutional Neural Network Class
 -   **Purpose** Specialised for image data processing using convolutional layers
 -   **Key Components:**
     -   Layers: Convolutional, pooling, dense and activation layers
     -   Functions: Forward propagation, backpropagation, flattening, global average pooling
-    -   Optimisers: Adam optimiser, SGD, GD, GD using batching
+    -   Optimisers: SGD, GD, GD, Adam, AdamW, RMSProp, Lion
 
 ### RNN Class
 -   **Purpose** Handles sequential data with temporal dependencies
 -   **Key Components:**
     -   Layers: Singular RNN, Stacked RNN
     -   Functions: Forward propagation across time steps, backpropagation through time (BPTT)
-    -   Optimisers: Adam, SGD, GD, GD using batching
+    -   Optimisers: SGD, GD, GD, Adam, AdamW, RMSProp, Lion
 
 ### Transformer Class
 -   **Purpose** Handles sequences with long range dependencies using attention mechanisms
 -   **Key Components:**
-    -   Layers: Multi head self attention, position wise feed forward network, embeddings
+    -   Layers: Multi head self attention, position wise feed forward network, embeddings, positional encoding
     -   Functions: Forward propagation, residual connections, layer normalisation, backpropagation
-    -   Optimisers: Adam, SGD, GD, GD using batching
+    -   Optimisers: SGD, GD, GD, Adam, AdamW, RMSProp, Lion
 
 ---
 

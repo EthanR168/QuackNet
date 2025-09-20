@@ -25,7 +25,7 @@ CNN.addLayer(DenseLayer(net))        # Fully connected Layer
 CNN.createWeightsBiases()
 
 # Train the model
-accuracy, loss = CNN.train(inputTensor, trueLabels, useBatches = False, batchSize = None, alpha = learningRate)
+accuracy, loss = CNN.train(inputTensor, trueLabels, useBatches = False, batchSize = None, learningRate = learningRate)
 
 print(f"average accauracy: {accuracy:.2f}%")
 print(f"average loss: {loss:.4f}")

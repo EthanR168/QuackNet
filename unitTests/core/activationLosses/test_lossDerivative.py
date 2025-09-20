@@ -1,5 +1,5 @@
 import numpy as np
-from quacknet import MSEDerivative, MAEDerivative, CrossEntropyLossDerivative
+from quacknet import MSEDerivative, MAEDerivative, CrossEntropyLossDerivative, NormalisedCrossEntropyLossDerivative
 from quacknet import SoftMaxDerivative
 
 def test_MSELossDerivative():
@@ -23,3 +23,8 @@ def test_CrossEntropyLossDerivative_UsingSoftmax():
     assert np.allclose(CrossEntropyLossDerivative(np.array([1, 1]), np.array([0.5, 0.5]), SoftMaxDerivative), np.array([0.5, 0.5]))
     assert np.allclose(CrossEntropyLossDerivative(np.array([0]), np.array([1]), SoftMaxDerivative), np.array([-1]))
     assert np.allclose(CrossEntropyLossDerivative(np.array([0.1, 0.8, 0.1]), np.array([0, 1, 0]), SoftMaxDerivative), np.array([0.1, -0.2, 0.1]))
+
+def test_NormalisedCrossEntropyLossDerivative():
+    assert np.allclose(NormalisedCrossEntropyLossDerivative(np.array([0.5, 0.5]), np.array([1, 0])), np.array([-0.25, 0.25]))
+    assert np.allclose(NormalisedCrossEntropyLossDerivative(np.array([0.1, 0.8, 0.1]), np.array([0, 1, 0])), np.array([0.03333333, -0.06666667, 0.03333333]))
+    assert np.allclose(NormalisedCrossEntropyLossDerivative(np.array([0.9]), np.array([1])), np.array([-0.1]))

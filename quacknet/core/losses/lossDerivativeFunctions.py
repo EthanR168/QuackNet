@@ -50,3 +50,6 @@ def CrossEntropyLossDerivative(value, trueVale, activationDerivative):
     if(activationDerivative == SoftMaxDerivative):
         return value - trueVale
     return -1 * (trueVale / value)
+
+def NormalisedCrossEntropyLossDerivative(value, trueValue):
+    return (value - trueValue) / len(trueValue)

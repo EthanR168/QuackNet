@@ -1,5 +1,5 @@
 import numpy as np
-from quacknet import MSELossFunction, MAELossFunction, CrossEntropyLossFunction
+from quacknet import MSELossFunction, MAELossFunction, CrossEntropyLossFunction, NormalisedCrossEntropyLossFunction
 
 def test_MSELossFunction():
     assert MSELossFunction(np.array([0.5, 0.5]), np.array([1, 0])) == 0.25
@@ -17,3 +17,8 @@ def test_CrossEntropyLossFunction():
     assert np.allclose(CrossEntropyLossFunction(np.array([1, 1]), np.array([0.5, 0.5])), 0)
     assert CrossEntropyLossFunction(np.array([0.01]), np.array([1])) == -np.log(0.01)
     assert CrossEntropyLossFunction(np.array([0.1, 0.8, 0.1]), np.array([0, 1, 0])) == -np.log(0.8)
+
+def test_NormalizedCrossEntropyLossFunction():
+    assert np.allclose(NormalisedCrossEntropyLossFunction(np.array([1, 1]), np.array([0.5, 0.5])), 0)
+    assert NormalisedCrossEntropyLossFunction(np.array([0.01]), np.array([1])) == -np.log(0.01)
+    assert np.allclose(NormalisedCrossEntropyLossFunction(np.array([0.1, 0.8, 0.1]), np.array([0, 1, 0])), -np.log(0.8) / 3)

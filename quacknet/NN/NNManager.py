@@ -1,6 +1,6 @@
 from quacknet.NN import backPropgation
 from quacknet.core.activations.activationFunctions import relu, sigmoid, tanH, linear, softMax
-from quacknet.core.losses.lossFunctions import MSELossFunction, MAELossFunction, CrossEntropyLossFunction
+from quacknet.core.losses.lossFunctions import MSELossFunction, MAELossFunction, CrossEntropyLossFunction, NormalisedCrossEntropyLossFunction
 from quacknet.NN.initialisers import Initialisers
 from quacknet.NN.writeAndReadWeightBias import writeAndRead
 from quacknet.core.utilities.dataAugmentation import Augementation
@@ -26,6 +26,7 @@ class Network(Initialisers, writeAndRead, Augementation):
             "mse": MSELossFunction,
             "mae": MAELossFunction,
             "cross entropy": CrossEntropyLossFunction,"cross": CrossEntropyLossFunction,
+            "normalised cross entropy": NormalisedCrossEntropyLossFunction,"normalised cross": NormalisedCrossEntropyLossFunction,
         }
         self.lossFunction = lossFunctionDict[lossFunc.lower()]
 
@@ -143,17 +144,19 @@ class Network(Initialisers, writeAndRead, Augementation):
         nodes, Parameters = self.optimise(inputData, labels, self.learningRate, self.batchSize)        
         self.weights = Parameters["weight"]
         self.biases = Parameters["biases"]
-        
-        lastLayer = len(nodes[0]) - 1
-        if(epochs > 1):
-            labels = np.tile(labels, (epochs, 1)) # duplicates the labels ([1, 2], (3, 1)) would become [[1, 2], [1, 2], [1, 2]]
-        for i in range(len(nodes)): 
-            totalLoss += self.lossFunction(nodes[i][lastLayer], labels[i])
-            nodeIndex = np.argmax(nodes[i][lastLayer])
-            labelIndex = np.argmax(labels[i])
-            if(nodeIndex == labelIndex):
-                correct += 1
-        return correct / (len(labels) * epochs), totalLoss / (len(labels) * epochs)
+
+        if(nodes[0][-1].shape[0] == 1):
+            self.batchSize = 1
+            
+        for i in range(len(nodes)): # nodes[i][-1] shape: (batchSize, outputSize)
+            for j in range(nodes[i][-1].shape[0]):
+                totalLoss += self.lossFunction(nodes[i][-1][j], labels[i*self.batchSize+j])
+
+                nodeIndex = np.argmax(nodes[i][-1][j])
+                labelIndex = np.argmax(labels[i*self.batchSize+j])
+                if(nodeIndex == labelIndex):
+                    correct += 1
+        return correct / len(labels), totalLoss / len(labels)
     
     def _checkIfNetworkCorrect(self): #this is to check if activation functions/loss functions adhere to certain rule
         for i in range(len(self.layers) - 1): #checks if softmax is used for any activation func that isnt output layer
@@ -161,8 +164,8 @@ class Network(Initialisers, writeAndRead, Augementation):
                 raise ValueError(f"Softmax shouldnt be used in non ouput layers. Error at Layer {i + 1}")
         usingSoftMax = self.layers[len(self.layers) - 1][1] == softMax
         if(usingSoftMax == True):
-            if(self.lossFunction != CrossEntropyLossFunction): #checks if softmax is used without cross entropy loss function
+            if(self.lossFunction != CrossEntropyLossFunction and self.lossFunction != NormalisedCrossEntropyLossFunction): #checks if softmax is used without cross entropy loss function
                 raise ValueError(f"Softmax output layer requires Cross Entropy loss function") #if so stops the user
-        elif(self.lossFunction == CrossEntropyLossFunction):
+        elif(self.lossFunction == CrossEntropyLossFunction or self.lossFunction == NormalisedCrossEntropyLossFunction):
             raise ValueError(f"Cross Entropy loss function requires Softmax output layer") #if so stops the user
     

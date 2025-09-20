@@ -5,15 +5,16 @@ from quacknet.CNN.layers.poolingLayer import PoolingLayer
 from quacknet.CNN.layers.globalAveragePoolingLayer import GlobalAveragePooling
 from quacknet.CNN.layers.denseLayer import DenseLayer
 from quacknet.core.optimisers.adam import Adam
+from quacknet.universalLayers.dropoutLayer import Dropout
 import numpy as np
 
 class CNNModel:
-    def __init__(self, NeuralNetworkClass):
+    def __init__(self, NeuralNetworkClass, optimisationFunction=Adam):
         self.layers = []
         self.weights = []
         self.biases = []
         self.NeuralNetworkClass = NeuralNetworkClass
-        self.adam = Adam(self.forward, self._backpropagation)
+        self.optimisationFunction = optimisationFunction(self.forward, self._backpropagation)
     
     def addLayer(self, layer):
         """
@@ -63,6 +64,8 @@ class CNNModel:
                 weightGradients, biasGradients, errorTerms = self.layers[i]._backpropagation(errorTerms, allTensors[i])
                 allWeightGradients.insert(0, weightGradients)
                 allBiasGradients.insert(0, biasGradients)
+            elif(type(self.layers[i]) == Dropout):
+                errorTerms = self.layers[i]._backpropagation(errorTerms)
         
         Parameters =  {
             "weight": self.weights,
@@ -75,7 +78,7 @@ class CNNModel:
         }
         return Parameters, Gradients 
     
-    def _optimser(self, inputData, labels, useBatches, batchSize, alpha, beta1, beta2, epsilon):
+    def _optimser(self, inputData, labels, useBatches, batchSize, learningRate):
         """
         Runs the Adam optimiser either with or without batches.
 
@@ -96,12 +99,12 @@ class CNNModel:
             list: Updated weights after optimisation
             list: Updated biases after optimisation
         """
-        allOutputs, Parameters = self.adam.optimiser(inputData, labels, useBatches, batchSize, alpha, beta1, beta2, epsilon)
+        allOutputs, Parameters = self.optimisationFunction.optimiser(inputData, labels, useBatches, batchSize, learningRate)
         self.weights = Parameters["weight"]
         self.biases = Parameters["biases"]
         return allOutputs, Parameters
     
-    def train(self, inputData, labels, useBatches, batchSize, alpha = 0.001, beta1 = 0.9, beta2 = 0.999, epsilon = 1e-8):
+    def train(self, inputData, labels, useBatches, batchSize, learningRate):
         """
         Trains the CNN for one epoch and calculates accuracy and average loss.
 
@@ -123,8 +126,9 @@ class CNNModel:
         assert np.array(inputData).ndim == 4 or np.array(inputData).ndim == 3, f"Dimension wrong size, got {np.array(inputData).ndim}, expected 4 or 3"
         correct, totalLoss = 0, 0
         
-        nodes, _ = self._optimser(inputData, labels, useBatches, batchSize, alpha, beta1, beta2, epsilon)        
+        nodes, _ = self._optimser(inputData, labels, useBatches, batchSize, learningRate)        
         
+        """
         #nodes: (numbatches, numLayers, batchSize, outputSize)
 
         #lastLayer = len(nodes[0]) - 1
@@ -135,6 +139,7 @@ class CNNModel:
         #    
         #    if(nodeIndex == labelIndex):
         #        correct += 1
+        """
 
         if(useBatches == False): 
             batchSize = 1

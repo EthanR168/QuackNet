@@ -1,7 +1,7 @@
 from quacknet.core.activations.activationFunctions import relu, sigmoid, tanH, linear, softMax
 from quacknet.core.activations.activationDerivativeFunctions import ReLUDerivative, SigmoidDerivative, TanHDerivative, LinearDerivative, SoftMaxDerivative
-from quacknet.core.losses.lossDerivativeFunctions import MSEDerivative, MAEDerivative, CrossEntropyLossDerivative
-from quacknet.core.losses.lossFunctions import MSELossFunction, MAELossFunction, CrossEntropyLossFunction
+from quacknet.core.losses.lossDerivativeFunctions import MSEDerivative, MAEDerivative, CrossEntropyLossDerivative, NormalisedCrossEntropyLossDerivative
+from quacknet.core.losses.lossFunctions import MSELossFunction, MAELossFunction, CrossEntropyLossFunction, NormalisedCrossEntropyLossFunction
 import numpy as np
 
 '''
@@ -57,8 +57,11 @@ def _outputLayerWeightChange(lossDerivative, activationDerivative, currentLayerN
         weightGradients (ndarray): Gradient of the loss with respect to the weight.
         errorTerms (ndarray): Error terms for the output layer nodes.
     """
-    if(activationDerivative == SoftMaxDerivative and lossDerivative == CrossEntropyLossDerivative):
-        errorTerms = currentLayerNodes - trueValues
+    if(activationDerivative == SoftMaxDerivative and (lossDerivative == CrossEntropyLossDerivative or lossDerivative == NormalisedCrossEntropyLossDerivative)):
+        if(lossDerivative == NormalisedCrossEntropyLossDerivative):
+            errorTerms = NormalisedCrossEntropyLossDerivative(currentLayerNodes, trueValues)
+        else:
+            errorTerms = currentLayerNodes - trueValues
     else:
         lossDerivativeValue = lossDerivative(currentLayerNodes, trueValues, len(currentLayerNodes))
         errorTerms = lossDerivativeValue * activationDerivative(currentLayerNodes)
@@ -111,8 +114,11 @@ def _outputLayerBiasChange(lossDerivative, activationDerivative, currentLayerNod
         biasGradients (ndarray): Gradient of the loss with respect to the biases.
         errorTerms (ndarray): Error terms for the output layer nodes.
     """
-    if(activationDerivative == SoftMaxDerivative and lossDerivative == CrossEntropyLossDerivative):
-        errorTerms = currentLayerNodes - trueValues
+    if(activationDerivative == SoftMaxDerivative and (lossDerivative == CrossEntropyLossDerivative or lossDerivative == NormalisedCrossEntropyLossDerivative)):
+        if(lossDerivative == NormalisedCrossEntropyLossDerivative):
+            errorTerms = NormalisedCrossEntropyLossDerivative(currentLayerNodes, trueValues)
+        else:
+            errorTerms = currentLayerNodes - trueValues
     else:
         lossDerivativeValue = lossDerivative(currentLayerNodes, trueValues, len(currentLayerNodes))
         errorTerms = lossDerivativeValue * activationDerivative(currentLayerNodes)
@@ -173,6 +179,7 @@ def _backPropgation(layerNodes, weights, biases, trueValues, layers, lossFunctio
         MSELossFunction: MSEDerivative,
         MAELossFunction: MAEDerivative,
         CrossEntropyLossFunction: CrossEntropyLossDerivative,
+        NormalisedCrossEntropyLossFunction: NormalisedCrossEntropyLossDerivative,
     }
     activationDerivatives = {
         relu: ReLUDerivative,

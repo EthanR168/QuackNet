@@ -17,6 +17,6 @@ class Initialisers:
             else:
                 bounds = 1
                 
-            self.weights.append(np.random.normal(0, bounds, size=(lastSize, currSize)))
-            self.biases.append(np.random.normal(0, bounds, size=(currSize)))
+            self.weights.append(np.random.normal(0, bounds, size=(lastSize, currSize)).astype(np.float32))
+            self.biases.append(np.random.normal(0, bounds, size=(currSize)).astype(np.float32))
         

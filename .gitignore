@@ -24,3 +24,4 @@ extra.txt
 *.pyc
 build/
 implemented.txt
+benchmarkFolder/OptimiserBenchmark/data/

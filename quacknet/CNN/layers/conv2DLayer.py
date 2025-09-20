@@ -55,7 +55,6 @@ class Conv2DLayer():
     def forward(self, imageTensor):
         if(self.usePadding == True):
             imageTensor = self._padImage(imageTensor, self.kernalSize, self.stride, self.padding)
-
         outputHeight = (imageTensor.shape[2] - self.kernalSize) // self.stride + 1
         outputWidth = (imageTensor.shape[3] - self.kernalSize) // self.stride + 1
         
@@ -64,7 +63,7 @@ class Conv2DLayer():
         batchSize, inputDepth, inputHeight, inputWidth = imageTensor.shape
 
         output = np.zeros((batchSize, self.numKernals, outputHeight, outputWidth))
-        
+
         for b in range(batchSize):
             for k in range(self.numKernals):
                 for i in range(outputHeight):

@@ -16,8 +16,11 @@ from .core.utilities.dataAugmentation import *
 from .core.utilities.drawGraphs import *
 
 from .core.optimisers.adam import Adam
+from .core.optimisers.adamW import AdamW
 from .core.optimisers.stochasticGD import SGD
 from .core.optimisers.gradientDescent import GD
+from .core.optimisers.rmsProp import RMSProp
+from .core.optimisers.lion import Lion
 
 from .NN import Network
 

@@ -1,4 +1,5 @@
 from quacknet import Network, CNNModel, Conv2DLayer, DenseLayer, GlobalAveragePooling, ActivationLayer
+from quacknet import Adam
 import numpy as np
 
 def test_CNN_CheckIfModelCanLearnOnSimpleData():
@@ -18,16 +19,16 @@ def test_CNN_CheckIfModelCanLearnOnSimpleData():
     net.addLayer(2)
     net.createWeightsAndBiases()
 
-    CNN = CNNModel(net)
+    CNN = CNNModel(net, Adam)
     CNN.addLayer(Conv2DLayer(kernalSize=2, depth=channels, numKernals=3, stride=2, padding="no"))
     CNN.addLayer(ActivationLayer())
     CNN.addLayer(GlobalAveragePooling())
     CNN.addLayer(DenseLayer(net))
     CNN.createWeightsBiases()       
 
-    _, initialLoss = CNN.train(inputTensor, trueLabels, useBatches = True, batchSize = batchSize, alpha = learningRate)
+    _, initialLoss = CNN.train(inputTensor, trueLabels, useBatches = True, batchSize = batchSize, learningRate = learningRate)
 
     for _ in range(50):
-        _, loss = CNN.train(inputTensor, trueLabels, useBatches = True, batchSize = batchSize, alpha = learningRate)
+        _, loss = CNN.train(inputTensor, trueLabels, useBatches = True, batchSize = batchSize, learningRate = learningRate)
 
     assert loss < initialLoss

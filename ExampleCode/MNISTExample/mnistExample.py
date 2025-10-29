@@ -8,43 +8,38 @@ train_labels = np.load('ExampleCode/MNISTExample/data/train_labels.npy')  # Shap
 #test_images = np.load('ExampleCode/MNISTExample/data/test_images.npy')   # Shape: (10000, 784)
 #test_labels = np.load('ExampleCode/MNISTExample/data/test_labels.npy')    # Shape: (10000, 10)
 
-from quacknet import Network
+from quacknet import Network, Adam
 from quacknet import drawGraphs
 
-def run(epochs, steps, skipInput):
+def run(epochs):
     learningRate = 0.01
     n = Network(
         learningRate = learningRate,
-        lossFunc = "Cross Entropy",
-        optimisationFunc = "batches", # Gradient Descent
+        lossFunc = "MSE",
+        optimisationFunction = Adam, 
         useBatches = True,
         batchSize = 64
     )
     
-    n.addLayer(784, "relu")
-    n.addLayer(128, "relu")
-    n.addLayer(64, "relu")
-    n.addLayer(10, "softmax")
+    n.addLayer(784, "linear") #"relu")
+    n.addLayer(128, "linear") # "relu")
+    n.addLayer(64, "linear") #  "relu")
+    n.addLayer(10, "linear") #  "softmax")
 
-    if(skipInput == True):
-        inp = input("Create new weights/biases (y/n): ").lower()
-    else:
-        inp = "y"
-
-    if(inp == "y"):
-        n.createWeightsAndBiases()
-        n.write() # writes weights/biases to a file
-    else:
-        n.read()
+    n.createWeightsAndBiases()
+    n.write() # writes weights/biases to a file
 
     accuracies, losses = [], []
-    for epoch in range(0, epochs, steps):
+    for epoch in range(epochs):
         start = time.time()
-        accuaracy, averageLoss = n.train(train_images, train_labels, steps)
-        print(f"epoch: {steps * (epoch + 1)} / {epochs*steps}, took: {(time.time() - start)} seconds, accuracy: {round(accuaracy*100,2)}%, average loss: {averageLoss}")
-        n.write() # writes weights/biases to a file
+        accuaracy, averageLoss = n.train(train_images, train_labels, 1)
+
         accuracies.append(accuaracy)
         losses.append(averageLoss)
+
+        print(f"epoch: {epoch + 1} / {epochs}, took: {(time.time() - start)} seconds, accuracy: {round(accuaracy*100,2)}%, average loss: {averageLoss}")
+        n.write() # writes weights/biases to a file
+
     totalAccuracy.append(accuracies)
     totalLoss.append(losses)
 
@@ -52,6 +47,6 @@ def run(epochs, steps, skipInput):
 
 totalAccuracy, totalLoss = [], []
 for _ in range(5):
-    run(epochs = 10, steps = 1, skipInput = False)
+    run(10)
 
 drawGraphs(None, totalAccuracy, totalLoss) # draws accuracy and loss graphs 

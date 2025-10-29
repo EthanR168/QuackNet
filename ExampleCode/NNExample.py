@@ -16,10 +16,11 @@ n.createWeightsAndBiases()
 # Example training data
 inputData = [[0.1, 0.2, 0.3, 0.4, 0.5]]
 labels = [[1, 0, 0]]
-numEpochs = 1
+numEpochs = 100
 
 # Train the network
-accuracy, averageLoss = n.train(inputData, labels, numEpochs)
+for i in range(numEpochs):
+    accuracy, averageLoss = n.train(inputData, labels, 1)
 
 # Evaluate
 print(f"Accuracy: {accuracy:.2f}%")

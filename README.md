@@ -6,7 +6,7 @@
 **QuackNet** is a from scratch deep learning library in NumPy with full support for Neural Networks, CNNs, RNNs, and Transformers. Educational and benchmarked against PyTorch and TensorFlow.
 
 [![PyPI version](https://img.shields.io/pypi/v/QuackNet)](https://pypi.org/project/QuackNet/) 
-[![Docs](https://img.shields.io/badge/docs-online-blue)](https://sirquackpng.github.io/QuackNet/quacknet.html)
+[![Docs](https://img.shields.io/badge/docs-online-blue)](https://ethanr168.github.io/QuackNet/quacknet.html)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
 ---
